@@ -1,0 +1,169 @@
+<!DOCTYPE html> 
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>PANEL DE PRECEPTORÍA</title>
+<link rel="website icon" type="png" href="..\img\logo.png">
+  <!-- Hojas de estilo externas -->
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/preceptor.css">
+<link rel="stylesheet" href="../css/responsive.css">
+
+</head>
+
+<!-- Encabezado principal de la página -->
+<header class="main-header">
+  <div class="header-left">
+    <!-- Logo institucional -->
+    <img src="../img/logo.png" alt="Logo" class="header-logo">
+    <h1 class="header-title">E.E.S.T.N°5</h1>
+  </div>
+
+     <!-- Botón de cierre de sesión -->
+  <button class="logout-icon" onclick="logout()">
+
+    <div class="sign"><svg viewBox="0 0 512 512">
+        <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9
+     406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7
+      15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32
+       32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path>
+      </svg></div>
+
+    <div class="text">Logout</div>
+  </button>
+
+
+</header>
+
+<body>
+
+
+  <!-- Contenedor principal del panel -->
+  <div class="boletin-container">
+    <h1>PANEL DE PRECEPTORÍA</h1>
+
+    <!-- Sección de asignaciones -->
+    <h2>Asignaciones</h2>
+
+    <!-- Bloque para asignar profesor a materia -->
+    <div>
+      <h3>Asignar profesor a materia</h3>
+      <!-- Select dinámico con lista de profesores -->
+      <select id="profesorSelect"></select>
+      <!-- Campo de texto para ingresar materia -->
+      <input type="text" id="materiaInput" placeholder="Materia">
+      <div class="contenedor-botones">
+        <button onclick="asignarMateria()">Asignar</button>
+      </div>
+      <!-- Lista donde se mostrarán las asignaciones realizadas -->
+      <ul id="materiasList"></ul>
+    </div>
+
+    <!-- Bloque para asignar alumno a año/división/especialidad -->
+    <div>
+      <h3>Asignar alumno a año/división/especialidad</h3>
+      <!-- Select dinámico con lista de alumnos -->
+      <select id="alumnoSelect"></select>
+      <!-- Campos de entrada para datos académicos -->
+      <input type="text" id="anioInput" placeholder="Año">
+      <input type="text" id="divisionInput" placeholder="División">
+      <input type="text" id="especialidadInput" placeholder="Especialidad">
+      <div class="contenedor-botones">
+        <button onclick="asignarAlumno()">Asignar</button>
+      </div>
+      <!-- Lista donde se mostrarán las asignaciones realizadas -->
+      <ul id="alumnosList"></ul>
+    </div>
+  </div>
+
+  <script>
+    // =======================================================
+    // Función: logout
+    // Descripción: Cierra la sesión eliminando el usuario activo 
+    // de sessionStorage y redirige al inicio de sesión.
+    // =======================================================
+    function logout() {
+      sessionStorage.removeItem("activeUser");
+      window.location.href = "principal.html";
+    }
+
+    // =======================================================
+    // Función: cargarSelects
+    // Descripción: Carga dinámicamente los usuarios almacenados
+    // en localStorage dentro de los selectores de profesores 
+    // y alumnos según su rol.
+    // =======================================================
+    function cargarSelects() {
+      const profesorSelect = document.getElementById("profesorSelect");
+      const alumnoSelect = document.getElementById("alumnoSelect");
+
+      // Limpia los selectores antes de cargarlos
+      profesorSelect.innerHTML = "";
+      alumnoSelect.innerHTML = "";
+
+      // Recorre todos los usuarios registrados en localStorage
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const user = JSON.parse(localStorage.getItem(key));
+
+        // Agrega opciones al select de profesores
+        if (user.role === "Profesor") {
+          profesorSelect.innerHTML += `<option value="${user.email || user.username}">${user.email || user.username}</option>`;
+        }
+
+        // Agrega opciones al select de alumnos
+        if (user.role === "Alumno") {
+          alumnoSelect.innerHTML += `<option value="${user.email || user.username}">${user.email || user.username}</option>`;
+        }
+      }
+    }
+
+    // =======================================================
+    // Función: asignarMateria
+    // Descripción: Toma el profesor seleccionado y la materia
+    // ingresada, valida que ambos estén completos y los agrega 
+    // a la lista de asignaciones de materias.
+    // =======================================================
+    function asignarMateria() {
+      const profesor = document.getElementById("profesorSelect").value;
+      const materia = document.getElementById("materiaInput").value;
+
+      // Validación de campos
+      if (!profesor || !materia) return alert("Seleccione profesor y materia");
+
+      // Crea elemento de lista con la asignación
+      const li = document.createElement("li");
+      li.textContent = `${profesor} → ${materia}`;
+      document.getElementById("materiasList").appendChild(li);
+    }
+
+    // =======================================================
+    // Función: asignarAlumno
+    // Descripción: Toma el alumno seleccionado y sus datos
+    // académicos (año, división y especialidad), valida que 
+    // estén completos y los agrega a la lista de asignaciones.
+    // =======================================================
+    function asignarAlumno() {
+      const alumno = document.getElementById("alumnoSelect").value;
+      const anio = document.getElementById("anioInput").value;
+      const division = document.getElementById("divisionInput").value;
+      const especialidad = document.getElementById("especialidadInput").value;
+
+      // Validación de campos
+      if (!alumno || !anio || !division || !especialidad) return alert("Complete todos los campos");
+
+      // Crea elemento de lista con la asignación
+      const li = document.createElement("li");
+      li.textContent = `${alumno} → Año ${anio}, División ${division}, Especialidad ${especialidad}`;
+      document.getElementById("alumnosList").appendChild(li);
+    }
+
+    // =======================================================
+    // Inicialización
+    // Al cargar la página se ejecuta la carga de selects
+    // con los datos almacenados en localStorage.
+    // =======================================================
+    cargarSelects();
+  </script>
+</body>
+</html>

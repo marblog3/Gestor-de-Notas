@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BOLETÍN DEL ALUMNO</title>
+  <link rel="website icon" type="png" href="..\img\logo.png">
+
+  <!-- Hojas de estilos principales -->
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/alumno.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+
+</head>
+
+<!-- Encabezado principal de la página con logo institucional -->
+<header class="main-header">
+  <div class="header-left">
+    <img src="../img/logo.png" alt="Logo" class="header-logo">
+    <h1 class="header-title">E.E.S.T.N°5</h1>
+  </div>
+ 
+  <!-- Botón de cierre de sesión -->
+  <button class="logout-icon" onclick="logout()">
+
+    <div class="sign"><svg viewBox="0 0 512 512">
+        <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9
+     406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7
+      15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32
+       32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path>
+      </svg></div>
+
+    <div class="text">Logout</div>
+  </button>
+
+
+
+</header>
+
+<body>
+
+  <script>
+    // Verifica si hay sesión activa al cargar la página
+    const activeUser = sessionStorage.getItem("activeUser");
+    if (!activeUser) {
+      // Si no hay sesión activa → redirige al login
+      window.location.href = "principal.html";
+    }
+  </script>
+
+
+  <!-- Contenedor principal del boletín -->
+  <div class="boletin-container">
+
+    <h1 class="title-1">BOLETÍN DEL ALUMNO</h1>
+
+    <!-- Tabla de datos generales del estudiante -->
+    <div>
+      <table id="tabla-datos-generales">
+        <tr>
+          <td><b>CICLO LECTIVO:</b><input type="text" name="nombre" maxlength="35" class="input-1"> </td>
+          <td><b>ESTUDIANTE:</b><input type="text" name="nombre" maxlength="35" class="input-1"></td>
+          <td><b>DNI:</b><input type="text" name="dni" maxlength="8" class="input-1"></td>
+          <td><b>ESPECIALIDAD:</b><input type="text" name="nombre" maxlength="35" class="input-1"></td>
+        </tr>
+        <tr>
+          <td><b>AÑO:</b><input type="number" name="nombre" maxlength="20" class="input-1"></td>
+          <td><b>DIVISIÓN:</b><input type="number" name="nombre" maxlength="35" class="input-1"></td>
+          <td><b>TURNO:</b><input type="text" name="nombre" maxlength="35" class="input-1"></td>
+          <td><b>PRECEPTOR/A:</b><input type="text" name="nombre" maxlength="35" class="input-1"></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Tabla de materias con sus calificaciones -->
+    <div><br>
+      <div class="scroll-tabla-2">
+        <table id="tabla-materias" class="tabla-2">
+      </div>
+      <thead>
+        <tr>
+          <th rowspan="2" class="th-2">MATERIA</th>
+          <th rowspan="2" class="th-2">AÑO</th>
+          <th colspan="3" class="th-2">CUATRIMESTRE</th>
+          <th colspan="2" class="th-2">PERÍODOS DE INTENSIFICACIÓN</th>
+          <th rowspan="2" class="th-2">CALIFICACIÓN FINAL</th>
+          <th rowspan="2" class="th-2">OBSERVACIONES</th>
+        </tr>
+        <tr>
+          <th class="th-2">1°</th>
+          <th class="th-2">2°</th>
+          <th class="th-2">Intensificación 1° CUAT.</th>
+          <th class="th-2">DICIEMBRE</th>
+          <th class="th-2">FEBRERO</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Ejemplo de filas de materias (vacías para completar) -->
+        <tr>
+          <td><input type="text" class="mate1"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="text" class="mate1"></td>
+        </tr>
+        <tr>
+          <td><input type="text" class="mate1"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="text" class="mate1"></td>
+        </tr>
+        <tr>
+          <td><input type="text" class="mate1"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="text" class="mate1"></td>
+        </tr>
+        <tr>
+          <td><input type="text" class="mate1"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="text" class="mate1"></td>
+        </tr>
+        <tr>
+          <td><input type="text" class="mate1"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="text" class="mate1"></td>
+        </tr>
+        <tr>
+          <td><input type="text" class="mate1"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="text" class="mate1"></td>
+        </tr>
+        <tr>
+          <td><input type="text" class="mate1"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="text" class="mate1"></td>
+        </tr>
+        <tr>
+          <td><input type="text" class="mate1"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="text" class="mate1"></td>
+        </tr>
+        <tr>
+          <td><input type="text" class="mate1"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="text" class="mate1"></td>
+        </tr>
+        <tr>
+          <td><input type="text" class="mate1"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="text" class="mate1"></td>
+        </tr>
+      </tbody>
+      </table>
+    </div>
+
+
+    <!-- Tabla de materias pendientes de aprobación -->
+    <div>
+      <h3>MATERIAS PENDIENTES DE APROBACIÓN Y ACREDITACIÓN - INTENSIFICACIÓN</h3>
+      <div class="scroll-tabla-4">
+        <table id="tabla-pendientes" class="tabla-4">
+      </div>
+
+
+      <thead>
+        <tr>
+          <th rowspan="2" class="th-3">MATERIA</th>
+          <th rowspan="2" class="th-3">AÑO</th>
+          <th rowspan="2" class="th-3">CICLO LECTIVO DEL CURSADO</th>
+          <th colspan="6" class="th-3">PERÍODOS DE INTENSIFICACIÓN</th>
+          <th rowspan="2" class="th-3">CALIFICACIÓN FINAL</th>
+          <th rowspan="2" class="th-3">MODELO DE INT.</th>
+          <th rowspan="2" class="th-3">OBSERVACIONES</th>
+        </tr>
+        <tr>
+          <th class="th-3">MARZO</th>
+          <th class="th-3">JUNIO</th>
+          <th class="th-3">JULIO</th>
+          <th class="th-3">AGOSTO</th>
+          <th class="th-3">DICIEMBRE</th>
+          <th class="th-3">FEBRERO</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Ejemplo de materias con calificaciones pendientes -->
+        <tr>
+          <td><input type="text" class="mate1"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" class="mate1"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="text" class="mate1"></td>
+        </tr>
+        </tr>
+        <tr>
+          <td><input type="text" class="mate1"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" class="mate1"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="text" class="mate1"></td>
+        </tr>
+        <tr>
+          <td><input type="text" class="mate1"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" class="mate1"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="text" class="mate1"></td>
+        </tr>
+        <tr>
+          <td><input type="text" class="mate1"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" class="mate1"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="text" class="mate1"></td>
+        </tr>
+        <tr>
+          <td><input type="text" class="mate1"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" class="mate1"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
+          <td><input type="text" class="mate1"></td>
+        </tr>
+      </tbody>
+      </table>
+    </div><br>
+
+
+    <!-- Sección de observaciones -->
+    <h3>OBSERVACIONES</h3>
+    <div>
+      <!-- Varias filas vacías para observaciones escritas -->
+      <table>
+        <td><input type="text" class="obs-3"></td>
+      </table>
+      <table>
+        <td><input type="text" class="obs-3"></td>
+      </table>
+      <table>
+        <td><input type="text" class="obs-3"></td>
+      </table>
+      <table>
+        <td><input type="text" class="obs-3"></td>
+      </table>
+       <table>
+        <td><input type="text" class="obs-3"></td>
+      </table>
+       <table>
+        <td><input type="text" class="obs-3"></td>
+      </table>
+
+    </div>
+
+    <!-- Script para evitar volver atrás con el historial -->
+    <script>
+      window.history.pushState(null, null, window.location.href);
+      window.onpopstate = function () {
+        window.history.go(1);
+        window.location.href = "principal.html";
+      };
+
+      // Función de cierre de sesión
+      function logout() {
+        sessionStorage.removeItem("activeUser"); // Elimina la sesión activa
+        window.location.replace("principal.html");   // Redirige y reemplaza historial
+      }
+    </script>
+
+    <!-- Script externo de gestión (para funciones adicionales) -->
+    <script src="../js/gestion.js"></script>
+
+    <!-- Botón para descargar boletín -->
+    <div id="botones" class="contenedor-botones">
+      <button id="exportarBtn" class="btn-exportar"><b>EXPORTAR A EXCEL</b></button>
+      <button><b>CONSULTAR</b></button>
+    </div>
+
+
+    </script>
+    <!-- Segundo control de historial para reforzar seguridad -->
+    <script>
+      window.history.pushState(null, null, window.location.href);
+      window.onpopstate = function () {
+        window.history.go(-1);
+        window.location.href = "principal.html";
+      };
+    </script>
+
+    <!-- Script para la descarga excel -->
+    <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <!-- Exportar a Excel -->
+    <script>
+      // Busca el botón de exportar en la página
+      const exportarBtn = document.getElementById("exportarBtn");
+
+      // Define la función que se ejecutará al hacer clic
+      async function exportarAExcel() {
+        try {
+          // --- Creación del Excel ---
+          const workbook = new ExcelJS.Workbook();
+          const worksheet = workbook.addWorksheet("Boletín Alumno");
+
+          // --- Títulos y datos del alumno ---
+          let datosGenerales = [];
+          document.querySelectorAll("#tabla-datos-generales input").forEach(inp => {
+            datosGenerales.push(inp.value || "");
+          });
+          worksheet.addRow(["CICLO LECTIVO", "ESTUDIANTE", "DNI", "ESPECIALIDAD", "AÑO", "DIVISIÓN", "TURNO", "PRECEPTOR/A"]);
+          worksheet.addRow(datosGenerales);
+          worksheet.addRow([]);
+
+          // --- Cabeceras de las tablas ---
+          const headerMaterias = ["MATERIA", "AÑO", "1° CUATRIMESTRE", "2° CUATRIMESTRE", "INTENSIFICACIÓN 1° CUAT.", "DICIEMBRE", "FEBRERO", "CALIFICACIÓN FINAL", "OBSERVACIONES"];
+          const headerPendientes = ["MATERIA", "AÑO", "CICLO LECTIVO DEL CURSADO", "MARZO", "JUNIO", "JULIO", "AGOSTO", "DICIEMBRE", "FEBRERO", "CALIFICACIÓN FINAL", "MODELO DE INT.", "OBSERVACIONES"];
+
+          // --- Obtener y agregar datos de la Tabla 1: MATERIAS ---
+          const tablaMaterias = document.getElementById('tabla-materias');
+          const filasMaterias = [];
+          tablaMaterias.querySelectorAll("tbody tr").forEach(tr => {
+            const fila = [];
+            tr.querySelectorAll("input").forEach(input => {
+              fila.push(input.value || "");
+            });
+            filasMaterias.push(fila);
+          });
+          worksheet.addRow([]);
+          worksheet.addRow(headerMaterias);
+          filasMaterias.forEach(fila => worksheet.addRow(fila));
+
+          // --- Obtener y agregar datos de la Tabla 2: PENDIENTES ---
+          const tablaPendientes = document.getElementById('tabla-pendientes');
+          const filasPendientes = [];
+          tablaPendientes.querySelectorAll("tbody tr").forEach(tr => {
+            const fila = [];
+            tr.querySelectorAll("input").forEach(input => {
+              fila.push(input.value || "");
+            });
+            filasPendientes.push(fila);
+          });
+          worksheet.addRow([]);
+          worksheet.addRow([]);
+          worksheet.addRow(headerPendientes);
+          filasPendientes.forEach(fila => worksheet.addRow(fila));
+
+
+          // Este bloque aplica bordes y alineación a TODAS las celdas existentes hasta ahora.
+          worksheet.eachRow({ includeEmpty: true }, function (row) {
+            row.eachCell({ includeEmpty: true }, function (cell) {
+              cell.border = {
+                top: { style: 'thin' }, left: { style: 'thin' },
+                bottom: { style: 'thin' }, right: { style: 'thin' }
+              };
+              cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+            });
+          });
+
+          // Poner cabeceras en negrita
+          worksheet.getRow(1).font = { bold: true };
+          worksheet.getRow(2).font = { bold: true };
+          worksheet.getRow(5).font = { bold: true }; // Se ajusta el número de fila
+          worksheet.getRow(6 + filasMaterias.length + 2).font = { bold: true }; // Se ajusta el número de fila
+
+
+          //  LA TABLA DE OBSERVACIONES  // 
+          // Añadir espacio antes de la nueva tabla
+          worksheet.addRow([]);
+          worksheet.addRow([]);
+
+          // 1. Crear y dar estilo al TÍTULO de Observaciones
+          const obsHeaderRow = worksheet.addRow(['OBSERVACIONES']);
+          worksheet.mergeCells(`A${obsHeaderRow.number}:E${obsHeaderRow.number}`); // Abarca 5 columnas (A a E)
+          const headerCell = worksheet.getCell(`A${obsHeaderRow.number}`);
+          headerCell.font = { bold: true };
+          headerCell.alignment = { vertical: 'middle', horizontal: 'center' };
+          headerCell.border = {
+            top: { style: 'thin' }, left: { style: 'thin' },
+            bottom: { style: 'thin' }, right: { style: 'thin' }
+          };
+
+          // 2. Obtener los valores de los inputs de observaciones
+          const obsInputs = document.querySelectorAll(".obs-3");
+          const obsValues = Array.from(obsInputs)
+            .map(input => input.value.trim())
+            .filter(text => text.length > 0); // Guardamos solo los que tienen texto
+
+          // 3. Crear una fila por cada observación con texto
+          obsValues.forEach(textoDeInput => {
+            const contentRow = worksheet.addRow([textoDeInput]);
+            worksheet.mergeCells(`A${contentRow.number}:E${contentRow.number}`);
+
+            const contentCell = worksheet.getCell(`A${contentRow.number}`);
+            contentCell.alignment = {
+              vertical: 'middle',
+              horizontal: 'left',
+              wrapText: true
+            };
+            contentCell.border = {
+              top: { style: 'thin' }, left: { style: 'thin' },
+              bottom: { style: 'thin' }, right: { style: 'thin' }
+            };
+          });
+
+          // 4. Rellenar con filas vacías hasta alcanzar el mínimo de 6
+          const filasConTexto = obsValues.length;
+          const filasMinimas = 6;
+          if (filasConTexto < filasMinimas) {
+            const filasAAgregar = filasMinimas - filasConTexto;
+            for (let i = 0; i < filasAAgregar; i++) {
+              const emptyRow = worksheet.addRow(['']); // Fila vacía
+              worksheet.mergeCells(`A${emptyRow.number}:E${emptyRow.number}`);
+
+              const emptyCell = worksheet.getCell(`A${emptyRow.number}`);
+              emptyCell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+              emptyCell.border = {
+                top: { style: 'thin' }, left: { style: 'thin' },
+                bottom: { style: 'thin' }, right: { style: 'thin' }
+              };
+            }
+          }
+
+
+          // --- Ajustes Finales de Columnas ---
+          worksheet.columns.forEach(column => { column.width = 20; });
+          worksheet.getColumn(1).width = 30;
+          worksheet.getColumn(9).width = 40;
+          worksheet.getColumn(12).width = 40;
+
+          // --- Descargar el archivo ---
+          const buffer = await workbook.xlsx.writeBuffer();
+          saveAs(new Blob([buffer]), "Boletin_Alumno.xlsx");
+
+        } catch (error) {
+          console.error("Error al exportar a Excel:", error);
+          alert("Hubo un error al generar el archivo de Excel. Revisa la consola para más detalles.");
+        }
+      }
+
+      // Asigna la función al evento 'click' del botón
+      exportarBtn.addEventListener("click", exportarAExcel);
+    </script>
+
+
+  </div>
+</body>
+
+</html>

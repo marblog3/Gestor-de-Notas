@@ -1,0 +1,126 @@
+/* =================================================================
+   ADMIN.CSS
+   Estilos para el panel de administración.
+   ================================================================= */
+
+/* Tabla de usuarios */
+.boletin {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+.boletin th, .boletin td {
+    border: 1px solid black;
+    padding: 5px;
+    text-align: center;
+}
+
+.accion-boton {
+    width: 45%;
+    padding: 10px;
+    margin: 2px;
+    background-color: #3b4a3c;
+}
+
+.accion-boton-1 {
+    width: 45%;
+    padding: 10px;
+    margin: 2px;
+    background-color: #3b4a3c;
+}
+
+/* Panel de notificaciones */
+.notification-panel {
+    margin-top: 30px;
+    background: #f8f8f8;
+    border: 2px solid #333;
+    border-radius: 6px;
+    padding: 10px;
+}
+.toggle-title {
+    margin: 0;
+    padding: 8px;
+    background: #3b394f;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+    text-align: left;
+}
+#pendingList {
+    list-style: none;
+    padding-left: 0;
+    margin: 10px 0;
+}
+#pendingList li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+#pendingList button {
+    padding: 10px 20px; font-size: 14px; margin: 0;
+}
+#pendingList button:first-of-type { background-color: #2ecc71; }
+#pendingList button:first-of-type:hover { background-color: #27ae60; }
+#pendingList button:last-of-type { background-color: #e74c3c; }
+#pendingList button:last-of-type:hover { background-color: #c0392b; }
+
+.contenedor-botones {
+    margin-right: 1430px;
+}
+
+.title-3 {
+    text-align: center;
+    font-size: 44px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    color: #3b394f;    
+}
+
+select {
+    font-size: 20px;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 500px;
+   
+}
+
+input {
+    font-size: 20px;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 500px;
+   
+}
+
+/* ---- ESTILOS PARA LA DIVISIÓN DE COLUMNAS ---- */
+
+/* Este es el contenedor principal que creamos en el HTML */
+.column-layout-container {
+  display: flex;          /* Activa el modo de columnas flexibles (Flexbox) */
+  align-items: flex-start;  /* Alinea los elementos en la parte superior */
+  gap: 30px;              /* Crea un espacio transparente de 30px entre las columnas */
+  max-width: 1300px;      /* Ancho máximo para el contenedor de columnas */
+  margin: 20px auto;      /* Centra el contenedor en la página */
+}
+
+/* Ajuste para los formularios cuando están dentro del contenedor de columnas.
+  Esto anula el centrado individual para que Flexbox pueda controlarlos.
+*/
+.column-layout-container .form-container {
+  margin: 0; /* Quita el margen automático que los centraba verticalmente */
+  flex: 1;   /* Hace que cada columna ocupe el mismo espacio disponible */
+}
+
+/* Mover los botones de los formularios de asignación a la derecha */
+#asignarProfesorForm,
+#asignarAlumnoForm {
+  text-align: right;
+}
+
+.input-2{
+    width: 484px;
+}

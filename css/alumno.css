@@ -1,0 +1,74 @@
+/* =================================================================
+   ALUMNO.CSS
+   Estilos para el boletín del alumno.
+   ================================================================= */
+.tabla-2, .tabla-4 {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 20px;
+}
+.tabla-2 th, .tabla-2 td, .tabla-4, .th-3, .tabla-, .td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: center;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.th-2 {
+  font-size: 20px; /* Agrandar el texto de la celda */
+  min-width: 180px; /* Aumenta este valor si necesitas que sean aún más largos */
+  height: 50px;
+  padding: 10px;    /* Añadir un poco de espacio interno */
+}
+
+
+.th-3 {
+  font-size: 20px;
+  min-width: 180px; /* Aumenta este valor si necesitas que sean aún más largos */
+  height: 50px;
+  padding: 10px;
+}
+
+.scroll-tabla-4 {
+    /* Es esencial para crear la barra de desplazamiento */
+    overflow-x: auto;
+    /* Asegura que el contenedor tome todo el ancho disponible */
+    width: 100%; 
+}
+
+.scroll-tabla-2 {
+    /* Es esencial para crear la barra de desplazamiento */
+    overflow-x: auto;
+    /* Asegura que el contenedor tome todo el ancho disponible */
+    width: 100%; 
+}
+
+.obs-3{
+    width: 1700px;
+    height: 30px;
+    font-size: 25px;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border-color: transparent;
+   
+ 
+    
+}
+
+.input-1{
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border-color: transparent;
+    width: 90%;
+}
+
+.mate1{
+    border-color: transparent;
+    width: 70%;
+}
+
+.title-1{
+    text-align: center;
+    font-size: 44px;
+    margin-top: 0px;
+    margin-bottom: 50px;
+    color: #3b394f;
+}

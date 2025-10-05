@@ -1,0 +1,22 @@
+/* =================================================================
+   PRECEPTOR.CSS
+   Estilos para el panel de preceptoría.
+   ================================================================= */
+
+
+h2, h3 {
+    text-align: left;
+    margin-top: 25px;
+}
+
+#materiasList li, #alumnosList li {
+    padding: 5px;
+    border-bottom: 1px solid #eee;
+    list-style-position: inside;
+}
+
+.contenedor-botones button {
+    background-color: #3b4a3c;
+}
+
+

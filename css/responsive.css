@@ -1,0 +1,126 @@
+/* =================================================================
+   RESPONSIVE.CSS (VERSIÓN MEJORADA)
+   Ajustes para tablets y dispositivos móviles.
+   ================================================================= */
+
+/* --- Para Tablets y Laptops Pequeñas (hasta 1024px) --- */
+@media (max-width: 1024px) {
+    /* Ajustamos el contenedor principal para que no sea tan ancho y tenga menos relleno */
+    .boletin-container, .container {
+        width: 90%;
+        padding: 30px;
+        margin-top: 120px; /* Ajuste para el header fijo */
+    }
+
+    /* Reducimos ligeramente el tamaño de los títulos principales */
+    h1, .header-title, .title-2 {
+        font-size: 28px;
+    }
+
+    .header-title1 {
+        font-size: 22px;
+    }
+
+    /* Hacemos que la disposición de columnas en el panel de admin se mantenga, pero con menos espacio */
+    .column-layout-container {
+        gap: 20px;
+    }
+}
+
+/* --- Para Tablets en modo vertical (hasta 768px) --- */
+@media (max-width: 768px) {
+    body {
+        /* Nos aseguramos que no haya zoom y que el texto no sea agrandado por el navegador en iOS */
+        zoom: 1;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    .boletin-container, .container {
+        padding: 20px;
+        width: 95%; /* Ocupa casi todo el ancho */
+    }
+
+    /* El layout de dos columnas del admin ahora se apila verticalmente */
+    .column-layout-container {
+      flex-direction: column;
+      align-items: center; /* Centramos los formularios apilados */
+    }
+    
+    .column-layout-container .form-container {
+      width: 100%; /* Cada formulario ocupa todo el ancho del contenedor */
+    }
+    
+    #asignarProfesorForm, #asignarAlumnoForm {
+        text-align: center; /* Centramos los botones en móvil */
+    }
+
+    /* El header se ajusta para no ocupar tanto espacio horizontal */
+    .main-header {
+        padding: 10px 15px;
+    }
+
+    .header-title {
+        font-size: 20px;
+    }
+
+    /* Forzamos a que las tablas que no quepan tengan scroll horizontal */
+    .tabla-scroll, .boletin, #tabla-materias, #tabla-pendientes, .tabla-3 {
+        display: block;
+        width: 100%;
+        overflow-x: auto; /* ¡La clave para tablas en móvil! */
+    }
+}
+
+/* --- Para Móviles (hasta 600px) --- */
+@media (max-width: 600px) {
+    /* El header principal se apila para dar más espacio */
+    .main-header {
+        flex-direction: column;
+        height: auto; /* Altura automática */
+        padding: 10px;
+    }
+
+    .main-header .header-left {
+        margin-bottom: 10px;
+    }
+
+    /* Aumentamos el margen superior para que el contenido no quede debajo del header más alto */
+    .boletin-container, .container {
+        margin-top: 150px;
+    }
+
+    h1, .title-2 {
+        font-size: 24px;
+    }
+    h2, h3 {
+        font-size: 20px;
+    }
+
+    /* Los inputs y selects de los formularios ocupan casi todo el ancho */
+    input, select, textarea {
+        width: 95%;
+    }
+
+    #login-container input, #register-container input, #register-container select {
+        width: 90%;
+    }
+    
+    /* Los contenedores de botones se apilan verticalmente para ser más fáciles de tocar */
+    .contenedor-botones {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .contenedor-botones button, .accion-boton {
+        width: 80%;
+        margin: 5px 0; /* Quitamos márgenes horizontales */
+        max-width: 300px;
+    }
+    
+    /* Quitamos márgenes extra que puedan causar problemas */
+    .contenedor-botones {
+        margin-right: 0;
+    }
+}

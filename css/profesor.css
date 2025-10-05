@@ -1,0 +1,235 @@
+/* =================================================================
+   PROFESOR.CSS
+   Estilos para la planilla de calificaciones.
+   ================================================================= */
+
+.tabla-scroll {
+    overflow-x: auto;
+}
+
+.tabla-3 {
+    table-layout: auto;
+    margin: 0 auto;
+}
+
+.tabla-3 input {
+    font-size: 16px;
+    text-align: center;
+}
+
+.tabla-3 input.nota {
+    font-size: 20px !important;
+    font-family: "Times New Roman", Times, serif !important;
+}
+
+/* Anchos de columnas específicos */
+.tabla-3 td:nth-child(2) input {
+    width: 350px;
+    padding: 6px;
+}
+
+.tabla-3 td:nth-child(3) input {
+    width: 250px;
+    padding: 6px;
+}
+
+.tabla-3 td:nth-child(7) input {
+    width: 250px;
+    padding: 6px;
+}
+
+.tabla-3 td:nth-child(1) input {
+    width: 50px;
+}
+
+.tabla-3 td:nth-child(4) input,
+.tabla-3 td:nth-child(5) input,
+.tabla-3 td:nth-child(6) input,
+.tabla-3 td:nth-child(8) input,
+.tabla-3 td:nth-child(9) input,
+.tabla-3 td:nth-child(10) input,
+.tabla-3 td:nth-child(11) input,
+.tabla-3 td:nth-child(12) input,
+.tabla-3 td:nth-child(13) input,
+.tabla-3 td:nth-child(14) input {
+    width: 110px;
+    padding: 6px;
+}
+
+
+/* Menú en cascada para materias */
+.menu-materia {
+  list-style: none;
+  margin-left: 16%;
+  padding: 0;
+  width: 300px;
+  border: 1px solid #77685a;
+  background: #fff;
+  font-size: 20px;
+  margin-bottom: 45px;
+  margin-top: 15px;
+
+}
+
+.menu-materia li {
+  position: relative;
+}
+
+.menu-materia > li > a {
+  display: block;
+  padding: 8px 12px;
+  text-decoration: none;
+  color: #22242a;
+  border-bottom: 1px solid #ccc;
+}
+
+.menu-materia > li > a:hover {
+  background: #eaeaea;
+}
+
+.menu-materia li ul {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  min-width: 200px;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  z-index: 1000;
+}
+
+.menu-materia li ul li a {
+  display: block;
+  padding: 8px 12px;
+  text-decoration: none;
+  color: #22242a;
+  border-bottom: 1px solid #ccc;
+}
+
+.menu-materia li ul li a:hover {
+  background: #f0f0f0;
+}
+
+/* Mostrar submenú al pasar el mouse */
+.menu-materia li:hover > ul {
+  display: block;
+}
+
+/* Botón 'X' para eliminar fila */
+.final-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.final-container .remove-row {
+    opacity: 0;
+    margin-left: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: opacity 0.2s, color 0.2s;
+}
+
+.final-container:hover .remove-row {
+    opacity: 1;
+    color: red;
+}
+
+.final-container .remove-row:hover {
+    color: darkred;
+}
+
+/* Reporte de resultados */
+.reporte-container {
+    margin-top: 25px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    overflow: hidden;
+}
+
+.reporte-encabezado {
+    padding: 10px;
+    text-align: center;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.reporte-fila {
+    display: flex;
+    border-top: 1px solid #ccc;
+}
+
+.reporte-columna {
+    flex: 1;
+    padding: 10px;
+    border-right: 1px solid #ccc;
+    font-size: 25px;
+}
+
+.reporte-columna:last-child {
+    border-right: none;
+}
+
+
+table,
+th,
+td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  padding: 8px;
+  text-align: left;
+}
+
+
+.tabla-3 th, 
+.tabla-3 td {
+    padding: 10px; /* Menos relleno que las tablas generales */
+    text-align: center; /* Centrado */
+}
+
+
+.select-preview {
+  display: inline-block;
+  padding: 6px 8px;
+  font-size: 18px;
+  border: none;
+  background: transparent;
+  color: black;
+}
+
+.title-2 {
+    text-align: center;
+    font-size: 44px;
+    margin-top: 0px;
+    margin-bottom: 50px;
+    color: #3b394f;
+}
+
+p {
+  font-size: 20px;
+  text-align: center;
+  font-weight: bold;
+}
+
+
+.td-1 {
+  text-align: center;
+  
+  
+}
+
+.input-1{
+  width: 80%;
+ 
+  
+  
+}
+
+
+

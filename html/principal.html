@@ -1,0 +1,183 @@
+<!DOCTYPE html> 
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login y Registro</title>
+  <link rel="website icon" type="png" href="..\img\logo.png">
+  <!-- Enlace al archivo de estilos -->
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/principal.css">
+<link rel="stylesheet" href="../css/responsive.css">
+
+</head>
+
+<!-- Encabezado fijo con logo e institución -->
+<header class="mi-header">
+  <div class="header-left1">
+    <img src="../img/logo.png" alt="Logo" class="header-logo1">
+    <h1 class="header-title1">E.E.S.T.N°5</h1>
+  </div>
+</header>
+
+<body>
+
+  <!-- Contenedor del formulario de inicio de sesión -->
+  <div class="container" id="login-container">
+    <h2>Sistema De Gestión De Notas</h2>
+    <h2>Iniciar Sesión</h2><br>
+    <!-- Mensaje de error dinámico -->
+    <div id="error-msg" class="error"></div>
+    <!-- Campos de entrada de usuario y contraseña -->
+    <input type="email" id="login-username" placeholder="Correo institucional" required>
+    <input type="password" id="login-password" placeholder="Contraseña" required><br>
+    <!-- Botón para ejecutar inicio de sesión -->
+    <button onclick="login()"><b>Iniciar Sesión</b></button>
+    <!-- Enlace para cambiar a la vista de registro -->
+    <div class="switch">
+      <b>¿No tienes cuenta?</b> <a href="javascript:void(0)" onclick="showRegister()"><b>Registrate</b></a>
+    </div>
+  </div>
+
+  <!-- Contenedor del formulario de registro (oculto por defecto) -->
+  <div class="container" id="register-container" style="display: none;">
+    <h2>Registrar Usuario</h2><br>
+    <!-- Mensaje de error dinámico -->
+    <div id="register-error-msg" class="error"></div>
+
+    <!-- Campo de correo institucional obligatorio -->
+    <input type="email" id="register-username" placeholder="Correo institucional (@eest5.com)" required>
+
+    <!-- Selector de rol -->
+    <div>
+      <select id="register-role" required>
+        <option value="">Seleccione un rol</option>
+        <option value="Profesor">Profesor</option>
+        <option value="Preceptor">Preceptor</option>
+        <option value="Alumno">Alumno</option>
+      </select>
+    </div>
+
+    <!-- Botón para enviar solicitud de registro -->
+    <button onclick="register()"><b>Registrar</b></button>
+    <!-- Enlace para cambiar a la vista de inicio de sesión -->
+    <div class="switch">
+      <b>¿Ya tienes cuenta?</b> <a href="javascript:void(0)" onclick="showLogin()"><b>Iniciar Sesión</b></a>
+    </div>
+  </div>
+
+  <script>
+    // Muestra el formulario de inicio de sesión y oculta el de registro
+    function showLogin() {
+      document.getElementById('login-container').style.display = 'block';
+      document.getElementById('register-container').style.display = 'none';
+      document.getElementById('register-error-msg').innerHTML = '';
+    }
+
+    // Muestra el formulario de registro y oculta el de inicio de sesión
+    function showRegister() {
+      document.getElementById('login-container').style.display = 'none';
+      document.getElementById('register-container').style.display = 'block';
+      document.getElementById('error-msg').innerHTML = '';
+    }
+
+    // Lógica de inicio de sesión
+    function login() {
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      // Validación de campos vacíos
+      if (!username || !password) {
+        document.getElementById('error-msg').innerHTML = 'Complete todos los campos';
+        return;
+      }
+
+      // Caso especial: acceso directo al administrador
+      if (username === "admin@eest5.com" && password === "admin123") {
+        sessionStorage.setItem("activeUser", JSON.stringify({ email: username, role: "Administrador" }));
+        window.location.href = "admin.html";
+        return;
+      }
+
+      // Validación de dominio institucional
+      if (!username.endsWith("@eest5.com")) {
+        document.getElementById('error-msg').innerHTML = "Debe usar un correo institucional (@eest5.com)";
+        return;
+      }
+
+      // Verificación contra usuarios guardados en localStorage
+      const savedUser = localStorage.getItem(username);
+      if (savedUser) {
+        const user = JSON.parse(savedUser);
+        // Validación de contraseña (cifrada con base64)
+        if (user.password === btoa(password)) {
+          sessionStorage.setItem("activeUser", JSON.stringify(user));
+          // Redirección según el rol del usuario
+          if (user.role === "Profesor") {
+            window.location.href = "profesor.html";
+          } else if (user.role === "Preceptor") {
+            window.location.href = "preceptor.html";
+          } else if (user.role === "Alumno") {
+            window.location.href = "alumno.html";
+          } else if (user.role === "Administrador") {
+            window.location.href = "admin.html";
+          }
+        } else {
+          document.getElementById('error-msg').innerHTML = 'Contraseña incorrecta';
+        }
+      } else {
+        document.getElementById('error-msg').innerHTML = 'Usuario no encontrado';
+      }
+    }
+
+    // Lógica de registro de usuario
+    function register() {
+      const username = document.getElementById('register-username').value.trim();
+      const role = document.getElementById('register-role').value;
+
+      // Validación de campos vacíos
+      if (!username || !role) {
+        document.getElementById('register-error-msg').innerHTML = 'Complete todos los campos';
+        return;
+      }
+
+      // Validación de dominio institucional
+      if (!username.endsWith("@eest5.com")) {
+        document.getElementById('register-error-msg').innerHTML = "Debe usar un correo institucional (@eest5.com)";
+        return;
+      }
+
+      // Obtención de solicitudes pendientes almacenadas
+      const pendingUsers = JSON.parse(localStorage.getItem("pendingUsers")) || [];
+      // Se almacena la solicitud con fecha y rol (el administrador asigna contraseña al aprobar)
+      pendingUsers.push({ username, role, requestedAt: new Date().toISOString() });
+      localStorage.setItem("pendingUsers", JSON.stringify(pendingUsers));
+
+      alert("Tu solicitud de registro fue enviada al administrador. Espera su aprobación.");
+      showLogin();
+    }
+
+    // Permite enviar formularios con la tecla Enter
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        const loginVisible = document.getElementById('login-container').style.display !== "none";
+        if (loginVisible) {
+          login();
+        } else {
+          register();
+        }
+      }
+    });
+
+    // Prevención de retroceso en historial del navegador
+    window.history.pushState(null, null, window.location.href);
+    window.onpopstate = function () {
+      window.history.go(1);
+      window.location.href = "principal.html";
+    };
+  </script>
+
+</body>
+
+</html>

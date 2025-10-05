@@ -1,0 +1,276 @@
+/* =================================================================
+   BASE.CSS
+   Estilos comunes y fundamentales para todo el sistema.
+   ================================================================= */
+
+/* --- Configuración general --- */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: beige;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #2a2a32;
+    zoom: 0.6; /* Zoom general para vista de escritorio */
+}
+
+/* --- Títulos --- */
+
+h1 {
+    text-align: center;
+    font-size: 44px;
+    margin-bottom: 10px;
+    color: #3b394f;
+}
+
+
+h2, h3 {
+    font-size: 25px;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    color: #3b394f;
+}
+
+.titulo-2 {
+    text-align: left;
+    color: #3b394f;
+}
+
+h5 { /* Regla encontrada en tabla.css */
+    color: bisque;
+    text-align: center;
+}
+
+img { /* Regla genérica encontrada en tabla.css */
+    width: 8%;
+}
+
+/* --- Contenedores Principales --- */
+.container,
+.boletin-container {
+    background-color: white;
+    padding: 60px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 1700px;
+    font-size: 16px;
+    margin-top: 100px;
+}
+
+/* --- Header Principal (usado en 4 de 5 páginas) --- */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #3b394f;
+    color: white;
+    padding: 15px 25px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.header-logo {
+    width: 70px;
+    height: auto;
+}
+
+.header-title {
+    font-size: 24px;
+    margin: 0;
+    font-weight: bold;
+    color: white;
+}
+
+/* --- Estilos de Formularios Genéricos --- */
+input,
+textarea,
+select {
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 20px;
+    width: 90%;
+}
+
+
+
+/* --- Botones --- */
+button, .accion-boton {
+    width: 100%;
+    max-width: 250px;
+    padding: 15px;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    margin: 10px 5px;
+    display: inline-block;
+    text-align: center;
+    background-color:#3b4a3c;;
+   
+}
+
+ button:hover {
+        background-color: #585583;
+    } 
+/* =================================================================
+   ESTILOS PARA EL ÍCONO DE CERRAR SESIÓN
+   ================================================================= */
+
+.logout-icon {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 45px;
+  height: 45px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition-duration: .3s;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
+  background-color: rgb(255, 65, 65);
+  margin-right: 90px;
+}
+
+/* plus sign */
+.sign {
+  width: 100%;
+  transition-duration: .3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sign svg {
+  width: 17px;
+}
+
+.sign svg path {
+  fill: white;
+}
+/* text */
+.text {
+  position: absolute;
+  right: 0%;
+  width: 0%;
+  opacity: 0;
+  color: white;
+  font-size: 1.2em;
+  font-weight: 600;
+  transition-duration: .3s;
+}
+/* hover effect on button width */
+.logout-icon:hover {
+  width: 125px;
+  border-radius: 40px;
+  transition-duration: .3s;
+}
+
+.logout-icon:hover .sign {
+  width: 30%;
+  transition-duration: .3s;
+  padding-right: 20px;
+}
+/* hover effect button's text */
+.logout-icon:hover .text {
+  opacity: 1;
+  width: 70%;
+  transition-duration: .3s;
+  padding-right: 10px;
+}
+/* button click effect*/
+.logout-icon:active {
+  transform: translate(2px ,2px);
+}
+
+
+.logout-icon:hover {
+    transform: scale(1.1); /* Agranda un poco el ícono al pasar el mouse */
+    opacity: 0.9;          /* Le da un leve efecto de transparencia */
+}
+
+.contenedor-botones {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.contenedor-botones button {
+    margin: 0 10px;
+}
+
+/* Colores de botones de acción */
+#guardarBtn, #iniciarSesionBtn { background-color: #27ae60; } /* verde */
+.logout-btn { background-color: #e74c3c; } /* rojo */
+#modificarBtn { background-color: #f39c12; } /* naranja */
+#agregarFilaBtn { background-color: #e3bd25; } /* amarillo */
+#exportarBtn, #descargarBtn { background-color: #2980b9; } /* azul */
+#btn-reporte { background-color: #8e44ad; } /* morado */
+
+/* Efectos hover */
+.logout-btn:hover { background-color: #c0392b; }
+.accion-boton:hover { background-color: #de1526; }
+.accion-boton-1:hover { background-color: #2fa417; }
+#guardarBtn:hover, #modificarBtn:hover, #agregarFilaBtn:hover, #exportarBtn:hover, #btn-reporte:hover {
+    filter: brightness(110%);
+}
+
+/* --- Estilos de Tablas Generales --- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+td, th {
+    border: 1px solid #000000;
+    padding: 15px;
+    text-align: center;
+}
+
+th {
+    font-size: 20px;
+    background-color: #3c3d40;
+    color: white;
+    
+    
+}
+
+/* --- Utilidades para Vista Previa (Guardar/Modificar) --- */
+.vista-previa input,
+.vista-previa select {
+    border: none;
+    pointer-events: none;
+    background: transparent;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.select-preview {
+    display: inline-block;
+    padding: 8px;
+    margin: 5px 0;
+    font-size: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: transparent;
+}
+
