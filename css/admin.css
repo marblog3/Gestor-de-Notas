@@ -57,16 +57,23 @@
     border-bottom: 1px solid #ddd;
 }
 #pendingList button {
-    padding: 10px 20px; font-size: 14px; margin: 0;
+    padding: 10px 35px; font-size: 14px; margin: 0;
+    
 }
 #pendingList button:first-of-type { background-color: #2ecc71; }
 #pendingList button:first-of-type:hover { background-color: #27ae60; }
 #pendingList button:last-of-type { background-color: #e74c3c; }
 #pendingList button:last-of-type:hover { background-color: #c0392b; }
 
+/* --- CORRECCIÓN CLAVE --- */
+/* Contenedor del botón "Crear Usuario" */
 .contenedor-botones {
-    margin-right: 1430px;
+    text-align: left; /* Alinea el contenido a la izquierda */
+    margin-top: 20px; /* Le da un espacio superior */
+    margin-bottom: 20px; /* Le da un espacio inferior */
 }
+/* Se quita el "margin-right" gigante que causaba el problema de renderizado. */
+
 
 .title-3 {
     text-align: center;
@@ -97,25 +104,19 @@ input {
 }
 
 /* ---- ESTILOS PARA LA DIVISIÓN DE COLUMNAS ---- */
-
-/* Este es el contenedor principal que creamos en el HTML */
 .column-layout-container {
-  display: flex;          /* Activa el modo de columnas flexibles (Flexbox) */
-  align-items: flex-start;  /* Alinea los elementos en la parte superior */
-  gap: 30px;              /* Crea un espacio transparente de 30px entre las columnas */
-  max-width: 1300px;      /* Ancho máximo para el contenedor de columnas */
-  margin: 20px auto;      /* Centra el contenedor en la página */
+  display: flex;
+  align-items: flex-start;
+  gap: 30px;
+  max-width: 1300px;
+  margin: 20px auto;
 }
 
-/* Ajuste para los formularios cuando están dentro del contenedor de columnas.
-  Esto anula el centrado individual para que Flexbox pueda controlarlos.
-*/
 .column-layout-container .form-container {
-  margin: 0; /* Quita el margen automático que los centraba verticalmente */
-  flex: 1;   /* Hace que cada columna ocupe el mismo espacio disponible */
+  margin: 0;
+  flex: 1;
 }
 
-/* Mover los botones de los formularios de asignación a la derecha */
 #asignarProfesorForm,
 #asignarAlumnoForm {
   text-align: right;
@@ -123,4 +124,202 @@ input {
 
 .input-2{
     width: 484px;
+}
+
+/* =================================================================
+   ADMIN.CSS (NUEVOS ESTILOS PARA MODALES)
+   ================================================================= */
+
+/* Variables para colores consistentes */
+:root {
+    --color-principal: #4a90e2;
+    --color-secundario: #f0f4f8;
+    --color-texto: #333;
+    --color-borde: #ddd;
+    --color-exito: #2ecc71;
+    --color-error: #e74c3c;
+    --color-advertencia: #f39c12;
+}
+
+/* Estilos base para la ventana modal (overlay) */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: none; /* Oculto por defecto */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Contenido del modal */
+.modal-contenido {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transform: scale(0.95);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Animación para mostrar el modal */
+.modal.show {
+    display: flex;
+    opacity: 1;
+}
+
+.modal.show .modal-contenido {
+    transform: scale(1);
+}
+
+/* Encabezado del modal */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--color-borde);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: var(--color-texto);
+    font-size: 24px;
+}
+
+.cerrar-btn {
+    font-size: 30px;
+    color: var(--color-texto);
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.cerrar-btn:hover {
+    color: var(--color-principal);
+}
+
+/* Estilos para el formulario dentro del modal */
+.modal-body .form-group {
+    margin-bottom: 20px;
+}
+
+.modal-body .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.modal-body .form-group input,
+.modal-body .form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--color-borde);
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.modal-body .form-group input:focus,
+.modal-body .form-group select:focus {
+    outline: none;
+    border-color: var(--color-principal);
+}
+
+/* Pie del modal con botones */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.modal-footer .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-submit {
+    background-color: var(--color-principal);
+    color: white;
+}
+.btn-submit:hover {
+    background-color: #357ABD;
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+}
+
+.btn-cancel {
+    background-color: #ccc;
+    color: var(--color-texto);
+}
+.btn-cancel:hover {
+    background-color: #b3b3b3;
+}
+
+.btn-danger {
+    background-color: var(--color-error);
+    color: white;
+}
+.btn-danger:hover {
+    background-color: #c0392b;
+}
+
+/* Estilos específicos para el modal de eliminación */
+.delete-modal-body {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.delete-modal-body i {
+    font-size: 48px;
+    color: var(--color-advertencia);
+    margin-bottom: 15px;
+}
+
+.delete-modal-body p {
+    font-size: 18px;
+    color: var(--color-texto);
+    margin: 0;
+}
+
+
+/* Estilo para la barra de búsqueda */
+.search-container {
+    margin-bottom: 20px;
+}
+
+#searchInput {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+/* Mensaje de error dentro del modal */
+.error-message {
+    color: var(--color-error);
+    font-size: 14px;
+    margin-top: 5px;
+    display: none; /* Oculto por defecto */
+}
+
+.contenedor-botones {
+  display: flex; /* Coloca los elementos hijos (botones) uno al lado del otro */
+  /* Opcional: ajusta el espacio entre los botones */
+  gap: 10px; /* Agrega un espacio de 10 píxeles entre ellos */
 }

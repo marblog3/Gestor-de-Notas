@@ -46,16 +46,20 @@
                 <h1 class="title-2">PLANILLA DE CALIFICACIONES</h1>
 
                 <!-- Datos generales de la cursada -->
-                <div>
-                        <table>
+                
+                <div class="tabla-wrapper">
+                        <table class="tabla-2">
                                 <tr>
                                         <td class="td-1"><p>CICLO LECTIVO:</p>
-                                                <select id="register-role" class="select" required>
+                                                <select id="register-role" class="select-1" required>
                                                         <option value="">Seleccionar ciclo</option>
                                                         <option>2025</option>
                                                         <option>2024</option>
                                                         <option>2023</option>
                                                         <option>2022</option>
+                                                        <option>2021</option>
+                                                        <option>2020</option>
+                                                        <option>2019</option>
                                                 </select>
                                         </td>
                                         <td class="td-1"><p>MATERIA:</p>
@@ -79,18 +83,18 @@
                                                         <li>
                                                                 <a href="#">Taller ▸</a>
                                                                 <ul>
-                                                                        <li><a href="#"
-                                                                                        data-materia="Informática">Informática</a>
-                                                                        </li>
-                                                                        <li><a href="#"
-                                                                                        data-materia="Construcciones">Construcciones</a>
-                                                                        </li>
-                                                                        <li><a href="#"
-                                                                                        data-materia="Electromecánica">Electromecánica</a>
-                                                                        </li>
-                                                                        <li><a href="#"
-                                                                                        data-materia="Química">Química</a>
-                                                                        </li>
+                                                                                <li><a href="#">Informática ▸</a>
+                                                                                <!-- NUEVO SUBMENÚ ANIDADO -->
+                                                                                        <ul class="submenu-lateral">
+                                                                                                <li><a href="#" data-materia="Lab. Aplicacion">Lab. Aplicacion</a></li>
+                                                                                        </ul>
+                                                                                </li>
+                                                                                <li><a href="#" data-materia="Construcciones">Construcciones</a>
+                                                                                </li>
+                                                                                <li><a href="#" data-materia="Electromecánica">Electromecánica</a>
+                                                                                </li>
+                                                                                <li><a href="#" data-materia="Química">Química</a>
+                                                                                </li>
                                                                 </ul>
                                                         </li>
                                                 </ul>
@@ -102,8 +106,11 @@
                                 </tr>
                                 <tr>
                                         <td class="td-1"><p>AÑO:</p>
-                                                <select id="register-role" required class="select">
+                                                <select id="register-role" required class="select-1">
                                                         <option value="">Seleccionar año</option>
+                                                        <option>1ro</option>
+                                                        <option>2do</option>
+                                                        <option>3ro</option>
                                                         <option>4to</option>
                                                         <option>5to</option>
                                                         <option>6to</option>
@@ -111,16 +118,21 @@
                                                 </select>
                                         </td>
                                         <td class="td-1"><P>DIVISIÓN:</P>
-                                                <select id="register-role" required class="select">
+                                                <select id="register-role" required class="select-1">
                                                         <option value="">Seleccionar división</option>
                                                         <option>1ra</option>
                                                         <option>2da</option>
                                                         <option>3ra</option>
                                                         <option>4ta</option>
+                                                        <option>5ta</option>
+                                                        <option>6ta</option>
+                                                        <option>7ma</option>
+                                                        <option>8va</option>
+                                                        <option>9na</option>
                                                 </select>
                                         </td>
                                         <td class="td-1"><P>TURNO:</P>
-                                                <select id="register-role" required class="select">
+                                                <select id="register-role" required class="select-1">
                                                         <option value="">Seleccionar turno</option>
                                                         <option>Mañana</option>
                                                         <option>Tarde</option>

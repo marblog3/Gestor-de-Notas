@@ -6,43 +6,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel de Administración</title>
   <link rel="website icon" type="png" href="..\img\logo.png">
-  <!-- Estilos principales -->
-<link rel="stylesheet" href="../css/base.css">
-<link rel="stylesheet" href="../css/admin.css">
-<link rel="stylesheet" href="../css/responsive.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
-<!-- Encabezado principal con logo y botón de cierre de sesión -->
-<header class="main-header">
-  <div class="header-left">
-    <img src="../img/logo.png" alt="Logo" class="header-logo">
-    <h1 class="header-title">E.E.S.T.N°5</h1>
-  </div>
-  
-  <!-- Botón de cierre de sesión -->
-  <button class="logout-icon" onclick="logout()">
-
-    <div class="sign"><svg viewBox="0 0 512 512">
-        <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9
-     406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7
-      15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32
-       32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path>
-      </svg></div>
-
-    <div class="text">Logout</div>
-  </button>
-</header>
-
 <body>
-
+  <header class="main-header">
+    <div class="header-left">
+      <img src="../img/logo.png" alt="Logo" class="header-logo">
+      <h1 class="header-title">E.E.S.T.N°5</h1>
+    </div>
+    <button class="logout-icon" onclick="logout()">
+      <div class="sign"><svg viewBox="0 0 512 512"><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path></svg></div>
+      <div class="text">Logout</div>
+    </button>
+  </header>
 
   <div class="boletin-container">
     <h1>PANEL DE ADMINISTRACIÓN</h1>
-    <!-- Tabla de usuarios registrados -->
-    <h2 class="titulo-2" >Usuarios registrados</h2>
+    <h2 class="titulo-2">Usuarios registrados</h2>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" onkeyup="searchUsers()" placeholder="Buscar por nombre, correo o DNI..." autocomplete="off">
+    </div>
+
     <table class="boletin" id="usersTable">
       <thead>
         <tr>
+          <th>Nombre Completo</th>
+          <th>DNI</th>
           <th>Correo</th>
           <th>Rol</th>
           <th>Acciones</th>
@@ -51,291 +45,481 @@
       <tbody></tbody>
     </table>
 
-    <!-- Botón para crear nuevos usuarios -->
     <div class="contenedor-botones">
-      <button onclick="createUser()"><b>➕ Crear Usuario</b></button>
+      <button onclick="openCreateModal()"><b>➕ Crear Usuario</b></button>
     </div>
 
-    <!-- Panel de notificaciones con solicitudes de registro -->
     <div id="notificationPanel" class="notification-panel">
       <h3 onclick="toggleSolicitudes()" class="toggle-title">
         Solicitudes de Registro <span id="flecha">⬇</span>
       </h3>
-      <div id="solicitudesContent" style="display:none;">
+      <div id="solicitudesContent">
         <ul id="pendingList"></ul>
       </div>
     </div>
 
-<div class="column-layout-container">
-
-  <div class="form-container">
-        <h2>Asignar alumno a curso</h2>
-        <form id="asignarAlumnoForm">
-            <div class="form-group">
-                <label for="alumnoSelect">Alumno:</label>
-                <select id="alumnoSelect" name="alumnoSelect" required>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="anioInput">Año:</label>
-                <input type="number" id="anioInput" name="anioInput" placeholder="Ej: 5to" class="input-2" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="divisionInput">División:</label>
-                <input type="text" id="divisionInput" name="divisionInput" placeholder="Ej: 2da" class="input-2" required>
-            </div>
-
-            <div class="form-group">
-                <label for="especialidadInput">Especialidad:</label>
-                <input type="text" id="especialidadInput" name="especialidadInput" placeholder="Ej: Informática" class="input-2" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="cursoSelectAlumno">Curso:</label>
-                <select id="cursoSelectAlumno" name="cursoSelectAlumno" required>
-                    </select>
-            </div>
-
-            <button type="submit">Asignar Alumno</button>
-        </form>
+    <div class="column-layout-container">
+        <div class="form-container">
+            <h2>Asignar alumno a curso</h2>
+            <form id="asignarAlumnoForm">
+                <div class="form-group">
+                    <label for="alumnoSelect">Alumno:</label>
+                    <select id="alumnoSelect" name="alumnoSelect" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="anioInput">Año:</label>
+                    <input type="number" id="anioInput" name="anioInput" placeholder="Ej: 5" class="input-2" required>
+                </div>
+                <div class="form-group">
+                    <label for="divisionInput">División:</label>
+                    <input type="text" id="divisionInput" name="divisionInput" placeholder="Ej: 2da" class="input-2" required>
+                </div>
+                <div class="form-group">
+                    <label for="especialidadInput">Especialidad:</label>
+                    <input type="text" id="especialidadInput" name="especialidadInput" placeholder="Ej: Informática" class="input-2" required>
+                </div>
+                <button type="submit">Asignar Alumno</button>
+            </form>
+        </div>
+        <div class="form-container">
+            <h2>Asignar profesor a materia</h2>
+            <form id="asignarProfesorForm">
+                <div class="form-group">
+                    <label for="profesorSelect">Profesor:</label>
+                    <select id="profesorSelect" name="profesorSelect" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="materiaInput">Materia:</label>
+                    <input type="text" id="materiaInput" name="materiaInput" placeholder="Ej: Programación" class="input-2" required>
+                </div>
+                <button type="submit">Asignar Materia</button>
+            </form>
+        </div>
     </div>
 
-    <div class="form-container">
-        <h2>Asignar profesor a curso</h2>
-        <form id="asignarProfesorForm">
-            <div class="form-group">
-                <label for="profesorSelect">Profesor:</label>
-                <select id="profesorSelect" name="profesorSelect" required>
-                </select>
-            </div>
-            <div class="form-group">
-                      <label for="materiaSelectProfesor">Materia:</label>
-                      <select id="materiaSelectProfesor" name="materiaSelectProfesor" required>
-                      </select>
-            </div>
+  </div>
 
-            <div class="form-group">
-                <label for="cursoSelectProfesor">Curso:</label>
-                <select id="cursoSelectProfesor" name="cursoSelectProfesor" required>
-                </select>
+  <div id="userModal" class="modal">
+    <div class="modal-contenido">
+      <div class="modal-header">
+        <h2 id="modalTitle"></h2>
+        <button class="cerrar-btn" onclick="closeModal('userModal')">&times;</button>
+      </div>
+      <form id="userForm" onsubmit="handleCreateUser(event)">
+        <div class="modal-body">
+          <input type="hidden" id="originalEmail">
+           <div class="form-group">
+                <label for="userFullname">Nombre Completo</label>
+                <input type="text" id="userFullname" placeholder="Nombre y Apellido" required>
             </div>
-
-            <button type="submit">Asignar Profesor</button>
-        </form>
+            <div class="form-group">
+                <label for="userDni">DNI</label>
+                <input type="text" id="userDni" placeholder="Documento Nacional de Identidad" required>
+            </div>
+          <div class="form-group">
+            <label for="userEmail">Correo Electrónico</label>
+            <input type="email" id="userEmail" placeholder="usuario@eest5.com" required>
+            <span id="emailError" class="error-message">Este correo ya está registrado.</span>
+          </div>
+          <div class="form-group">
+            <label for="userPassword">Contraseña</label>
+            <input type="password" id="userPassword" placeholder="Dejar en blanco para no cambiar">
+          </div>
+          <div class="form-group">
+            <label for="userRole">Rol</label>
+            <select id="userRole" required>
+              <option value="Alumno">Alumno</option>
+              <option value="Profesor">Profesor</option>
+              <option value="Preceptor">Preceptor</option>
+              <option value="Administrador">Administrador</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-cancel" onclick="closeModal('userModal')">Cancelar</button>
+          <button type="submit" class="btn btn-submit">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="deleteModal" class="modal">
+    <div class="modal-contenido">
+      <div class="modal-header">
+        <h2>Confirmar Eliminación</h2>
+        <button class="cerrar-btn" onclick="closeModal('deleteModal')">&times;</button>
+      </div>
+      <div class="modal-body delete-modal-body">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p id="deleteMessage"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-cancel" onclick="closeModal('deleteModal')">Cancelar</button>
+        <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Eliminar</button>
+      </div>
+    </div>
+  </div>
+  <div id="approvalModal" class="modal">
+        <div class="modal-contenido">
+            <div class="modal-header">
+                <h2>Aprobar Solicitud</h2>
+                <button class="cerrar-btn" onclick="closeModal('approvalModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Correo:</strong> <span id="approveEmail"></span></p>
+                <p><strong>Nombre:</strong> <span id="approveName"></span></p>
+                <p><strong>DNI:</strong> <span id="approveDni"></span></p>
+                <p><strong>Rol:</strong> <span id="approveRole"></span></p>
+                <hr>
+                <div class="form-group">
+                    <label for="approvePassword">Asignar Contraseña</label>
+                    <input type="password" id="approvePassword" placeholder="Cree una contraseña para el usuario" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel" onclick="closeModal('approvalModal')">Cancelar</button>
+                <button type="button" id="confirmApproveBtn" class="btn btn-submit">Aprobar Usuario</button>
+            </div>
+        </div>
     </div>
 
-    
-
-</div>
 
   <script>
     /* ------------------------------------------
-       FUNCIÓN: Mostrar/Ocultar solicitudes pendientes
-       ------------------------------------------ */
-    function toggleSolicitudes() {
-      const content = document.getElementById("solicitudesContent");
-      const flecha = document.getElementById("flecha");
-      if (content.style.display === "none") {
-        content.style.display = "block";
-        flecha.textContent = "⬆";
-      } else {
-        content.style.display = "none";
-        flecha.textContent = "⬇";
+     MANEJO DE MODALES
+     ------------------------------------------ */
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.add('show');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('show');
+    }
+
+    window.addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal')) {
+        closeModal(e.target.id);
       }
-    }
+    });
 
     /* ------------------------------------------
-       FUNCIÓN: Cerrar sesión del usuario activo
+       LÓGICA DE GESTIÓN DE USUARIOS
        ------------------------------------------ */
-    function logout() {
-      sessionStorage.removeItem("activeUser"); // Eliminamos la sesión actual
-      window.location.href = "principal.html"; // Redirección a login
+    function openCreateModal() {
+      document.getElementById('userForm').reset();
+      document.getElementById('modalTitle').textContent = 'Crear Nuevo Usuario';
+      document.getElementById('userEmail').readOnly = false;
+      document.getElementById('emailError').style.display = 'none';
+      document.getElementById('userPassword').placeholder = "Ingrese la contraseña";
+      document.getElementById('userPassword').required = true;
+      document.getElementById('userForm').onsubmit = handleCreateUser;
+      openModal('userModal');
+    }
+
+    function openEditModal(email) {
+      const user = JSON.parse(localStorage.getItem(email));
+      if (!user) return;
+
+      document.getElementById('userForm').reset();
+      document.getElementById('modalTitle').textContent = 'Editar Usuario';
+      document.getElementById('emailError').style.display = 'none';
+      
+      document.getElementById('originalEmail').value = email;
+      document.getElementById('userFullname').value = user.fullname || '';
+      document.getElementById('userDni').value = user.dni || '';
+      document.getElementById('userEmail').value = email;
+      document.getElementById('userEmail').readOnly = true;
+      document.getElementById('userRole').value = user.role;
+      document.getElementById('userPassword').placeholder = "Dejar en blanco para no cambiar";
+      document.getElementById('userPassword').required = false;
+
+      document.getElementById('userForm').onsubmit = handleEditUser;
+      openModal('userModal');
+    }
+
+    function openDeleteModal(email) {
+      document.getElementById('deleteMessage').textContent = `¿Estás seguro de que quieres eliminar al usuario ${email}?`;
+      const confirmBtn = document.getElementById('confirmDeleteBtn');
+      const newConfirmBtn = confirmBtn.cloneNode(true);
+      confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+      newConfirmBtn.onclick = () => handleDeleteUser(email);
+      openModal('deleteModal');
+    }
+    
+    function handleCreateUser(event) {
+        event.preventDefault();
+        const email = document.getElementById('userEmail').value;
+        const password = document.getElementById('userPassword').value;
+        const role = document.getElementById('userRole').value;
+        const fullname = document.getElementById('userFullname').value;
+        const dni = document.getElementById('userDni').value;
+        const emailError = document.getElementById('emailError');
+
+        if (!email.endsWith("@eest5.com")) {
+            emailError.textContent = "Debe ser un correo @eest5.com.";
+            emailError.style.display = 'block';
+            return;
+        }
+        if (localStorage.getItem(email)) {
+            emailError.textContent = "Este correo ya está registrado.";
+            emailError.style.display = 'block';
+            return;
+        }
+
+        emailError.style.display = 'none';
+        const user = { email, fullname, dni, password: btoa(password), role };
+        localStorage.setItem(email, JSON.stringify(user));
+        closeModal('userModal');
+        cargarUsuarios();
+    }
+
+    function handleEditUser(event) {
+        event.preventDefault();
+        const originalEmail = document.getElementById('originalEmail').value;
+        const newPassword = document.getElementById('userPassword').value;
+        const newRole = document.getElementById('userRole').value;
+        const newFullname = document.getElementById('userFullname').value;
+        const newDni = document.getElementById('userDni').value;
+
+        const user = JSON.parse(localStorage.getItem(originalEmail));
+        user.role = newRole;
+        user.fullname = newFullname;
+        user.dni = newDni;
+        if (newPassword) {
+            user.password = btoa(newPassword);
+        }
+        localStorage.setItem(originalEmail, JSON.stringify(user));
+        closeModal('userModal');
+        cargarUsuarios();
+    }
+
+    function handleDeleteUser(email) {
+      localStorage.removeItem(email);
+      closeModal('deleteModal');
+      cargarUsuarios();
     }
 
     /* ------------------------------------------
-       FUNCIÓN: Cargar usuarios desde localStorage
+       CARGA DE DATOS Y BÚSQUEDA
        ------------------------------------------ */
     function cargarUsuarios() {
       const tbody = document.querySelector("#usersTable tbody");
       tbody.innerHTML = "";
-
-      // Recorremos todos los usuarios almacenados
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (key === "pendingUsers") continue; // Excluye solicitudes pendientes
-        const user = JSON.parse(localStorage.getItem(key));
-        if (!user || !user.role) continue; // Evita registros inválidos
+        if (key === "pendingUsers" || key.startsWith("asignacion")) continue;
+        try {
+            const user = JSON.parse(localStorage.getItem(key));
+            if (!user || !user.role) continue;
 
-        // Crear fila con datos del usuario
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${user.email || user.username}</td>
-          <td>${user.role}</td>
-          <td>
-            <button class="accion-boton-1" onclick="editUser('${key}')">Editar</button>
-            <button class="accion-boton" onclick="deleteUser('${key}')">Eliminar</button>
-          </td>
-        `;
-        tbody.appendChild(row);
+            const row = document.createElement("tr");
+            row.innerHTML = `
+            <td>${user.fullname || 'No especificado'}</td>
+            <td>${user.dni || 'No especificado'}</td>
+            <td>${user.email || user.username}</td>
+            <td>${user.role}</td>
+            <td>
+                <button class="accion-boton-1" onclick="openEditModal('${key}')">Editar</button>
+                <button class="accion-boton" onclick="openDeleteModal('${key}')">Eliminar</button>
+            </td>
+            `;
+            tbody.appendChild(row);
+        } catch(e) { console.error("Error parsing user data for key:", key)}
       }
-      cargarSelects(); // Refresca los selects de asignación
+      cargarSelects();
+      
+      // --- SOLUCIÓN DEFINITIVA ---
+      // Sincroniza la tabla con el buscador inmediatamente después de cargar los datos.
+      searchUsers(); 
     }
 
-    /* ------------------------------------------
-       FUNCIÓN: Crear un nuevo usuario
-       ------------------------------------------ */
-    function createUser() {
-      const email = prompt("Correo institucional:");
-      if (!email || !email.endsWith("@eest5.com")) {
-        alert("Debe ingresar un correo válido (@eest5.com)");
-        return;
-      }
-      const password = prompt("Contraseña:");
-      const role = prompt("Rol (Profesor, Preceptor, Alumno, Administrador):");
+    function searchUsers() {
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toUpperCase();
+        const table = document.getElementById('usersTable');
+        const tr = table.getElementsByTagName('tr');
 
-      const user = { email, password: btoa(password), role };
-      localStorage.setItem(email, JSON.stringify(user)); // Guardar usuario en localStorage
-      cargarUsuarios();
+        for (let i = 1; i < tr.length; i++) {
+            let visible = false;
+            const tds = tr[i].getElementsByTagName('td');
+            for (let j = 0; j < tds.length; j++) {
+                const td = tds[j];
+                if (td) {
+                    if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                        visible = true;
+                        break;
+                    }
+                }
+            }
+            tr[i].style.display = visible ? "" : "none";
+        }
     }
 
-    /* ------------------------------------------
-       FUNCIÓN: Editar el rol de un usuario
-       ------------------------------------------ */
-    function editUser(email) {
-      const user = JSON.parse(localStorage.getItem(email));
-      const newRole = prompt("Nuevo rol (Profesor, Preceptor, Alumno, Administrador):", user.role);
-      user.role = newRole;
-      localStorage.setItem(email, JSON.stringify(user));
-      cargarUsuarios();
-    }
 
     /* ------------------------------------------
-       FUNCIÓN: Eliminar usuario
+       MANEJO DE SOLICITUDES PENDIENTES
        ------------------------------------------ */
-    function deleteUser(email) {
-      if (confirm("¿Seguro que quieres eliminar este usuario?")) {
-        localStorage.removeItem(email);
+    function toggleSolicitudes() {
+      const content = document.getElementById("solicitudesContent");
+      const flecha = document.getElementById("flecha");
+      
+      const isHidden = content.style.display === "none" || content.style.display === "";
+      content.style.display = isHidden ? "block" : "none";
+      flecha.textContent = isHidden ? "⬆" : "⬇";
+    }
+    
+    function cargarSolicitudes() {
+        const pendingList = document.getElementById("pendingList");
+        pendingList.innerHTML = "";
+        const pendingUsers = JSON.parse(localStorage.getItem("pendingUsers")) || [];
+        pendingUsers.forEach((user, index) => {
+            const date = new Date(user.requestedAt).toLocaleString();
+            const li = document.createElement("li");
+            li.innerHTML = `
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                    <div>
+                        <b>${user.fullname} (${user.dni})</b><br>
+                        <span style="font-size:14px;color:#333">${user.username} (Rol: ${user.role})</span><br>
+                        <span style="font-size:12px;color:#666">${date}</span>
+                    </div>
+                    <div class="contenedor-botones">
+                        <button onclick="openApprovalModal(${index})">Aprobar</button>
+                        <button onclick="rechazarUsuario(${index})">Rechazar</button>
+                    </div>
+                </div>`;
+            pendingList.appendChild(li);
+        });
+    }
+
+    function openApprovalModal(index) {
+        const pendingUsers = JSON.parse(localStorage.getItem("pendingUsers")) || [];
+        const userReq = pendingUsers[index];
+        
+        document.getElementById('approveEmail').textContent = userReq.username;
+        document.getElementById('approveName').textContent = userReq.fullname;
+        document.getElementById('approveDni').textContent = userReq.dni;
+        document.getElementById('approveRole').textContent = userReq.role;
+        document.getElementById('approvePassword').value = '';
+
+        const confirmBtn = document.getElementById('confirmApproveBtn');
+        confirmBtn.onclick = () => handleApproveUser(index);
+
+        openModal('approvalModal');
+    }
+
+    function handleApproveUser(index) {
+        const password = document.getElementById('approvePassword').value;
+        if (!password) {
+            alert("Debe asignar una contraseña.");
+            return;
+        }
+
+        const pendingUsers = JSON.parse(localStorage.getItem("pendingUsers")) || [];
+        const userReq = pendingUsers[index];
+        
+        const user = {
+            email: userReq.username,
+            fullname: userReq.fullname,
+            dni: userReq.dni,
+            role: userReq.role,
+            password: btoa(password)
+        };
+
+        localStorage.setItem(user.email, JSON.stringify(user));
+        pendingUsers.splice(index, 1);
+        localStorage.setItem("pendingUsers", JSON.stringify(pendingUsers));
+
+        closeModal('approvalModal');
         cargarUsuarios();
-      }
+        cargarSolicitudes();
     }
-
+    
+    function rechazarUsuario(index) {
+      if (!confirm("¿Seguro que quieres rechazar esta solicitud?")) return;
+      const pendingUsers = JSON.parse(localStorage.getItem("pendingUsers")) || [];
+      pendingUsers.splice(index, 1);
+      localStorage.setItem("pendingUsers", JSON.stringify(pendingUsers));
+      cargarSolicitudes();
+    }
+    
     /* ------------------------------------------
-       FUNCIÓN: Cargar selects de profesores y alumnos
+       FORMULARIOS DE ASIGNACIÓN
        ------------------------------------------ */
     function cargarSelects() {
-      const profesorSelect = document.getElementById("profesorSelect");
-      const alumnoSelect = document.getElementById("alumnoSelect");
-      profesorSelect.innerHTML = "";
-      alumnoSelect.innerHTML = "";
+        const profesorSelect = document.getElementById("profesorSelect");
+        const alumnoSelect = document.getElementById("alumnoSelect");
+        profesorSelect.innerHTML = '<option value="">Seleccione un profesor</option>';
+        alumnoSelect.innerHTML = '<option value="">Seleccione un alumno</option>';
 
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key === "pendingUsers") continue;
-        const user = JSON.parse(localStorage.getItem(key));
-        if (user.role === "Profesor") {
-          profesorSelect.innerHTML += `<option value="${user.email || user.username}">${user.email || user.username}</option>`;
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key === "pendingUsers" || key.startsWith("asignacion")) continue;
+            
+            try {
+                const user = JSON.parse(localStorage.getItem(key));
+                if (user && user.role) {
+                    if (user.role === "Profesor") {
+                        profesorSelect.innerHTML += `<option value="${user.email}">${user.fullname || user.email}</option>`;
+                    }
+                    if (user.role === "Alumno") {
+                        alumnoSelect.innerHTML += `<option value="${user.email}">${user.fullname || user.email}</option>`;
+                    }
+                }
+            } catch(e) {}
         }
-        if (user.role === "Alumno") {
-          alumnoSelect.innerHTML += `<option value="${user.email || user.username}">${user.email || user.username}</option>`;
+    }
+    
+    document.getElementById('asignarProfesorForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const profesor = document.getElementById("profesorSelect").value;
+        const materia = document.getElementById("materiaInput").value;
+        if (!profesor || !materia) return alert("Seleccione profesor y materia");
+
+        const asignacionKey = `asignacion_prof_${profesor}`;
+        const asignaciones = JSON.parse(localStorage.getItem(asignacionKey)) || [];
+        if (!asignaciones.includes(materia)) {
+            asignaciones.push(materia);
+            localStorage.setItem(asignacionKey, JSON.stringify(asignaciones));
+            alert(`Materia '${materia}' asignada a ${profesor}.`);
+        } else {
+            alert("Esta materia ya está asignada a este profesor.");
         }
-      }
-    }
+    });
+
+    document.getElementById('asignarAlumnoForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const alumno = document.getElementById("alumnoSelect").value;
+        const anio = document.getElementById("anioInput").value;
+        const division = document.getElementById("divisionInput").value;
+        const especialidad = document.getElementById("especialidadInput").value;
+        if (!alumno || !anio || !division || !especialidad) return alert("Complete todos los campos del alumno.");
+        
+        const curso = `${anio} ${division} ${especialidad}`;
+        const asignacionKey = `asignacion_alu_${alumno}`;
+        localStorage.setItem(asignacionKey, JSON.stringify({ curso }));
+        alert(`Alumno ${alumno} asignado al curso ${curso}.`);
+    });
+
 
     /* ------------------------------------------
-       FUNCIÓN: Asignar materia a profesor
+       INICIALIZACIÓN Y OTROS
        ------------------------------------------ */
-    function asignarMateria() {
-      const profesor = document.getElementById("profesorSelect").value;
-      const materia = document.getElementById("materiaInput").value;
-      if (!profesor || !materia) return alert("Seleccione profesor y materia");
-
-      const li = document.createElement("li");
-      li.textContent = `${profesor} → ${materia}`;
-      document.getElementById("materiasList").appendChild(li);
+    function logout() {
+      sessionStorage.removeItem("activeUser");
+      window.location.href = "principal.html";
     }
 
-    /* ------------------------------------------
-       FUNCIÓN: Asignar alumno a curso/especialidad
-       ------------------------------------------ */
-    function asignarAlumno() {
-      const alumno = document.getElementById("alumnoSelect").value;
-      const anio = document.getElementById("anioInput").value;
-      const division = document.getElementById("divisionInput").value;
-      const especialidad = document.getElementById("especialidadInput").value;
+    document.addEventListener('DOMContentLoaded', () => {
+      // Usamos un pequeño retraso para combatir el autocompletado agresivo de algunos navegadores
+      setTimeout(() => {
+        document.getElementById('searchInput').value = '';
+      }, 100);
+      
+      document.getElementById('solicitudesContent').style.display = 'none';
 
-      if (!alumno || !anio || !division || !especialidad) return alert("Complete todos los campos");
-
-      const li = document.createElement("li");
-      li.textContent = `${alumno} → Año ${anio}, División ${division}, Especialidad ${especialidad}`;
-      document.getElementById("alumnosList").appendChild(li);
-    }
-
-    /* ------------------------------------------
-       FUNCIÓN: Cargar solicitudes pendientes
-       ------------------------------------------ */
-    function cargarSolicitudes() {
-      const pendingList = document.getElementById("pendingList");
-      pendingList.innerHTML = "";
-      const pendingUsers = JSON.parse(localStorage.getItem("pendingUsers")) || [];
-
-      // Renderizar solicitudes en lista
-      pendingUsers.forEach((user, principal) => {
-        const date = new Date(user.requestedAt).toLocaleString();
-        const li = document.createElement("li");
-        li.style.marginBottom = "8px";
-        li.style.padding = "6px";
-        li.style.borderBottom = "1px solid #ddd";
-        li.innerHTML = `
-          <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-            <div style="flex:1;">
-              <b>${user.username}</b> <span style="font-size:12px;color:#666"> (Rol: ${user.role})</span>
-              <div style="font-size:12px;color:#666">${date}</div>
-            </div>
-            <div style="flex-shrink:0; display:flex; gap:6px;">
-              <button onclick="aprobarUsuario(${principal})">Aprobar</button>
-              <button onclick="rechazarUsuario(${principal})">Rechazar</button>
-            </div>
-          </div>
-        `;
-        pendingList.appendChild(li);
-      });
-    }
-
-    /* ------------------------------------------
-       FUNCIÓN: Aprobar solicitud de usuario
-       ------------------------------------------ */
-    function aprobarUsuario(principal) {
-      const pendingUsers = JSON.parse(localStorage.getItem("pendingUsers")) || [];
-      const userReq = pendingUsers[principal];
-      const rawPass = prompt(`Asignar contraseña para ${userReq.username} (esta será la contraseña que usará):`);
-      if (rawPass === null || rawPass.trim() === "") {
-        alert("Aprobación cancelada: debe ingresar una contraseña para el usuario.");
-        return;
-      }
-      // Crear objeto usuario aprobado
-      const user = { email: userReq.username, username: userReq.username, role: userReq.role, password: btoa(rawPass) };
-      localStorage.setItem(user.email, JSON.stringify(user));
-      pendingUsers.splice(principal, 1); // Eliminar de pendientes
-      localStorage.setItem("pendingUsers", JSON.stringify(pendingUsers));
       cargarUsuarios();
       cargarSolicitudes();
-    }
-
-    /* ------------------------------------------
-       FUNCIÓN: Rechazar solicitud de usuario
-       ------------------------------------------ */
-    function rechazarUsuario(principal) {
-      const pendingUsers = JSON.parse(localStorage.getItem("pendingUsers")) || [];
-      pendingUsers.splice(principal, 1);
-      localStorage.setItem("pendingUsers", JSON.stringify(pendingUsers));
-      cargarSolicitudes();
-    }
-
-    // Inicialización al cargar la página
-    cargarUsuarios();
-    cargarSolicitudes();
+    });
   </script>
 </body>
+
 </html>
