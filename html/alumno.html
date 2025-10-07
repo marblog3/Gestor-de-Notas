@@ -7,22 +7,20 @@
   <title>BOLETÍN DEL ALUMNO</title>
   <link rel="website icon" type="png" href="..\img\logo.png">
 
-  <!-- Hojas de estilos principales -->
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/alumno.css">
   <link rel="stylesheet" href="../css/responsive.css">
+  
 
 
 </head>
 
-<!-- Encabezado principal de la página con logo institucional -->
 <header class="main-header">
   <div class="header-left">
     <img src="../img/logo.png" alt="Logo" class="header-logo">
     <h1 class="header-title">E.E.S.T.N°5</h1>
   </div>
- 
-  <!-- Botón de cierre de sesión -->
+
   <button class="logout-icon" onclick="logout()">
 
     <div class="sign"><svg viewBox="0 0 512 512">
@@ -51,12 +49,27 @@
   </script>
 
 
-  <!-- Contenedor principal del boletín -->
   <div class="boletin-container">
 
-    <h1 class="title-1">BOLETÍN DEL ALUMNO</h1>
+    <div class="title-container">
+      <div id="notification-icon" class="icon-group">
+        <div class="icon-wrapper">
+          <span class="notification-dot"></span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+        </div>
+        <div class="notification-panel">
+            <h4>Notificaciones</h4>
+            <ul id="notification-list">
+                </ul>
+        </div>
+      </div>
+      <h1 class="title-1">BOLETÍN DEL ALUMNO</h1>
+    </div>
 
-    <!-- Tabla de datos generales del estudiante -->
+
     <div>
       <table id="tabla-datos-generales">
         <tr>
@@ -74,7 +87,6 @@
       </table>
     </div>
 
-    <!-- Tabla de materias con sus calificaciones -->
     <div><br>
       <div class="scroll-tabla-2">
         <table id="tabla-materias" class="tabla-2">
@@ -97,7 +109,6 @@
         </tr>
       </thead>
       <tbody>
-        <!-- Ejemplo de filas de materias (vacías para completar) -->
         <tr>
           <td><input type="text" class="mate1"></td>
           <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
@@ -213,7 +224,6 @@
     </div>
 
 
-    <!-- Tabla de materias pendientes de aprobación -->
     <div>
       <h3>MATERIAS PENDIENTES DE APROBACIÓN Y ACREDITACIÓN - INTENSIFICACIÓN</h3>
       <div class="scroll-tabla-4">
@@ -241,7 +251,6 @@
         </tr>
       </thead>
       <tbody>
-        <!-- Ejemplo de materias con calificaciones pendientes -->
         <tr>
           <td><input type="text" class="mate1"></td>
           <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
@@ -318,10 +327,8 @@
     </div><br>
 
 
-    <!-- Sección de observaciones -->
     <h3>OBSERVACIONES</h3>
     <div>
-      <!-- Varias filas vacías para observaciones escritas -->
       <table>
         <td><input type="text" class="obs-3"></td>
       </table>
@@ -334,16 +341,15 @@
       <table>
         <td><input type="text" class="obs-3"></td>
       </table>
-       <table>
+      <table>
         <td><input type="text" class="obs-3"></td>
       </table>
-       <table>
+      <table>
         <td><input type="text" class="obs-3"></td>
       </table>
 
     </div>
 
-    <!-- Script para evitar volver atrás con el historial -->
     <script>
       window.history.pushState(null, null, window.location.href);
       window.onpopstate = function () {
@@ -358,10 +364,8 @@
       }
     </script>
 
-    <!-- Script externo de gestión (para funciones adicionales) -->
     <script src="../js/gestion.js"></script>
 
-    <!-- Botón para descargar boletín -->
     <div id="botones" class="contenedor-botones">
       <button id="exportarBtn" class="btn-exportar"><b>EXPORTAR A EXCEL</b></button>
       <button><b>CONSULTAR</b></button>
@@ -369,32 +373,19 @@
 
 
     </script>
-    <!-- Segundo control de historial para reforzar seguridad -->
-    <script>
-      window.history.pushState(null, null, window.location.href);
-      window.onpopstate = function () {
-        window.history.go(-1);
-        window.location.href = "principal.html";
-      };
-    </script>
 
-    <!-- Script para la descarga excel -->
     <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
-    <!-- Exportar a Excel -->
     <script>
-      // Busca el botón de exportar en la página
+      // ------------ SCRIPT DE EXPORTACIÓN A EXCEL ------------
       const exportarBtn = document.getElementById("exportarBtn");
 
-      // Define la función que se ejecutará al hacer clic
       async function exportarAExcel() {
         try {
-          // --- Creación del Excel ---
           const workbook = new ExcelJS.Workbook();
           const worksheet = workbook.addWorksheet("Boletín Alumno");
 
-          // --- Títulos y datos del alumno ---
           let datosGenerales = [];
           document.querySelectorAll("#tabla-datos-generales input").forEach(inp => {
             datosGenerales.push(inp.value || "");
@@ -403,11 +394,9 @@
           worksheet.addRow(datosGenerales);
           worksheet.addRow([]);
 
-          // --- Cabeceras de las tablas ---
           const headerMaterias = ["MATERIA", "AÑO", "1° CUATRIMESTRE", "2° CUATRIMESTRE", "INTENSIFICACIÓN 1° CUAT.", "DICIEMBRE", "FEBRERO", "CALIFICACIÓN FINAL", "OBSERVACIONES"];
           const headerPendientes = ["MATERIA", "AÑO", "CICLO LECTIVO DEL CURSADO", "MARZO", "JUNIO", "JULIO", "AGOSTO", "DICIEMBRE", "FEBRERO", "CALIFICACIÓN FINAL", "MODELO DE INT.", "OBSERVACIONES"];
 
-          // --- Obtener y agregar datos de la Tabla 1: MATERIAS ---
           const tablaMaterias = document.getElementById('tabla-materias');
           const filasMaterias = [];
           tablaMaterias.querySelectorAll("tbody tr").forEach(tr => {
@@ -421,7 +410,6 @@
           worksheet.addRow(headerMaterias);
           filasMaterias.forEach(fila => worksheet.addRow(fila));
 
-          // --- Obtener y agregar datos de la Tabla 2: PENDIENTES ---
           const tablaPendientes = document.getElementById('tabla-pendientes');
           const filasPendientes = [];
           tablaPendientes.querySelectorAll("tbody tr").forEach(tr => {
@@ -436,8 +424,6 @@
           worksheet.addRow(headerPendientes);
           filasPendientes.forEach(fila => worksheet.addRow(fila));
 
-
-          // Este bloque aplica bordes y alineación a TODAS las celdas existentes hasta ahora.
           worksheet.eachRow({ includeEmpty: true }, function (row) {
             row.eachCell({ includeEmpty: true }, function (cell) {
               cell.border = {
@@ -448,21 +434,16 @@
             });
           });
 
-          // Poner cabeceras en negrita
           worksheet.getRow(1).font = { bold: true };
           worksheet.getRow(2).font = { bold: true };
-          worksheet.getRow(5).font = { bold: true }; // Se ajusta el número de fila
-          worksheet.getRow(6 + filasMaterias.length + 2).font = { bold: true }; // Se ajusta el número de fila
+          worksheet.getRow(5).font = { bold: true }; 
+          worksheet.getRow(6 + filasMaterias.length + 2).font = { bold: true }; 
 
-
-          //  LA TABLA DE OBSERVACIONES  // 
-          // Añadir espacio antes de la nueva tabla
           worksheet.addRow([]);
           worksheet.addRow([]);
 
-          // 1. Crear y dar estilo al TÍTULO de Observaciones
           const obsHeaderRow = worksheet.addRow(['OBSERVACIONES']);
-          worksheet.mergeCells(`A${obsHeaderRow.number}:E${obsHeaderRow.number}`); // Abarca 5 columnas (A a E)
+          worksheet.mergeCells(`A${obsHeaderRow.number}:E${obsHeaderRow.number}`); 
           const headerCell = worksheet.getCell(`A${obsHeaderRow.number}`);
           headerCell.font = { bold: true };
           headerCell.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -470,14 +451,12 @@
             top: { style: 'thin' }, left: { style: 'thin' },
             bottom: { style: 'thin' }, right: { style: 'thin' }
           };
-
-          // 2. Obtener los valores de los inputs de observaciones
+          
           const obsInputs = document.querySelectorAll(".obs-3");
           const obsValues = Array.from(obsInputs)
             .map(input => input.value.trim())
-            .filter(text => text.length > 0); // Guardamos solo los que tienen texto
-
-          // 3. Crear una fila por cada observación con texto
+            .filter(text => text.length > 0); 
+          
           obsValues.forEach(textoDeInput => {
             const contentRow = worksheet.addRow([textoDeInput]);
             worksheet.mergeCells(`A${contentRow.number}:E${contentRow.number}`);
@@ -494,13 +473,12 @@
             };
           });
 
-          // 4. Rellenar con filas vacías hasta alcanzar el mínimo de 6
           const filasConTexto = obsValues.length;
           const filasMinimas = 6;
           if (filasConTexto < filasMinimas) {
             const filasAAgregar = filasMinimas - filasConTexto;
             for (let i = 0; i < filasAAgregar; i++) {
-              const emptyRow = worksheet.addRow(['']); // Fila vacía
+              const emptyRow = worksheet.addRow(['']); 
               worksheet.mergeCells(`A${emptyRow.number}:E${emptyRow.number}`);
 
               const emptyCell = worksheet.getCell(`A${emptyRow.number}`);
@@ -512,14 +490,11 @@
             }
           }
 
-
-          // --- Ajustes Finales de Columnas ---
           worksheet.columns.forEach(column => { column.width = 20; });
           worksheet.getColumn(1).width = 30;
           worksheet.getColumn(9).width = 40;
           worksheet.getColumn(12).width = 40;
 
-          // --- Descargar el archivo ---
           const buffer = await workbook.xlsx.writeBuffer();
           saveAs(new Blob([buffer]), "Boletin_Alumno.xlsx");
 
@@ -528,9 +503,51 @@
           alert("Hubo un error al generar el archivo de Excel. Revisa la consola para más detalles.");
         }
       }
-
-      // Asigna la función al evento 'click' del botón
       exportarBtn.addEventListener("click", exportarAExcel);
+
+      // ------------ SCRIPT NUEVO Y CORREGIDO PARA NOTIFICACIONES ------------
+      document.addEventListener("DOMContentLoaded", () => {
+        const notiIcon = document.getElementById("notification-icon");
+        if (!notiIcon) return; // Si no encuentra el icono, no hace nada
+
+        const notiWrapper = notiIcon.querySelector(".icon-wrapper");
+        const notiDot = notiIcon.querySelector(".notification-dot");
+        const notiPanel = notiIcon.querySelector(".notification-panel");
+        const notiList = document.getElementById("notification-list");
+
+        const notiMessage = localStorage.getItem("notificacionAlumno");
+        
+        // 1. Revisa si existe una notificación al cargar la página
+        if (notiMessage) {
+          notiDot.classList.add("show"); 
+          const li = document.createElement("li");
+          li.textContent = notiMessage;
+          notiList.appendChild(li);
+        } else {
+          const li = document.createElement("li");
+          li.textContent = "No hay notificaciones nuevas.";
+          li.classList.add("empty");
+          notiList.appendChild(li);
+        }
+
+        // 2. Evento para abrir/cerrar el panel al hacer clic en la campana
+        notiWrapper.addEventListener("click", (event) => {
+          event.stopPropagation();
+          notiPanel.classList.toggle("show");
+
+          if (notiDot.classList.contains("show")) {
+            notiDot.classList.remove("show");
+            localStorage.removeItem("notificacionAlumno");
+          }
+        });
+
+        // 3. Evento para cerrar el panel al hacer clic fuera
+        document.addEventListener("click", (event) => {
+            if (!notiIcon.contains(event.target)) {
+                notiPanel.classList.remove("show");
+            }
+        });
+      });
     </script>
 
 

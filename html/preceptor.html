@@ -76,23 +76,34 @@
     </div>
   </div>
 
+    <script>
+    // Verifica si hay sesión activa al cargar la página
+    const activeUser = sessionStorage.getItem("activeUser");
+    if (!activeUser) {
+      // Si no hay sesión activa → redirige al login
+      window.location.href = "principal.html";
+    }
+  </script>
+
+          <!-- Script para evitar volver atrás con el historial -->
+    <script>
+      window.history.pushState(null, null, window.location.href);
+      window.onpopstate = function () {
+        window.history.go(1);
+        window.location.href = "principal.html";
+      };
+    </script>
+
+    
+
   <script>
-    // =======================================================
-    // Función: logout
-    // Descripción: Cierra la sesión eliminando el usuario activo 
-    // de sessionStorage y redirige al inicio de sesión.
-    // =======================================================
+
+  
     function logout() {
       sessionStorage.removeItem("activeUser");
       window.location.href = "principal.html";
     }
 
-    // =======================================================
-    // Función: cargarSelects
-    // Descripción: Carga dinámicamente los usuarios almacenados
-    // en localStorage dentro de los selectores de profesores 
-    // y alumnos según su rol.
-    // =======================================================
     function cargarSelects() {
       const profesorSelect = document.getElementById("profesorSelect");
       const alumnoSelect = document.getElementById("alumnoSelect");
@@ -118,12 +129,6 @@
       }
     }
 
-    // =======================================================
-    // Función: asignarMateria
-    // Descripción: Toma el profesor seleccionado y la materia
-    // ingresada, valida que ambos estén completos y los agrega 
-    // a la lista de asignaciones de materias.
-    // =======================================================
     function asignarMateria() {
       const profesor = document.getElementById("profesorSelect").value;
       const materia = document.getElementById("materiaInput").value;
@@ -137,12 +142,7 @@
       document.getElementById("materiasList").appendChild(li);
     }
 
-    // =======================================================
-    // Función: asignarAlumno
-    // Descripción: Toma el alumno seleccionado y sus datos
-    // académicos (año, división y especialidad), valida que 
-    // estén completos y los agrega a la lista de asignaciones.
-    // =======================================================
+
     function asignarAlumno() {
       const alumno = document.getElementById("alumnoSelect").value;
       const anio = document.getElementById("anioInput").value;
@@ -158,11 +158,7 @@
       document.getElementById("alumnosList").appendChild(li);
     }
 
-    // =======================================================
-    // Inicialización
-    // Al cargar la página se ejecuta la carga de selects
-    // con los datos almacenados en localStorage.
-    // =======================================================
+
     cargarSelects();
   </script>
 </body>
