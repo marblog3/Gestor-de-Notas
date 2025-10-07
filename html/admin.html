@@ -182,6 +182,24 @@
         </div>
     </div>
 
+      <script>
+    // Verifica si hay sesión activa al cargar la página
+    const activeUser = sessionStorage.getItem("activeUser");
+    if (!activeUser) {
+      // Si no hay sesión activa → redirige al login
+      window.location.href = "principal.html";
+    }
+  </script>
+
+          <!-- Script para evitar volver atrás con el historial -->
+    <script>
+      window.history.pushState(null, null, window.location.href);
+      window.onpopstate = function () {
+        window.history.go(1);
+        window.location.href = "principal.html";
+      };
+    </script>
+
 
   <script>
     /* ------------------------------------------
