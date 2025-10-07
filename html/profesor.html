@@ -184,17 +184,18 @@
                                         </tr>
                                 </thead>
                                 <tbody id="tabla-estudiantes">
-                                        </tbody>
+                                </tbody>
                         </table>
                 </div>
 
                 <div id="botones" class="contenedor-botones">
                         <button id="agregarFilaBtn"><b>AGREGAR ESTUDIANTE</b></button>
+                        <button id="calcularPromedioBtn"><b>CALCULAR PROMEDIOS</b></button>
                         <button id="guardarBtn" disabled><b>GUARDAR Y NOTIFICAR</b></button>
                         <button id="modificarBtn" style="display:none;"><b>MODIFICAR</b></button>
                         <button id="exportarBtn" class="btn-exportar"><b>EXPORTAR A EXCEL</b></button>
-
                 </div>
+
                 <div id="reporte" class="reporte-container">
                         <div class="reporte-encabezado">
                                 <h3>REPORTE DE RESULTADOS</h3>
@@ -223,7 +224,7 @@
         <td><input type="text" name="nombre" maxlength="35" class="nota"></td>
         ${Array(11).fill('<td><input type="number" min="1" max="10" class="nota" maxlength="2"></td>').join('')}
         <td class="final-container">
-            <input type="number" min="1" max="10" class="nota" maxlength="2">
+            <input type="number" min="1" max="10" class="nota" maxlength="2" readonly>
             <span class="remove-row">X</span>
         </td>
     </tr>`;
@@ -239,7 +240,6 @@
 
                         // --- Validaciones ---
                         function aplicarValidaciones() {
-                                // DNI: solo números y formato 99.999.999
                                 const dniInput = document.getElementById("dni");
                                 if (dniInput) {
                                         dniInput.addEventListener("input", (e) => {
@@ -250,7 +250,6 @@
                                         });
                                 }
 
-                                // Texto: sin números
                                 document.querySelectorAll("input[type='text']").forEach(inp => {
                                         if (inp.id !== "dni") {
                                                 inp.addEventListener("input", (e) => {
@@ -262,7 +261,6 @@
                                         }
                                 });
 
-                                // Números: solo del 1 al 10
                                 document.querySelectorAll(".tabla-3 input[type='number']").forEach(inp => {
                                         inp.addEventListener("keydown", (e) => {
                                                 if (["Backspace", "Tab", "Enter", "ArrowLeft", "ArrowRight"].includes(e.key)) return;
@@ -290,11 +288,12 @@
                                 aplicarValidaciones();
                         });
 
-                        // --- Botones (LOGICA ORIGINAL MOVIDA A LA NUEVA FUNCIÓN) ---
+                        // --- Botones ---
                         const guardarBtn = document.getElementById("guardarBtn");
                         const modificarBtn = document.getElementById("modificarBtn");
                         const boletin = document.getElementById("boletin");
                         const agregarFilaBtn = document.getElementById("agregarFilaBtn");
+                        const calcularPromedioBtn = document.getElementById("calcularPromedioBtn");
 
                         // Agregar fila
                         agregarFilaBtn.addEventListener("click", () => {
@@ -304,7 +303,7 @@
                                 configurarNavegacion();
                                 aplicarValidaciones();
                         });
-                       
+
                         // Modificar
                         modificarBtn.addEventListener("click", () => {
                                 document.querySelectorAll(".select-preview").forEach(span => {
@@ -368,22 +367,16 @@
                                 });
                         });
 
-                        // --- Selección de materia ---
                         document.querySelectorAll(".menu-materia a[data-materia]").forEach(link => {
                                 link.addEventListener("click", (e) => {
                                         e.preventDefault();
                                         const materia = e.target.dataset.materia;
-
-                                        // Mostrar materia en el span
                                         const spanMateria = document.getElementById("materia-seleccionada");
                                         spanMateria.textContent = materia;
-
-                                        // Ocultar menú cascada
                                         document.getElementById("menu-materia").style.display = "none";
                                 });
                         });
 
-                        // --- Función para obtener la materia seleccionada ---
                         function getMateriaSeleccionada() {
                                 return document.getElementById("materia-seleccionada").textContent || "";
                         }
@@ -503,150 +496,203 @@
                                 saveAs(new Blob([buffer], { type: "application/octet-stream" }), "Planilla_Calificaciones.xlsx");
                         });
 
-                        // --- Calcular promedios y aprobados ---
+                        // --- FUNCIÓN DE CÁLCULO DE REPORTE---
                         function calcularReporte() {
-                                // Esta función se mantiene igual, pero la eliminamos del HTML
-                                // para simplificar, puedes mantenerla si la usas.
+                                let sumaNotasClase = 0;
+                                let cantidadAlumnosConNota = 0;
+                                let alumnosAprobados = 0;
+                                const notaAprobacion = 7; // Se considera aprobado con 7 o más
+
+                                document.querySelectorAll("#tabla-estudiantes tr").forEach(tr => {
+                                        const inputs = tr.querySelectorAll('input[type="number"]');
+
+                                        // Las posiciones de las notas según la estructura de la tabla:
+                                        const nota1erCuatri = inputs[2]; // CALIFICACIÓN 1º CUATRIMESTRE
+                                        const nota2doCuatri = inputs[6]; // CALIFICACIÓN 2º CUATRIMESTRE
+                                        const inputFinal = inputs[inputs.length - 1]; // CALIFICACIÓN FINAL
+
+                                        const val1 = parseFloat(nota1erCuatri.value);
+                                        const val2 = parseFloat(nota2doCuatri.value);
+
+                                        // Si ambas notas son números válidos, calcula el promedio del alumno
+                                        if (!isNaN(val1) && !isNaN(val2)) {
+                                                const promedio = (val1 + val2) / 2;
+                                                // Muestra el promedio en el campo de calificación final
+                                                inputFinal.value = promedio.toFixed(2);
+
+                                                // Suma para el reporte general
+                                                sumaNotasClase += promedio;
+                                                cantidadAlumnosConNota++;
+
+                                                // Cuenta si el alumno aprobó
+                                                if (promedio >= notaAprobacion) {
+                                                        alumnosAprobados++;
+                                                }
+                                        }
+                                });
+
+                                // Actualiza el cuadro de reporte general
+                                if (cantidadAlumnosConNota > 0) {
+                                        const promedioGeneral = sumaNotasClase / cantidadAlumnosConNota;
+                                        const porcentajeAprobados = (alumnosAprobados / cantidadAlumnosConNota) * 100;
+
+                                        document.getElementById("promedio-general").textContent = promedioGeneral.toFixed(2);
+                                        document.getElementById("porcentaje-aprobados").textContent = porcentajeAprobados.toFixed(2) + "%";
+                                } else {
+                                        document.getElementById("promedio-general").textContent = "-";
+                                        document.getElementById("porcentaje-aprobados").textContent = "-";
+                                }
+                        }
+
+                        // Asigna la función restaurada al botón
+                        if (calcularPromedioBtn) {
+                                calcularPromedioBtn.addEventListener("click", calcularReporte);
                         }
                 </script>
-                
-              <script>
-    // =================================================================
-    // 1. CONFIGURACIÓN DE LA API
-    // =================================================================
-    // ID DE CLIENTE OBTENIDO DE GOOGLE CLOUD
-    const CLIENT_ID = '385519034733-oug8nbcd676633k9u8bfkfo6v0a2394k.apps.googleusercontent.com';
-    
-    // Permiso necesario para enviar correos con la API de Gmail
-    const SCOPES = 'https://www.googleapis.com/auth/gmail.send';
 
-    let tokenClient;
-    let gapiInited = false;
-    let gisInited = false;
+                <script>
+                        // =================================================================
+                        // LÓGICA DE LA API DE GOOGLE 
+                        // =================================================================
+                        const CLIENT_ID = '385519034733-oug8nbcd676633k9u8bfkfo6v0a2394k.apps.googleusercontent.com';
+                        const SCOPES = 'https://www.googleapis.com/auth/gmail.send';
 
-    // =================================================================
-    // 2. INICIALIZACIÓN DE LAS LIBRERÍAS DE GOOGLE
-    // =================================================================
+                        let tokenClient;
+                        let gapiInited = false;
+                        let gisInited = false;
 
-    function gapiLoaded() {
-        gapi.load('client', initializeGapiClient);
-    }
+                        function gapiLoaded() {
+                                gapi.load('client', initializeGapiClient);
+                        }
 
-    async function initializeGapiClient() {
-        await gapi.client.init({
-            discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest'],
-        });
-        gapiInited = true;
-        checkAuthButton();
-    }
+                        async function initializeGapiClient() {
+                                await gapi.client.init({
+                                        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest'],
+                                });
+                                gapiInited = true;
+                                checkAuthButton();
+                        }
 
-    function gisLoaded() {
-        tokenClient = google.accounts.oauth2.initTokenClient({
-            client_id: CLIENT_ID,
-            scope: SCOPES,
-            callback: '', // Se manejará con promesas
-        });
-        gisInited = true;
-        checkAuthButton();
-    }
+                        function gisLoaded() {
+                                tokenClient = google.accounts.oauth2.initTokenClient({
+                                        client_id: CLIENT_ID,
+                                        scope: SCOPES,
+                                        callback: '',
+                                });
+                                gisInited = true;
+                                checkAuthButton();
+                        }
 
-    function checkAuthButton() {
-        if (gapiInited && gisInited) {
-            document.getElementById('guardarBtn').disabled = false;
-        }
-    }
+                        function checkAuthButton() {
+                                if (gapiInited && gisInited) {
+                                        document.getElementById('guardarBtn').disabled = false;
+                                }
+                        }
 
-    // =================================================================
-    // 3. LÓGICA DE AUTENTICACIÓN Y ENVÍO
-    // =================================================================
+                        document.getElementById("guardarBtn").addEventListener("click", handleAuthClick);
 
-    document.getElementById("guardarBtn").addEventListener("click", handleAuthClick);
-    
-    function handleAuthClick() {
-        tokenClient.callback = async (resp) => {
-            if (resp.error !== undefined) {
-                console.error("Error en la autorización:", resp);
-                alert("Hubo un error en la autorización con Google.");
-                throw (resp);
-            }
-            await enviarEmailDeAviso();
-            ejecutarLogicaOriginalDeGuardado();
-        };
+                        function handleAuthClick() {
+                                tokenClient.callback = async (resp) => {
+                                        if (resp.error !== undefined) {
+                                                console.error("Error en la autorización:", resp);
+                                                alert("Hubo un error en la autorización con Google.");
+                                                throw (resp);
+                                        }
+                                        await enviarEmailDeAviso();
+                                        ejecutarLogicaOriginalDeGuardado();
+                                };
 
-        if (gapi.client.getToken() === null) {
-            tokenClient.requestAccessToken({ prompt: 'consent' });
-        } else {
-            tokenClient.requestAccessToken({ prompt: '' });
-        }
-    }
+                                if (gapi.client.getToken() === null) {
+                                        tokenClient.requestAccessToken({ prompt: 'consent' });
+                                } else {
+                                        tokenClient.requestAccessToken({ prompt: '' });
+                                }
+                        }
 
-    // --- NUEVA FUNCIÓN PARA CODIFICAR EL ASUNTO ---
-    function encodeSubject(subject) {
-        // Esta función convierte caracteres especiales (como tildes) a un formato
-        // que los asuntos de correo electrónico pueden entender correctamente.
-        const encoded = btoa(unescape(encodeURIComponent(subject)));
-        return `=?UTF-8?B?${encoded}?=`;
-    }
+                        function encodeSubject(subject) {
+                                const encoded = btoa(unescape(encodeURIComponent(subject)));
+                                return `=?UTF-8?B?${encoded}?=`;
+                        }
 
-    async function enviarEmailDeAviso() {
-        const materia = getMateriaSeleccionada() || "la materia";
-        const profesor = document.querySelector("td:nth-child(3) input")?.value || "El Profesor/a";
-        const emailDestino = "mariabenitezr6@gmail.com";
-        
-        // Creamos el asunto con tildes normalmente
-        const asuntoOriginal = `Notificación de carga de notas: ${materia}`;
-        // LO CODIFICAMOS usando la nueva función
-        const asuntoCodificado = encodeSubject(asuntoOriginal);
+                        async function enviarEmailDeAviso() {
+                                const materia = getMateriaSeleccionada() || "la materia";
+                                const profesor = document.querySelector("td:nth-child(3) input")?.value || "El Profesor/a";
+                                const emailDestino = "mvbenitezramirez@eest5.com";
 
-        const cuerpoMensaje = 'Hola,\r\n\r\n' +
-            `Este es un aviso para informarle que el profesor/a ${profesor} ha cargado/actualizado las notas para ${materia}.\r\n\r\n` +
-            'Saludos cordiales,\r\n' +
-            'Sistema de Gestión E.E.S.T.N°5';
+                                const asuntoOriginal = `Notificación de carga de notas: ${materia}`;
+                                const asuntoCodificado = encodeSubject(asuntoOriginal);
 
-        const emailString = [
-            `To: ${emailDestino}`,
-            'Content-Type: text/plain; charset=utf-8',
-            'MIME-Version: 1.0',
-            `Subject: ${asuntoCodificado}`, // <-- Usamos la variable codificada aquí
-            '',
-            cuerpoMensaje
-        ].join('\n');
+                                const cuerpoMensaje = 'Hola,\r\n\r\n' +
+                                        `Este es un aviso para informarle que el profesor/a ${profesor} ha cargado/actualizado las notas para ${materia}.\r\n\r\n` +
+                                        'Saludos cordiales,\r\n' +
+                                        'Sistema de Gestión E.E.S.T.N°5';
 
-        const base64EncodedEmail = btoa(emailString).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+                                const emailString = [
+                                        `To: ${emailDestino}`,
+                                        'Content-Type: text/plain; charset=utf-8',
+                                        'MIME-Version: 1.0',
+                                        `Subject: ${asuntoCodificado}`,
+                                        '',
+                                        cuerpoMensaje
+                                ].join('\n');
 
-        try {
-            const response = await gapi.client.gmail.users.messages.send({
-                'userId': 'me',
-                'resource': {
-                    'raw': base64EncodedEmail
-                }
-            });
-            console.log("Correo de notificación enviado exitosamente:", response);
-            alert("¡Notificación enviada con éxito!");
+                                const base64EncodedEmail = btoa(emailString).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
-        } catch (error) {
-            console.error("Error al enviar el correo:", error);
-            alert("Hubo un error al enviar la notificación. Revisa la consola para más detalles.");
-        }
-    }
-    
-    function ejecutarLogicaOriginalDeGuardado() {
-        document.querySelectorAll("select").forEach(select => {
-            const valor = getSelectText(select);
-            const span = document.createElement("span");
-            span.textContent = valor;
-            span.className = "select-preview";
-            span.dataset.options = select.innerHTML;
-            select.replaceWith(span);
-        });
-        boletin.classList.add("vista-previa");
-        guardarBtn.style.display = "none";
-        modificarBtn.style.display = "inline-block";
-        exportarBtn.style.display = "inline-block";
-        
-        localStorage.setItem("notificacionAlumno", "¡El profesor cargó tus notas!");
-    }
-</script>
+                                try {
+                                        const response = await gapi.client.gmail.users.messages.send({
+                                                'userId': 'me',
+                                                'resource': {
+                                                        'raw': base64EncodedEmail
+                                                }
+                                        });
+                                        console.log("Correo de notificación enviado exitosamente:", response);
+                                        alert("¡Notificación enviada con éxito!");
+
+                                } catch (error) {
+                                        console.error("Error al enviar el correo:", error);
+                                        alert("Hubo un error al enviar la notificación. Revisa la consola para más detalles.");
+                                }
+                        }
+
+                        function ejecutarLogicaOriginalDeGuardado() {
+                                document.querySelectorAll("select").forEach(select => {
+                                        const valor = getSelectText(select);
+                                        const span = document.createElement("span");
+                                        span.textContent = valor;
+                                        span.className = "select-preview";
+                                        span.dataset.options = select.innerHTML;
+                                        select.replaceWith(span);
+                                });
+                                boletin.classList.add("vista-previa");
+                                guardarBtn.style.display = "none";
+                                modificarBtn.style.display = "inline-block";
+                                exportarBtn.style.display = "inline-block";
+
+                                localStorage.setItem("notificacionAlumno", "¡El profesor cargó tus notas!");
+
+
+                        }
+
+
+
+                        guardarBtn.addEventListener("click", () => {
+
+                                // Guardar notas (lo que ya tienes)
+
+                                boletin.classList.add("vista-previa");
+
+
+
+                                //  Crear una notificación en localStorage
+
+                                localStorage.setItem("notificacionAlumno", "¡El profesor cargó tus notas!");
+
+                        });
+
+
+
+
+                </script>
 
 </body>
 
