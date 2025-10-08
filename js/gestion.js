@@ -1,7 +1,7 @@
 // =======================================================
 // Inicialización de eventos al cargar el DOM
 // =======================================================
-document.addEventListener("DOMContentLoaded", () => { 
+document.addEventListener("DOMContentLoaded", () => {
   const guardarBtn = document.getElementById("guardarBtn");
   const modificarBtn = document.getElementById("modificarBtn");
   const descargarBtn = document.getElementById("descargarBtn");
