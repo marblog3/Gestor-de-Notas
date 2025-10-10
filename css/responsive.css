@@ -119,7 +119,7 @@
         max-width: 300px;
     }
     
-    /* Quitamos márgenes extra que puedan causar problemas */
+    /* Quitamos márgenes extra que puedan causar problemas a */
     .contenedor-botones {
         margin-right: 0;
     }

@@ -660,4 +660,4 @@ if (btnGuardar) {
     btnGuardar.addEventListener("click", guardarNotasEnLocalStorage);
 }
 
-
+a
