@@ -71,13 +71,47 @@ function aplicarValidaciones() {
 // --- Inicializar ---
 document.addEventListener('DOMContentLoaded', function () {
     const tablaEstudiantes = document.getElementById('tabla-estudiantes');
-    for (let i = 0; i < 12; i++) {
-        tablaEstudiantes.insertAdjacentHTML("beforeend", crearFilaEstudiante());
+
+    // 1️⃣ Obtener todos los alumnos del localStorage
+    let alumnos = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key === "pendingUsers" || key.startsWith("asignacion")) continue;
+        try {
+            const user = JSON.parse(localStorage.getItem(key));
+            if (user && user.role === "Alumno") {
+                alumnos.push(user);
+            }
+        } catch (e) { }
     }
+
+    // 2️⃣ Crear una fila por cada alumno
+    if (alumnos.length > 0) {
+        alumnos.forEach((alumno, index) => {
+            const fila = document.createElement("tr");
+            fila.innerHTML = `
+                <td><span class="orden">${index + 1}</span></td>
+                <td><input type="text" name="nombre" value="${alumno.fullname}" class="nota" disabled></td>
+                ${Array(11).fill('<td><input type="number" min="1" max="10" class="nota" maxlength="2"></td>').join('')}
+                <td class="final-container">
+                    <input type="number" min="1" max="10" class="nota" maxlength="2" readonly>
+                    <span class="remove-row">X</span>
+                </td>
+            `;
+            tablaEstudiantes.appendChild(fila);
+        });
+    } else {
+        // Si no hay alumnos, crea filas vacías (como antes)
+        for (let i = 0; i < 12; i++) {
+            tablaEstudiantes.insertAdjacentHTML("beforeend", crearFilaEstudiante());
+        }
+    }
+
     actualizarOrden();
     configurarNavegacion();
     aplicarValidaciones();
 });
+
 
 // --- Botones ---
 const guardarBtn = document.getElementById("guardarBtn");
@@ -476,7 +510,154 @@ guardarBtn.addEventListener("click", () => {
     localStorage.setItem("notificacionAlumno", "¡El profesor cargó tus notas!");
 
 });
+function cargarAlumnosPorCurso() {
+    // Obtenemos los datos del curso seleccionados en los <select> del profesor
+    const anio = getSelectText(document.querySelector("tr:nth-child(2) td:nth-child(1) select"));
+    const division = getSelectText(document.querySelector("tr:nth-child(2) td:nth-child(2) select"));
+    const especialidad = "Informática"; // Asumimos un valor por ahora, puedes añadir un <select> para esto
+
+    const tablaBody = document.getElementById('tabla-estudiantes');
+    tablaBody.innerHTML = ''; // Limpiamos la tabla
+
+    // Recorremos todo localStorage para encontrar alumnos
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        try {
+            const user = JSON.parse(localStorage.getItem(key));
+            // Verificamos si es un alumno y si su curso coincide
+            if (user && user.role === 'Alumno' && user.curso) {
+                if (user.curso.anio === anio && user.curso.division === division && user.curso.especialidad === especialidad) {
+                    
+                    // Si coincide, creamos una fila para ese alumno
+                    const filaHTML = crearFilaEstudiante();
+                    const filaElement = document.createElement('tr');
+                    filaElement.innerHTML = filaHTML.match(/<tr[^>]*>([\s\S]*)<\/tr>/)[1]; // Extraemos el contenido del <tr>
+                    
+                    // Guardamos el email del alumno en la fila para usarlo al guardar
+                    filaElement.dataset.email = user.email; 
+                    
+                    // Llenamos el nombre del alumno
+                    const nombreInput = filaElement.querySelector('input[name="nombre"]');
+                    nombreInput.value = user.fullname || '';
+                    nombreInput.readOnly = true; // Hacemos que el nombre no se pueda editar
+
+                    tablaBody.appendChild(filaElement);
+                }
+            }
+        } catch (e) {
+            // Ignoramos claves que no son JSON de usuario
+        }
+    }
+    actualizarOrden();
+}
+
+// Llama a esta función cuando cambien los select de año o división
+document.querySelector("tr:nth-child(2) td:nth-child(1) select").addEventListener('change', cargarAlumnosPorCurso);
+document.querySelector("tr:nth-child(2) td:nth-child(2) select").addEventListener('change', cargarAlumnosPorCurso);
 
 
+// --- MODIFICACIÓN: Lógica para guardar las notas ---
+function ejecutarLogicaOriginalDeGuardado() {
+    // ... (El código que ya tienes para cambiar la vista)
+    
+    // --- LÓGICA AÑADIDA PARA GUARDAR NOTAS ---
+
+    // 1. Obtenemos los datos del curso y materia
+    const ciclo = getSelectText(document.querySelector("td:nth-child(1) select, td:nth-child(1) .select-preview"));
+    const anio = getSelectText(document.querySelector("tr:nth-child(2) td:nth-child(1) select, tr:nth-child(2) td:nth-child(1) .select-preview"));
+    const division = getSelectText(document.querySelector("tr:nth-child(2) td:nth-child(2) select, tr:nth-child(2) td:nth-child(2) .select-preview"));
+    const especialidad = "Informática"; // De nuevo, esto podría venir de un select
+    const materia = getMateriaSeleccionada();
+
+    // 2. Creamos la clave única para esta planilla de notas
+    const claveNotas = `notas_${ciclo}_${anio}-${division}-${especialidad}_${materia}`;
+
+    const notasDeAlumnos = {};
+
+    // 3. Recorremos cada fila de la tabla para obtener las notas
+    document.querySelectorAll("#tabla-estudiantes tr").forEach(fila => {
+        const emailAlumno = fila.dataset.email;
+        if (emailAlumno) {
+            const inputs = fila.querySelectorAll('input[type="number"]');
+            notasDeAlumnos[emailAlumno] = {
+                c1: inputs[2].value, // Nota 1er Cuatri
+                c2: inputs[6].value, // Nota 2do Cuatri
+                final: inputs[inputs.length - 1].value // Nota Final
+                // Puedes añadir más notas aquí si quieres
+            };
+        }
+    });
+
+    // 4. Guardamos el objeto completo como un string JSON en localStorage
+    localStorage.setItem(claveNotas, JSON.stringify(notasDeAlumnos));
+
+    // Finalmente, creamos la notificación para el alumno
+    localStorage.setItem("notificacionAlumno", `¡El profesor de ${materia} cargó tus notas!`);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const activeUser = JSON.parse(sessionStorage.getItem("activeUser"));
+
+    if (activeUser) {
+        // Campo de nombre del profesor
+        const inputNombre = document.querySelector("td:nth-child(3) input");
+        if (inputNombre) inputNombre.value = activeUser.fullname || "";
+
+        // Campo de DNI del profesor
+        const inputDni = document.getElementById("dni");
+        if (inputDni) inputDni.value = activeUser.dni || "";
+    }
+});
+// GUARDAR LAS NOTAS EN LOCALSTORAGE (OBJETO NOMBRADO, COMPATIBLE CON ALUMNO)//
+function guardarNotasEnLocalStorage() {
+    const materia = getMateriaSeleccionada() || "Sin materia";
+    const profesorData = JSON.parse(sessionStorage.getItem("activeUser")) || {};
+    // cargamos el array ya existente para actualizar/mergear
+    let notasGuardadas = JSON.parse(localStorage.getItem("notasRegistradas")) || [];
+
+    // Recorremos las filas de la tabla donde está el profesor cargando notas
+    const filas = document.querySelectorAll(".tabla-3 tbody tr");
+    filas.forEach(tr => {
+        const inputs = Array.from(tr.querySelectorAll("input"));
+
+        // En tu tabla de profesor el primer input (celdas[0]) es el nombre del alumno
+        const nombreAlumno = (inputs[0] && inputs[0].value || "").trim();
+        if (!nombreAlumno) return; // saltar filas vacías
+
+        // Función segura para obtener valor por índice (evita errores si cambian columnas)
+        const val = (i) => inputs[i] ? inputs[i].value : "";
+
+        // Mapear a campos explícitos según la estructura de la planilla del profesor
+        const notaObj = {
+            alumno: nombreAlumno,
+            dni: val( /* índice del DNI si existe */  /* por defecto no lo tomamos */  ) || "", 
+            materia: materia,
+            nota_1Cuat: val(3) || "",     // CALIFICACIÓN 1º CUATRIMESTRE (según export logic del profesor)
+            nota_2Cuat: val(7) || "",     // CALIFICACIÓN 2º CUATRIMESTRE
+            intensificacion: val(9) || "",// INTENSIFICACIÓN 1ºC
+            diciembre: val(10) || "",
+            febrero: val(11) || "",
+            final: val(12) || "",
+            profesor: profesorData.fullname || profesorData.email || "Desconocido",
+            fecha: new Date().toISOString()
+        };
+
+        // Reemplazar si ya existe nota para el mismo alumno+materia
+        const idx = notasGuardadas.findIndex(n => n.alumno.toLowerCase() === notaObj.alumno.toLowerCase() && n.materia.toLowerCase() === notaObj.materia.toLowerCase());
+        if (idx >= 0) notasGuardadas[idx] = notaObj;
+        else notasGuardadas.push(notaObj);
+    });
+
+    localStorage.setItem("notasRegistradas", JSON.stringify(notasGuardadas));
+    alert("✅ Notas guardadas correctamente. Los alumnos verán sus calificaciones.");
+}
+
+// Atalo al botón Guardar (si no lo tenés ya)
+const btnGuardar = document.getElementById("guardarBtn");
+if (btnGuardar) {
+    // Evitar múltiples escuchas
+    btnGuardar.removeEventListener("click", guardarNotasEnLocalStorage);
+    btnGuardar.addEventListener("click", guardarNotasEnLocalStorage);
+}
 
 

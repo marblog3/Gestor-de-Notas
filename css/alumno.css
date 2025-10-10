@@ -2,83 +2,103 @@
    ALUMNO.CSS
    Estilos para el boletín del alumno.
    ================================================================= */
-.tabla-2, .tabla-4 {
-    border-collapse: collapse;
-    width: 100%;
-    margin-top: 20px;
+.tabla-2,
+.tabla-4 {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 20px;
 }
-.tabla-2 th, .tabla-2 td, .tabla-4, .th-3, .tabla-, .td {
-    border: 1px solid black;
-    padding: 8px;
-    text-align: center;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+.tabla-2 th,
+.tabla-2 td,
+.tabla-4,
+.th-3,
+.tabla-,
+.td {
+  border: 1px solid black;
+  padding: 8px;
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .th-2 {
-  font-size: 20px; /* Agrandar el texto de la celda */
-  min-width: 180px; /* Aumenta este valor si necesitas que sean aún más largos */
+  font-size: 20px;
+  /* Agrandar el texto de la celda */
+  min-width: 180px;
+  /* Aumenta este valor si necesitas que sean aún más largos */
   height: 50px;
-  padding: 10px;    /* Añadir un poco de espacio interno */
+  padding: 10px;
+  /* Añadir un poco de espacio interno */
 }
 
 
 .th-3 {
   font-size: 20px;
-  min-width: 180px; /* Aumenta este valor si necesitas que sean aún más largos */
+  min-width: 180px;
+  /* Aumenta este valor si necesitas que sean aún más largos */
   height: 50px;
   padding: 10px;
 }
 
 .scroll-tabla-4 {
-    /* Es esencial para crear la barra de desplazamiento */
-    overflow-x: auto;
-    /* Asegura que el contenedor tome todo el ancho disponible */
-    width: 100%; 
+  /* Es esencial para crear la barra de desplazamiento */
+  overflow-x: auto;
+  /* Asegura que el contenedor tome todo el ancho disponible */
+  width: 100%;
 }
 
 .scroll-tabla-2 {
-    /* Es esencial para crear la barra de desplazamiento */
-    overflow-x: auto;
-    /* Asegura que el contenedor tome todo el ancho disponible */
-    width: 100%; 
+  /* Es esencial para crear la barra de desplazamiento */
+  overflow-x: auto;
+  /* Asegura que el contenedor tome todo el ancho disponible */
+  width: 100%;
 }
 
-.obs-3{
-    width: 1700px;
-    height: 30px;
-    font-size: 25px;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    border-color: transparent;
-   
- 
-    
+.obs-3 {
+  width: 1700px;
+  height: 30px;
+  font-size: 25px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border-color: transparent;
+
+
+
 }
 
-.input-1{
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    border-color: transparent;
-    width: 90%;
+.input-1 {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border-color: transparent;
+  width: 90%;
+  text-align: center;
+  display: block;
 }
 
-.mate1{
-    border-color: transparent;
-    width: 70%;
+.mate1 {
+  border-color: transparent;
+  width: 70%;
+  pointer-events: none;/* evita clics o foco */
+  opacity: 0.6; /* lo hace ver desactivado */
+  
 }
 
 /* --- ESTILOS MODIFICADOS Y AÑADIDOS --- */
 
 /* Contenedor para alinear el título y el ícono */
 .title-container {
-  position: relative;      /* Cambiado de flex a relative para posicionar el icono */
-  text-align: center;      /* Esto centrará el título h1 que está dentro */
-  margin-bottom: 50px;     /* Mantenemos el margen inferior que tenía el título */
+  position: relative;
+  /* Cambiado de flex a relative para posicionar el icono */
+  text-align: center;
+  /* Esto centrará el título h1 que está dentro */
+  margin-bottom: 50px;
+  /* Mantenemos el margen inferior que tenía el título */
 }
 
 .title-1 {
-  display: inline-block; /* Asegura que el centrado funcione bien */
+  display: inline-block;
+  /* Asegura que el centrado funcione bien */
   font-size: 44px;
   color: #3b394f;
-  margin: 0; 
+  margin: 0;
 }
 
 
@@ -88,15 +108,22 @@
 
 /* Grupo que contiene el icono y el tooltip */
 .icon-group {
-  position: absolute;      /* Posicionamiento absoluto respecto al title-container */
-  left: 0;                 /* Lo pegamos a la izquierda del contenedor */
-  top: 50%;                /* Lo centramos verticalmente */
-  transform: translateY(-50%); /* Ajuste fino para el centrado vertical */
-  z-index: 100;            /* AÑADIDO: Para que el panel aparezca por encima de otros elementos */
+  position: absolute;
+  /* Posicionamiento absoluto respecto al title-container */
+  left: 0;
+  /* Lo pegamos a la izquierda del contenedor */
+  top: 50%;
+  /* Lo centramos verticalmente */
+  transform: translateY(-50%);
+  /* Ajuste fino para el centrado vertical */
+  z-index: 100;
+  /* AÑADIDO: Para que el panel aparezca por encima de otros elementos */
 }
+
 /* Envoltorio del icono */
 .icon-wrapper {
-  position: relative; /* AÑADIDO: para posicionar la burbuja dentro */
+  position: relative;
+  /* AÑADIDO: para posicionar la burbuja dentro */
   padding: 0.4rem;
   border-radius: 9999px;
   cursor: pointer;
@@ -120,7 +147,8 @@
   height: 1rem;
   color: rgba(255, 255, 255, 0.8);
   transition: all 0.3s ease-in-out;
-  display: block; /* Ayuda a evitar espacios extra */
+  display: block;
+  /* Ayuda a evitar espacios extra */
 }
 
 .icon-group:hover .icon-svg {
@@ -183,10 +211,12 @@
   .icon-wrapper {
     padding: 0.6rem;
   }
+
   .icon-svg {
     width: 1.25rem;
     height: 1.25rem;
   }
+
   .tooltip-content {
     font-size: 0.8rem;
     padding: 0.4rem 0.8rem;
