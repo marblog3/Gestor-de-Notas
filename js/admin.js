@@ -231,7 +231,6 @@ function openApprovalModal(index) {
     document.getElementById('approveEmail').textContent = userReq.username;
     document.getElementById('approveName').textContent = userReq.fullname;
     document.getElementById('approveDni').textContent = userReq.dni;
-    document.getElementById('approveRole').textContent = userReq.role;
     document.getElementById('approvePassword').value = '';
 
     const confirmBtn = document.getElementById('confirmApproveBtn');
@@ -242,30 +241,38 @@ function openApprovalModal(index) {
 
 function handleApproveUser(index) {
     const password = document.getElementById('approvePassword').value;
-    if (!password) {
-        alert("Debe asignar una contraseña.");
+    const role = document.getElementById('approveRoleSelect').value;
+
+    if (!password || !role) {
+        alert("Debe asignar una contraseña y un rol.");
         return;
     }
 
     const pendingUsers = JSON.parse(localStorage.getItem("pendingUsers")) || [];
     const userReq = pendingUsers[index];
 
-    const user = {
+    const newUser = {
         email: userReq.username,
         fullname: userReq.fullname,
         dni: userReq.dni,
-        role: userReq.role,
-        password: btoa(password)
+        password: btoa(password),
+        role
     };
 
-    localStorage.setItem(user.email, JSON.stringify(user));
+    // Guardar en localStorage
+    localStorage.setItem(newUser.email, JSON.stringify(newUser));
+
+    // Eliminar de pendientes
     pendingUsers.splice(index, 1);
     localStorage.setItem("pendingUsers", JSON.stringify(pendingUsers));
+
+    alert(`Usuario ${newUser.fullname} aprobado como ${role}.`);
 
     closeModal('approvalModal');
     cargarUsuarios();
     cargarSolicitudes();
 }
+
 
 function rechazarUsuario(index) {
     if (!confirm("¿Seguro que quieres rechazar esta solicitud?")) return;
@@ -275,9 +282,7 @@ function rechazarUsuario(index) {
     cargarSolicitudes();
 }
 
-/* ------------------------------------------
-   FORMULARIOS DE ASIGNACIÓN
-   ------------------------------------------ */
+/*FORMULARIOS DE ASIGNACIÓN*/
 function cargarSelects() {
     const profesorSelect = document.getElementById("profesorSelect");
     const alumnoSelect = document.getElementById("alumnoSelect");
@@ -334,9 +339,7 @@ document.getElementById('asignarAlumnoForm').addEventListener('submit', function
 });
 
 
-/* ------------------------------------------
-   INICIALIZACIÓN Y OTROS
-   ------------------------------------------ */
+/* NICIALIZACIÓN Y OTROS*/
 function logout() {
     sessionStorage.removeItem("activeUser");
     window.location.href = "principal.html";

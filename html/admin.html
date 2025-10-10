@@ -19,8 +19,12 @@
       <h1 class="header-title">E.E.S.T.N°5</h1>
     </div>
     <button class="logout-icon" onclick="logout()">
-      <div class="sign"><svg viewBox="0 0 512 512"><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path></svg></div>
-      <div class="text">Logout</div>
+      <div class="sign"><svg viewBox="0 0 512 512">
+          <path
+            d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z">
+          </path>
+        </svg></div>
+      <div class="text">Cerrar sesion</div>
     </button>
   </header>
 
@@ -29,7 +33,8 @@
     <h2 class="titulo-2">Usuarios registrados</h2>
 
     <div class="search-container">
-        <input type="text" id="searchInput" onkeyup="searchUsers()" placeholder="Buscar por nombre, correo o DNI..." autocomplete="off">
+      <input type="text" id="searchInput" onkeyup="searchUsers()" placeholder="Buscar por nombre, correo o DNI..."
+        autocomplete="off">
     </div>
 
     <table class="boletin" id="usersTable">
@@ -59,42 +64,44 @@
     </div>
 
     <div class="column-layout-container">
-        <div class="form-container">
-            <h2>Asignar alumno a curso</h2>
-            <form id="asignarAlumnoForm">
-                <div class="form-group">
-                    <label for="alumnoSelect">Alumno:</label>
-                    <select id="alumnoSelect" name="alumnoSelect" required></select>
-                </div>
-                <div class="form-group">
-                    <label for="anioInput">Año:</label>
-                    <input type="number" id="anioInput" name="anioInput" placeholder="Ej: 5" class="input-2" required>
-                </div>
-                <div class="form-group">
-                    <label for="divisionInput">División:</label>
-                    <input type="text" id="divisionInput" name="divisionInput" placeholder="Ej: 2da" class="input-2" required>
-                </div>
-                <div class="form-group">
-                    <label for="especialidadInput">Especialidad:</label>
-                    <input type="text" id="especialidadInput" name="especialidadInput" placeholder="Ej: Informática" class="input-2" required>
-                </div>
-                <button type="submit">Asignar Alumno</button>
-            </form>
-        </div>
-        <div class="form-container">
-            <h2>Asignar profesor a materia</h2>
-            <form id="asignarProfesorForm">
-                <div class="form-group">
-                    <label for="profesorSelect">Profesor:</label>
-                    <select id="profesorSelect" name="profesorSelect" required></select>
-                </div>
-                <div class="form-group">
-                    <label for="materiaInput">Materia:</label>
-                    <input type="text" id="materiaInput" name="materiaInput" placeholder="Ej: Programación" class="input-2" required>
-                </div>
-                <button type="submit">Asignar Materia</button>
-            </form>
-        </div>
+      <div class="form-container">
+        <h2>Asignar alumno a curso</h2>
+        <form id="asignarAlumnoForm">
+          <div class="form-group">
+            <label for="alumnoSelect">Alumno:</label>
+            <select id="alumnoSelect" name="alumnoSelect" required></select>
+          </div>
+          <div class="form-group">
+            <label for="anioInput">Año:</label>
+            <input type="number" id="anioInput" name="anioInput" placeholder="Ej: 5" class="input-2" required>
+          </div>
+          <div class="form-group">
+            <label for="divisionInput">División:</label>
+            <input type="text" id="divisionInput" name="divisionInput" placeholder="Ej: 2da" class="input-2" required>
+          </div>
+          <div class="form-group">
+            <label for="especialidadInput">Especialidad:</label>
+            <input type="text" id="especialidadInput" name="especialidadInput" placeholder="Ej: Informática"
+              class="input-2" required>
+          </div>
+          <button type="submit">Asignar Alumno</button>
+        </form>
+      </div>
+      <div class="form-container">
+        <h2>Asignar profesor a materia</h2>
+        <form id="asignarProfesorForm">
+          <div class="form-group">
+            <label for="profesorSelect">Profesor:</label>
+            <select id="profesorSelect" name="profesorSelect" required></select>
+          </div>
+          <div class="form-group">
+            <label for="materiaInput">Materia:</label>
+            <input type="text" id="materiaInput" name="materiaInput" placeholder="Ej: Programación" class="input-2"
+              required>
+          </div>
+          <button type="submit">Asignar Materia</button>
+        </form>
+      </div>
     </div>
 
   </div>
@@ -108,14 +115,14 @@
       <form id="userForm" onsubmit="handleCreateUser(event)">
         <div class="modal-body">
           <input type="hidden" id="originalEmail">
-           <div class="form-group">
-                <label for="userFullname">Nombre Completo</label>
-                <input type="text" id="userFullname" placeholder="Nombre y Apellido" required>
-            </div>
-            <div class="form-group">
-                <label for="userDni">DNI</label>
-                <input type="text" id="userDni" placeholder="Documento Nacional de Identidad" required>
-            </div>
+          <div class="form-group">
+            <label for="userFullname">Nombre Completo</label>
+            <input type="text" id="userFullname" placeholder="Nombre y Apellido" required>
+          </div>
+          <div class="form-group">
+            <label for="userDni">DNI</label>
+            <input type="text" id="userDni" placeholder="Documento Nacional de Identidad" required>
+          </div>
           <div class="form-group">
             <label for="userEmail">Correo Electrónico</label>
             <input type="email" id="userEmail" placeholder="usuario@eest5.com" required>
@@ -159,30 +166,39 @@
     </div>
   </div>
   <div id="approvalModal" class="modal">
-        <div class="modal-contenido">
-            <div class="modal-header">
-                <h2>Aprobar Solicitud</h2>
-                <button class="cerrar-btn" onclick="closeModal('approvalModal')">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p><strong>Correo:</strong> <span id="approveEmail"></span></p>
-                <p><strong>Nombre:</strong> <span id="approveName"></span></p>
-                <p><strong>DNI:</strong> <span id="approveDni"></span></p>
-                <p><strong>Rol:</strong> <span id="approveRole"></span></p>
-                <hr>
-                <div class="form-group">
-                    <label for="approvePassword">Asignar Contraseña</label>
-                    <input type="password" id="approvePassword" placeholder="Cree una contraseña para el usuario" required>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-cancel" onclick="closeModal('approvalModal')">Cancelar</button>
-                <button type="button" id="confirmApproveBtn" class="btn btn-submit">Aprobar Usuario</button>
-            </div>
+    <div class="modal-contenido">
+      <div class="modal-header">
+        <h2>Aprobar Solicitud</h2>
+        <button class="cerrar-btn" onclick="closeModal('approvalModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Correo:</strong> <span id="approveEmail"></span></p>
+        <p><strong>Nombre:</strong> <span id="approveName"></span></p>
+        <p><strong>DNI:</strong> <span id="approveDni"></span></p>
+        <p><strong>Rol:</strong> <span id="approveRole"></span></p>
+        <hr>
+        <div class="form-group">
+          <label for="approveRoleSelect">Asignar Rol</label>
+          <select id="approveRoleSelect" required>
+            <option value="">Seleccionar rol</option>
+            <option value="Profesor">Profesor</option>
+            <option value="Alumno">Alumno</option>
+            <option value="Preceptor">Preceptor</option>
+          </select>
         </div>
+        <div class="form-group">
+          <label for="approvePassword">Asignar Contraseña</label>
+          <input type="password" id="approvePassword" placeholder="Cree una contraseña para el usuario" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-cancel" onclick="closeModal('approvalModal')">Cancelar</button>
+        <button type="button" id="confirmApproveBtn" class="btn btn-submit">Aprobar Usuario</button>
+      </div>
     </div>
-
-     <script src="../js/admin.js"></script>
+  </div>
+  
+  <script src="../js/admin.js"></script>
 </body>
 
 </html>

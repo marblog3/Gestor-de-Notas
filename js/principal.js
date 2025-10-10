@@ -1,19 +1,18 @@
-
-// Muestra el formulario de inicio de sesión y oculta el de registro
+// Mostrar login
 function showLogin() {
     document.getElementById('login-container').style.display = 'block';
     document.getElementById('register-container').style.display = 'none';
     document.getElementById('register-error-msg').innerHTML = '';
 }
 
-// Muestra el formulario de registro y oculta el de inicio de sesión
+// Mostrar registro
 function showRegister() {
     document.getElementById('login-container').style.display = 'none';
     document.getElementById('register-container').style.display = 'block';
     document.getElementById('error-msg').innerHTML = '';
 }
 
-// Lógica de inicio de sesión
+// LOGIN
 function login() {
     const username = document.getElementById('login-username').value.trim();
     const password = document.getElementById('login-password').value;
@@ -23,12 +22,14 @@ function login() {
         return;
     }
 
+    // ADMIN FIJO
     if (username === "admin@eest5.com" && password === "admin123") {
         sessionStorage.setItem("activeUser", JSON.stringify({ email: username, role: "Administrador" }));
         window.location.href = "admin.html";
         return;
     }
 
+    // Validar correo institucional
     if (!username.endsWith("@eest5.com")) {
         document.getElementById('error-msg').innerHTML = "Debe usar un correo institucional (@eest5.com)";
         return;
@@ -39,15 +40,7 @@ function login() {
         const user = JSON.parse(savedUser);
         if (user.password === btoa(password)) {
             sessionStorage.setItem("activeUser", JSON.stringify(user));
-            if (user.role === "Profesor") {
-                window.location.href = "profesor.html";
-            } else if (user.role === "Preceptor") {
-                window.location.href = "preceptor.html";
-            } else if (user.role === "Alumno") {
-                window.location.href = "alumno.html";
-            } else if (user.role === "Administrador") {
-                window.location.href = "admin.html";
-            }
+            redirectByRole(user.role);
         } else {
             document.getElementById('error-msg').innerHTML = 'Contraseña incorrecta';
         }
@@ -56,14 +49,33 @@ function login() {
     }
 }
 
-// Lógica de registro de usuario (ACTUALIZADA)
+// Redirección según rol
+function redirectByRole(role) {
+    switch (role) {
+        case "Profesor":
+            window.location.href = "profesor.html";
+            break;
+        case "Preceptor":
+            window.location.href = "preceptor.html";
+            break;
+        case "Alumno":
+            window.location.href = "alumno.html";
+            break;
+        case "Administrador":
+            window.location.href = "admin.html";
+            break;
+        default:
+            alert("Rol desconocido o no asignado.");
+    }
+}
+
+// REGISTRO
 function register() {
     const fullname = document.getElementById('register-fullname').value.trim();
     const dni = document.getElementById('register-dni').value.trim();
     const username = document.getElementById('register-username').value.trim();
-    const role = document.getElementById('register-role').value;
 
-    if (!fullname || !dni || !username || !role) {
+    if (!fullname || !dni || !username) {
         document.getElementById('register-error-msg').innerHTML = 'Complete todos los campos';
         return;
     }
@@ -74,21 +86,19 @@ function register() {
     }
 
     const pendingUsers = JSON.parse(localStorage.getItem("pendingUsers")) || [];
-    // Se almacena la solicitud con los nuevos datos
     pendingUsers.push({
         username,
         fullname,
         dni,
-        role,
         requestedAt: new Date().toISOString()
     });
     localStorage.setItem("pendingUsers", JSON.stringify(pendingUsers));
 
-    alert("Tu solicitud de registro fue enviada al administrador. Espera su aprobación.");
+    alert("Tu solicitud fue enviada al administrador. Espera su aprobación.");
     showLogin();
 }
 
-// Permite enviar formularios con la tecla Enter
+// Tecla Enter para login/registro
 document.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
         const loginVisible = document.getElementById('login-container').style.display !== "none";
@@ -100,8 +110,21 @@ document.addEventListener("keydown", function (event) {
     }
 });
 
+// Al cargar: si hay sesión activa, NO redirige automáticamente,
+// solo evita entrar si se escribe manualmente "principal.html"
+document.addEventListener("DOMContentLoaded", () => {
+    const activeUser = sessionStorage.getItem("activeUser");
+    if (activeUser) {
+        const user = JSON.parse(activeUser);
+        if (!window.location.pathname.endsWith("principal.html")) return;
+        // Mostrar mensaje y redirigir a su página
+        alert("Ya tienes una sesión activa.");
+        redirectByRole(user.role);
+    }
+});
+
+// Evitar volver atrás al presionar el botón del navegador (solo mantiene la página actual)
 window.history.pushState(null, null, window.location.href);
 window.onpopstate = function () {
     window.history.go(1);
-    window.location.href = "principal.html";
 };

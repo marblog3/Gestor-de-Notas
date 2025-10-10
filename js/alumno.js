@@ -190,4 +190,167 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+document.addEventListener("DOMContentLoaded", () => {
+    // ... (El código de la notificación que ya tienes) ...
 
+    // --- FUNCIÓN NUEVA: Cargar las notas del alumno ---
+    function cargarNotasDelAlumno() {
+        const activeUserData = JSON.parse(sessionStorage.getItem("activeUser"));
+        if (!activeUserData || !activeUserData.email) return;
+
+        const alumnoEmail = activeUserData.email;
+        const alumnoData = JSON.parse(localStorage.getItem(alumnoEmail));
+        
+        if (!alumnoData || !alumnoData.curso) {
+            console.log("Este alumno no tiene un curso asignado.");
+            return;
+        }
+
+        const curso = alumnoData.curso;
+        const tablaMateriasBody = document.querySelector("#tabla-materias tbody");
+        tablaMateriasBody.innerHTML = ''; // Limpiamos la tabla antes de llenarla
+
+        // Recorremos todo localStorage en busca de planillas de notas
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            
+            // Verificamos si es una clave de notas y si pertenece al curso del alumno
+            if (key.startsWith('notas_') && key.includes(`${curso.anio}-${curso.division}-${curso.especialidad}`)) {
+                const materia = key.split('_').pop(); // Extraemos el nombre de la materia de la clave
+                const notasData = JSON.parse(localStorage.getItem(key));
+
+                // Buscamos las notas específicas de este alumno
+                const misNotas = notasData[alumnoEmail];
+                
+                if (misNotas) {
+                    // Creamos una nueva fila en la tabla de materias del alumno
+                    const fila = document.createElement('tr');
+                    fila.innerHTML = `
+                        <td><input type="text" class="mate1" value="${materia}" readonly></td>
+                        <td><input type="number" class="mate1" value="${curso.anio}" readonly></td>
+                        <td><input type="number" class="mate1" value="${misNotas.c1 || ''}" readonly></td>
+                        <td><input type="number" class="mate1" value="${misNotas.c2 || ''}" readonly></td>
+                        <td><input type="number" class="mate1" readonly></td> <td><input type="number" class="mate1" readonly></td> <td><input type="number" class="mate1" readonly></td> <td><input type="number" class="mate1" value="${misNotas.final || ''}" readonly></td>
+                        <td><input type="text" class="mate1" readonly></td> `;
+                    tablaMateriasBody.appendChild(fila);
+                }
+            }
+        }
+    }
+    
+    // Llamamos a la función al cargar la página
+    cargarNotasDelAlumno();
+});
+document.addEventListener("DOMContentLoaded", () => {
+    const activeUser = JSON.parse(sessionStorage.getItem("activeUser"));
+
+    if (activeUser) {
+        const tabla = document.querySelector("#tabla-datos-generales");
+
+        if (tabla) {
+            // Nombre
+            const inputNombre = tabla.querySelector("td:nth-child(2) input");
+            if (inputNombre) inputNombre.value = activeUser.fullname || "";
+
+            // DNI
+            const inputDni = tabla.querySelector("td:nth-child(3) input");
+            if (inputDni) inputDni.value = activeUser.dni || "";
+        }
+    }
+});
+
+
+// CARGAR NOTAS DEL PROFESOR EN LOS INPUTS EXISTENTES DEL ALUMNO//
+document.addEventListener("DOMContentLoaded", () => {
+    const alumnoData = JSON.parse(sessionStorage.getItem("activeUser"));
+    if (!alumnoData) return;
+
+    const notasGuardadas = JSON.parse(localStorage.getItem("notasRegistradas")) || [];
+
+    // Filtramos notas para el alumno actual (primero por DNI si existe, si no por fullname)
+    const notasDelAlumno = notasGuardadas.filter(n => {
+        if (alumnoData.dni && n.dni) return n.dni.toString() === alumnoData.dni.toString();
+        return n.alumno && alumnoData.fullname && n.alumno.toLowerCase().trim() === alumnoData.fullname.toLowerCase().trim();
+    });
+
+    if (notasDelAlumno.length === 0) return;
+
+    const tabla = document.getElementById("tabla-materias");
+    if (!tabla) return;
+    const tbody = tabla.querySelector("tbody") || tabla;
+
+    // Helper: clonar una fila existente para agregar más si hace falta
+    function clonarFilaTemplate() {
+        const primeraFila = tbody.querySelector("tr");
+        if (!primeraFila) {
+            // crear una fila mínima si no hay plantillas (9 inputs)
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td><input type="text" class="mate1"></td>
+                <td><input type="number" min="1" max="9999" class="mate1"></td>
+                <td><input type="number" min="1" max="10" class="mate1"></td>
+                <td><input type="number" min="1" max="10" class="mate1"></td>
+                <td><input type="number" min="1" max="10" class="mate1"></td>
+                <td><input type="number" min="1" max="10" class="mate1"></td>
+                <td><input type="number" min="1" max="10" class="mate1"></td>
+                <td><input type="number" min="1" max="10" class="mate1"></td>
+                <td><input type="text" class="mate1"></td>
+            `;
+            tbody.appendChild(tr);
+            return tr;
+        } else {
+            const nuevo = primeraFila.cloneNode(true);
+            // limpiar inputs
+            nuevo.querySelectorAll("input").forEach(i => i.value = "");
+            tbody.appendChild(nuevo);
+            return nuevo;
+        }
+    }
+
+    // Recorremos las notas y las ubicamos en la tabla del alumno
+    notasDelAlumno.forEach(nota => {
+        // 1) buscar fila con la misma materia (ignorando mayúsculas)
+        let fila = Array.from(tbody.querySelectorAll("tr")).find(tr => {
+            const inMat = tr.querySelector("td:nth-child(1) input");
+            return inMat && inMat.value.trim().toLowerCase() === (nota.materia || "").toLowerCase().trim();
+        });
+
+        // 2) si no existe, buscar primera fila vacía en materia
+        if (!fila) {
+            fila = Array.from(tbody.querySelectorAll("tr")).find(tr => {
+                const inMat = tr.querySelector("td:nth-child(1) input");
+                return inMat && inMat.value.trim() === "";
+            });
+        }
+
+        // 3) si tampoco hay filas vacías, clonamos una fila nueva
+        if (!fila) fila = clonarFilaTemplate();
+
+        const inputs = Array.from(fila.querySelectorAll("input"));
+
+        // Asegurarnos que la fila tenga al menos 9 inputs (si no, adaptamos)
+        while (inputs.length < 9) {
+            const td = document.createElement("td");
+            const inp = document.createElement("input");
+            inp.type = "text";
+            td.appendChild(inp);
+            fila.appendChild(td);
+            inputs.push(inp);
+        }
+
+        // Asignación respetando el orden: 
+        // [0] materia | [1] año | [2] 1° | [3] 2° | [4] intensificacion 1°Cuat | [5] diciembre | [6] febrero | [7] calificacion final | [8] observaciones
+        inputs[0].value = nota.materia || inputs[0].value || "";
+        inputs[1].value = (nota.year || (new Date()).getFullYear()) || inputs[1].value || "";
+        inputs[2].value = nota.nota_1Cuat || inputs[2].value || "";
+        inputs[3].value = nota.nota_2Cuat || inputs[3].value || "";
+        inputs[4].value = nota.intensificacion || inputs[4].value || "";
+        inputs[5].value = nota.diciembre || inputs[5].value || "";
+        inputs[6].value = nota.febrero || inputs[6].value || "";
+        inputs[7].value = nota.final || inputs[7].value || "";
+        inputs[8].value = nota.observaciones || (`Profesor: ${nota.profesor || ""}`) || inputs[8].value || "";
+
+        // Opcional: bloquear edición de las notas para el alumno (si querés que no pueda editarlas)
+        // inputs.slice(0,9).forEach(i => i.disabled = true);
+    });
+});
