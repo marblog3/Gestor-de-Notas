@@ -659,5 +659,3 @@ if (btnGuardar) {
     btnGuardar.removeEventListener("click", guardarNotasEnLocalStorage);
     btnGuardar.addEventListener("click", guardarNotasEnLocalStorage);
 }
-
-
