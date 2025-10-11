@@ -117,4 +117,3 @@ function register() {
   // Cambia la vista a login tras registrar
   showLogin();
 }
-a
