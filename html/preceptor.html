@@ -4,80 +4,110 @@
 <head>
   <meta charset="UTF-8">
   <title>PANEL DE PRECEPTORÍA</title>
-  <link rel="website icon" type="png" href="..\img\logo.png">
-  <!-- Hojas de estilo externas -->
+  <link rel="website icon" type="png" href="../img/logo.png">
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/preceptor.css">
   <link rel="stylesheet" href="../css/responsive.css">
-
 </head>
 
-<!-- Encabezado principal de la página -->
 <header class="main-header">
   <div class="header-left">
-    <!-- Logo institucional -->
     <img src="../img/logo.png" alt="Logo" class="header-logo">
     <h1 class="header-title">E.E.S.T.N°5</h1>
   </div>
 
-  <!-- Botón de cierre de sesión -->
   <button class="logout-icon" onclick="logout()">
-
-    <div class="sign"><svg viewBox="0 0 512 512">
-        <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9
+    <div class="sign">
+      <svg viewBox="0 0 512 512">
+        <path
+          d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9
      406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7
       15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32
-       32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path>
-      </svg></div>
-
+       32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z">
+        </path>
+      </svg>
+    </div>
     <div class="text">Cerrar sesión</div>
   </button>
-
-
 </header>
 
 <body>
 
-
-  <!-- Contenedor principal del panel -->
   <div class="boletin-container">
     <h1>PANEL DE PRECEPTORÍA</h1>
 
-    <!-- Sección de asignaciones -->
-    <h2>Asignaciones</h2>
+    <!-- Asignación de profesor -->
+    <section>
+      <h2>Asignar Profesor a Materia</h2>
 
-    <!-- Bloque para asignar profesor a materia -->
-    <div>
-      <h3>Asignar profesor a materia</h3>
-      <!-- Select dinámico con lista de profesores -->
+      <label for="profesorSelect"><b>Profesor:</b></label>
       <select id="profesorSelect"></select>
-      <!-- Campo de texto para ingresar materia -->
-      <input type="text" id="materiaInput" placeholder="Materia">
+
+      <label for="materiaInput"><b>Materia:</b></label>
+      <input type="text" id="materiaInput" placeholder="Ej: Matemática, Lab. Aplicación">
+
+      <label for="anioInputProf"><b>Año:</b></label>
+      <select id="anioInputProf">
+        <option value="">Seleccionar año</option>
+        <option value="4to">4to</option>
+        <option value="5to">5to</option>
+        <option value="6to">6to</option>
+        <option value="7mo">7mo</option>
+      </select>
+
+      <label for="divisionInputProf"><b>División:</b></label>
+      <select id="divisionInputProf">
+        <option value="">Seleccionar división</option>
+        <option value="4ta">4ta</option>
+        <option value="5ta">5ta</option>
+        <option value="6ta">6ta</option>
+      </select>
+
       <div class="contenedor-botones">
         <button onclick="asignarMateria()">Asignar</button>
       </div>
-      <!-- Lista donde se mostrarán las asignaciones realizadas -->
-      <ul id="materiasList"></ul>
-    </div>
 
-    <!-- Bloque para asignar alumno a año/división/especialidad -->
-    <div>
-      <h3>Asignar alumno a año/división/especialidad</h3>
-      <!-- Select dinámico con lista de alumnos -->
+      <ul id="materiasList"></ul>
+    </section>
+
+    <hr>
+
+    <!-- Asignación de alumno -->
+    <section>
+      <h2>Asignar Alumno a Año / División / Especialidad</h2>
+
+      <label for="alumnoSelect"><b>Alumno:</b></label>
       <select id="alumnoSelect"></select>
-      <!-- Campos de entrada para datos académicos -->
-      <input type="text" id="anioInput" placeholder="Año">
-      <input type="text" id="divisionInput" placeholder="División">
-      <input type="text" id="especialidadInput" placeholder="Especialidad">
+
+      <label for="anioInput"><b>Año:</b></label>
+      <select id="anioInput">
+        <option value="">Seleccionar año</option>
+        <option value="4to">4to</option>
+        <option value="5to">5to</option>
+        <option value="6to">6to</option>
+        <option value="7mo">7mo</option>
+      </select>
+
+      <label for="divisionInput"><b>División:</b></label>
+      <select id="divisionInput">
+        <option value="">Seleccionar división</option>
+        <option value="4ta">4ta</option>
+        <option value="5ta">5ta</option>
+        <option value="6ta">6ta</option>
+      </select>
+
+      <label for="especialidadInput"><b>Especialidad:</b></label>
+      <input type="text" id="especialidadInput" value="Informática" disabled>
+
       <div class="contenedor-botones">
         <button onclick="asignarAlumno()">Asignar</button>
       </div>
-      <!-- Lista donde se mostrarán las asignaciones realizadas -->
+
       <ul id="alumnosList"></ul>
-    </div>
+    </section>
   </div>
 
   <script src="../js/preceptor.js"></script>
 </body>
 
-</html>a
+</html>

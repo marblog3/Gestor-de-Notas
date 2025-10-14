@@ -59,15 +59,19 @@
                                                         <li>
                                                                 <a href="#">Aúlica ▸</a>
                                                                 <ul>
-                                                                        <li><a href="#"
-                                                                                        data-materia="Matemáticas">Matemáticas</a>
+                                                                        <li class="menu-10"><a href="#" data-materia="Matemáticas">Matemáticas</a>
                                                                         </li>
-                                                                        <li><a href="#" data-materia="Lengua">Lengua</a>
+                                                                        <li class="menu-10"><a href="#" data-materia="Literatura">Literatura</a>
                                                                         </li>
-                                                                        <li><a href="#"
-                                                                                        data-materia="Historia">Historia</a>
+                                                                        <li class="menu-10"><a href="#" data-materia="Historia">Historia</a>
                                                                         </li>
-                                                                        <li><a href="#" data-materia="Física">Física</a>
+                                                                        <li class="menu-10"><a href="#" data-materia="Física">Física</a>
+                                                                        </li>
+                                                                        <li class="menu-10"><a href="#" data-materia="Ingles">Ingles</a>
+                                                                        </li>
+                                                                        <li class="menu-10"><a href="#" data-materia="Ingles">Arte</a>
+                                                                        </li>
+                                                                        <li class="menu-10"><a href="#" data-materia="Filosofia">Filosofia</a>
                                                                         </li>
                                                                 </ul>
                                                         </li>
@@ -76,10 +80,45 @@
                                                                 <ul>
                                                                         <li><a href="#">Informática ▸</a>
                                                                                 <ul class="submenu-lateral">
-                                                                                        <li><a href="#"
+                                                                                        <li class="menu-10"><a href="#"
                                                                                                         data-materia="Lab. Aplicacion">Lab.
-                                                                                                        Aplicacion</a>
+                                                                                                        de Sistemas
+                                                                                                        Operativos</a>
                                                                                         </li>
+                                                                                        <li class="menu-10"><a href="#"
+                                                                                                        data-materia="Lab. Aplicacion">Lab.
+                                                                                                        de
+                                                                                                        Aplicaciones</a>
+
+                                                                                        </li>
+                                                                                        <li class="menu-10"><a href="#"
+                                                                                                        data-materia="Lab. Aplicacion">Lab.
+                                                                                                        de
+                                                                                                        Programacion</a>
+                                                                                        </li>
+                                                                                        <li class="menu-10"><a href="#"
+                                                                                                        data-materia="Lab. Aplicacion">Lab.
+                                                                                                        de Hardaware</a>
+
+                                                                                        </li>
+                                                                                        <li class="menu-10"><a href="#"
+                                                                                                        data-materia="Lab. Aplicacion">Lab.
+                                                                                                        de Sistemas
+                                                                                                        Digitales</a>
+                                                                                        </li>
+                                                                                        <li class="menu-10"><a href="#"
+                                                                                                        data-materia="Lab. Aplicacion">Seguridad
+                                                                                                        Informatica</a>
+
+                                                                                        </li>
+                                                                                        <li class="menu-10"><a href="#"
+                                                                                                        data-materia="Lab. Aplicacion">Base De Datos</a>
+                                                                                        </li>
+                                                                                        <li class="menu-10"><a href="#"
+                                                                                                        data-materia="Lab. Aplicacion">Modelos y Sistemas</a>
+
+                                                                                        </li>
+                                        
                                                                                 </ul>
                                                                         </li>
                                                                         <li><a href="#"
@@ -98,11 +137,11 @@
 
 
                                         <td class="td-1">
-                                                <p>PROFESOR/A:</p><input type="text" class="input-1"disabled>
+                                                <p>PROFESOR/A:</p><input type="text" class="input-1" disabled>
                                         </td>
                                         <td class="td-1">
                                                 <p>D.N.I:
-                                                <p><input type="text" id="dni" class="input-1"disabled>
+                                                <p><input type="text" id="dni" class="input-1" disabled>
                                         </td>
                                 </tr>
                                 <tr>
@@ -184,9 +223,10 @@
                 <div id="botones" class="contenedor-botones">
                         <button id="agregarFilaBtn"><b>AGREGAR ESTUDIANTE</b></button>
                         <button id="calcularPromedioBtn"><b>CALCULAR PROMEDIOS</b></button>
-                        <button id="guardarBtn" disabled><b>GUARDAR Y NOTIFICAR</b></button>
+                        <button id="guardarBtn"><b>GUARDAR</b></button>
+                        <button id="notificarBtn" style="display:none;"><b>NOTIFICAR</b></button>
                         <button id="modificarBtn" style="display:none;"><b>MODIFICAR</b></button>
-                        <button id="exportarBtn" class="btn-exportar"><b>EXPORTAR A EXCEL</b></button>
+                        <button id="exportarBtn" class="btn-exportar" style="display:none;"><b>EXPORTAR A EXCEL</b></button>
                 </div>
 
                 <div id="reporte" class="reporte-container">
@@ -219,4 +259,4 @@
 
 </body>
 
-</html>a
+</html>

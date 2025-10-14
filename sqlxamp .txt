@@ -1,0 +1,58 @@
+-- 1. Usar la base de datos
+USE `sistema_gestion_eest5`;
+
+---------------------------------------------------
+-- 2. Tabla para usuarios pendientes de aprobación (usuarios_en_espera)
+--    Guarda temporalmente las solicitudes de registro.
+---------------------------------------------------
+CREATE TABLE IF NOT EXISTS `usuarios_en_espera` (
+    `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `fullname` VARCHAR(100) NOT NULL COMMENT 'Nombre completo del solicitante.',
+    `dni` VARCHAR(15) NOT NULL UNIQUE COMMENT 'DNI del solicitante.',
+    `email` VARCHAR(100) NOT NULL UNIQUE COMMENT 'Correo institucional (username).',
+    `requested_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha y hora de la solicitud.',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Usuarios que han solicitado registro y esperan aprobación del Admin.';
+
+---------------------------------------------------
+-- 3. Tabla para usuarios activos y aprobados (usuarios)
+--    Guarda todos los usuarios activos (Admin, Profesor, Preceptor, Alumno).
+---------------------------------------------------
+CREATE TABLE IF NOT EXISTS `usuarios` (
+    `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `fullname` VARCHAR(100) NOT NULL COMMENT 'Nombre completo del usuario.',
+    `dni` VARCHAR(15) NOT NULL UNIQUE COMMENT 'DNI del usuario.',
+    `email` VARCHAR(100) NOT NULL UNIQUE COMMENT 'Correo institucional (username).',
+    `password` VARCHAR(255) NOT NULL COMMENT 'Contraseña hasheada (usar password_hash de PHP).',
+    `role` ENUM('Administrador', 'Profesor', 'Preceptor', 'Alumno') NOT NULL COMMENT 'Rol asignado al usuario.',
+    `curso_info` JSON NULL COMMENT 'Almacena asignaciones: curso (Alumno) o materias (Profesor/Preceptor).',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Usuarios activos en el sistema con roles asignados.';
+
+-- NOTA: Insertar el usuario administrador fijo manualmente después de crear la tabla
+-- La contraseña 'admin123' debe ser hasheada en PHP antes de insertarla.
+
+---------------------------------------------------
+-- 4. Tabla para registrar las notas de los estudiantes (notas)
+--    Centraliza las calificaciones cargadas por los profesores.
+---------------------------------------------------
+CREATE TABLE IF NOT EXISTS `notas` (
+    `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `alumno_email` VARCHAR(100) NOT NULL COMMENT 'Email del alumno.',
+    `materia` VARCHAR(100) NOT NULL,
+    `profesor_email` VARCHAR(100) NOT NULL COMMENT 'Email del profesor que cargó la nota.',
+    `fecha_carga` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `curso_anio` INT(2) NULL,
+    
+    -- Calificaciones (DECIMAL para permitir notas con decimales si es necesario)
+    `nota_1Cuat` DECIMAL(4, 2) NULL,
+    `nota_2Cuat` DECIMAL(4, 2) NULL,
+    `intensificacion` DECIMAL(4, 2) NULL,
+    `diciembre` DECIMAL(4, 2) NULL,
+    `febrero` DECIMAL(4, 2) NULL,
+    `final` DECIMAL(4, 2) NULL,
+    `observaciones` TEXT NULL,
+    
+    PRIMARY KEY (`id`),
+    INDEX `idx_alumno_materia` (`alumno_email`, `materia`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Calificaciones detalladas de los estudiantes.';
