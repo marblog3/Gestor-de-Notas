@@ -45,18 +45,13 @@ async function cargarSelects() {
     }
 }
 
-<<<<<<< HEAD
 // FUNCIÓN ACTUALIZADA: Asigna materia, año y división a un profesor
-=======
-// FUNCIÓN MIGRADA: Asigna materia a profesor usando el endpoint de la DB
->>>>>>> 10d1695100edca15ba3ec2004d4fc43abcfc04bd
 async function asignarMateria() {
     const profesor = document.getElementById("profesorSelect").value;
     const materia = document.getElementById("materiaInput").value;
     const anio = document.getElementById("anioInputProf").value;
     const division = document.getElementById("divisionInputProf").value;
 
-<<<<<<< HEAD
     if (!profesor || !materia || !anio || !division) {
         return alert("Complete todos los campos para asignar la materia.");
     }
@@ -75,21 +70,6 @@ async function asignarMateria() {
         if (data.success) {
             const li = document.createElement("li");
             li.textContent = `${profesor} → ${materia} (${anio} ${division})`;
-=======
-    if (!profesor || !materia) return alert("Seleccione profesor y materia");
-    
-    try {
-        const response = await fetch('../api/assign_course.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: profesor, data: { materia } })
-        });
-        const data = await response.json();
-
-        if (data.success) {
-            const li = document.createElement("li");
-            li.textContent = `${profesor} → ${materia}`;
->>>>>>> 10d1695100edca15ba3ec2004d4fc43abcfc04bd
             document.getElementById("materiasList").appendChild(li);
             alert(data.message);
         } else {
@@ -97,10 +77,7 @@ async function asignarMateria() {
         }
     } catch (e) {
         alert("Error de conexión con el servidor al asignar materia.");
-<<<<<<< HEAD
         console.error(e);
-=======
->>>>>>> 10d1695100edca15ba3ec2004d4fc43abcfc04bd
     }
 }
 
