@@ -39,7 +39,7 @@
                                 <tr>
                                         <td class="td-1">
                                                 <p>CICLO LECTIVO:</p>
-                                                <select id="register-role" class="select-1" required>
+                                                <select id="ciclo-lectivo-select" class="select-1" required>
                                                         <option value="">Seleccionar ciclo</option>
                                                         <option>2025</option>
                                                         <option>2024</option>
@@ -52,86 +52,38 @@
                                         </td>
                                         <td class="td-1">
                                                 <p>MATERIA:</p>
-                                                <span id="materia-seleccionada" class="select-1">
-                                                        <p>Seleccionar materia</p>
-                                                </span>
-                                                <ul class="menu-materia" id="menu-materia">
-                                                        <li>
-                                                                <a href="#">Aúlica ▸</a>
-                                                                <ul>
-                                                                        <li><a href="#"
-                                                                                        data-materia="Matemáticas">Matemáticas</a>
-                                                                        </li>
-                                                                        <li><a href="#" data-materia="Lengua">Lengua</a>
-                                                                        </li>
-                                                                        <li><a href="#"
-                                                                                        data-materia="Historia">Historia</a>
-                                                                        </li>
-                                                                        <li><a href="#" data-materia="Física">Física</a>
-                                                                        </li>
-                                                                </ul>
-                                                        </li>
-                                                        <li>
-                                                                <a href="#">Taller ▸</a>
-                                                                <ul>
-                                                                        <li><a href="#">Informática ▸</a>
-                                                                                <ul class="submenu-lateral">
-                                                                                        <li><a href="#"
-                                                                                                        data-materia="Lab. Aplicacion">Lab.
-                                                                                                        Aplicacion</a>
-                                                                                        </li>
-                                                                                </ul>
-                                                                        </li>
-                                                                        <li><a href="#"
-                                                                                        data-materia="Construcciones">Construcciones</a>
-                                                                        </li>
-                                                                        <li><a href="#"
-                                                                                        data-materia="Electromecánica">Electromecánica</a>
-                                                                        </li>
-                                                                        <li><a href="#"
-                                                                                        data-materia="Química">Química</a>
-                                                                        </li>
-                                                                </ul>
-                                                        </li>
-                                                </ul>
+                                                <select id="materia-seleccionada" class="select-1">
+                                                        <option value="">Seleccionar materia</option>
+                                                </select>
                                         </td>
 
 
                                         <td class="td-1">
-                                                <p>PROFESOR/A:</p><input type="text" class="input-1"disabled>
+                                                <p>PROFESOR/A:</p><input type="text" class="input-1" disabled>
                                         </td>
                                         <td class="td-1">
                                                 <p>D.N.I:
-                                                <p><input type="text" id="dni" class="input-1"disabled>
+                                                <p><input type="text" id="dni" class="input-1" disabled>
                                         </td>
                                 </tr>
                                 <tr>
                                         <td class="td-1">
                                                 <p>AÑO:</p>
-                                                <select id="register-role" required class="select-1">
+                                                <select id="anio-select" required class="select-1">
                                                         <option value="">Seleccionar año</option>
-                                                        <option>1ro</option>
-                                                        <option>2do</option>
-                                                        <option>3ro</option>
-                                                        <option>4to</option>
-                                                        <option>5to</option>
-                                                        <option>6to</option>
-                                                        <option>7mo</option>
+                                                        <option value="4to">4to</option>
+                                                        <option value="5to">5to</option>
+                                                        <option value="6to">6to</option>
+                                                        <option value="7mo">7mo</option>
                                                 </select>
                                         </td>
                                         <td class="td-1">
                                                 <P>DIVISIÓN:</P>
-                                                <select id="register-role" required class="select-1">
+                                                <select id="division-select" required class="select-1">
                                                         <option value="">Seleccionar división</option>
-                                                        <option>1ra</option>
-                                                        <option>2da</option>
-                                                        <option>3ra</option>
-                                                        <option>4ta</option>
-                                                        <option>5ta</option>
-                                                        <option>6ta</option>
-                                                        <option>7ma</option>
-                                                        <option>8va</option>
-                                                        <option>9na</option>
+                                                        <option value="4ta">4ta</option>
+                                                        <option value="5ta">5ta</option>
+                                                        <option value="6ta">6ta</option>
                                                 </select>
                                         </td>
                                         <td class="td-1">
@@ -184,9 +136,11 @@
                 <div id="botones" class="contenedor-botones">
                         <button id="agregarFilaBtn"><b>AGREGAR ESTUDIANTE</b></button>
                         <button id="calcularPromedioBtn"><b>CALCULAR PROMEDIOS</b></button>
-                        <button id="guardarBtn" disabled><b>GUARDAR Y NOTIFICAR</b></button>
+                        <button id="guardarBtn"><b>GUARDAR</b></button>
+                        <button id="notificarBtn" style="display:none;"><b>NOTIFICAR</b></button>
                         <button id="modificarBtn" style="display:none;"><b>MODIFICAR</b></button>
-                        <button id="exportarBtn" class="btn-exportar"><b>EXPORTAR A EXCEL</b></button>
+                        <button id="exportarBtn" class="btn-exportar" style="display:none;"><b>EXPORTAR A
+                                        EXCEL</b></button>
                 </div>
 
                 <div id="reporte" class="reporte-container">
@@ -219,4 +173,4 @@
 
 </body>
 
-</html>a
+</html>

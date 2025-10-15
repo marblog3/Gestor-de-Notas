@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/principal.css">
   <link rel="stylesheet" href="../css/responsive.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
 <header class="mi-header">
@@ -25,10 +26,21 @@
     <h2>Iniciar Sesión</h2><br>
     <div id="error-msg" class="error"></div>
     <input type="email" id="login-username" placeholder="Correo institucional" required>
-    <input type="password" id="login-password" placeholder="Contraseña" required><br>
+    <input type="password" id="login-password" placeholder="Contraseña" required>
     <button onclick="login()"><b>Iniciar Sesión</b></button>
     <div class="switch">
       <b>¿No tienes cuenta?</b> <a href="javascript:void(0)" onclick="showRegister()"><b>Registrate</b></a>
+    </div>
+          <div class="google-login-container">
+      <div id="g_id_onload"
+           data-client_id="1016546675395-j3p58ugrpdhnb1pfa25m2jichtt4a4pt.apps.googleusercontent.com"
+           data-context="signin"
+           data-ux_mode="popup"
+           data-callback="handleGoogleCredentialResponse"
+           data-auto_prompt="false">
+      </div>
+
+      <div class="g_id_signin" data-type="standard"></div>
     </div>
   </div>
 
@@ -40,9 +52,8 @@
     <input type="text" id="register-dni" placeholder="DNI" required>
 
     <input type="email" id="register-username" placeholder="Correo institucional (@eest5.com)" required>
-    <p style="font-size: 13px; color: #666; margin-top: 8px;">
-  El administrador asignará tu rol (Profesor, Alumno o Preceptor) una vez aprobada tu solicitud.
-</p>
+    
+
 
 
   
@@ -55,6 +66,14 @@
 
   <script src="../js/principal.js"></script>
 
+  <div id="custom-alert-overlay" class="modal-overlay">
+  <div class="modal-box">
+    <p id="custom-alert-message"></p>
+    <button onclick="closeCustomAlert()">Aceptar</button>
+  </div>
+</div>
+
 </body>
 
-</html>a
+</html>
+

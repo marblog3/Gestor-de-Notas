@@ -267,7 +267,7 @@ p {
 .input-1 {
   margin-left: auto; /* Centramos el menú dentro de la celda */
   margin-right: auto;
-  width: 80%;
+  width: 90%;
   font-size: 25px;
   text-align: center;
 }
@@ -289,6 +289,10 @@ p {
     margin-right: auto;
     width: 100%; /* Hacemos que ocupe el 90% de la celda */
     max-width: 300px; /* Pero no más de 300px */
+}
+
+.menu-10{
+  text-align: left;
 }
 
 

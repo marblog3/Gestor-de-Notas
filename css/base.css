@@ -14,7 +14,7 @@ body {
     min-height: 100vh;
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #2a2a32;
-    zoom: 0.85; /* Zoom general para vista de escritorio */
+    zoom: 0.70; /* Zoom general para vista de escritorio */
 }
 
 /* --- Títulos --- */
