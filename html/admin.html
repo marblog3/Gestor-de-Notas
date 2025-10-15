@@ -199,6 +199,21 @@
   </div>
   
   <script src="../js/admin.js"></script>
+  
+  <div id="alertModal" class="modal">
+    <div class="modal-contenido">
+      <div class="modal-header">
+        <h2>Notificación</h2>
+        <button class="cerrar-btn" onclick="closeModal('alertModal')">&times;</button>
+      </div>
+      <div class="modal-body" style="text-align: center; font-size: 18px;">
+        <p id="alertMessage"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-submit" onclick="closeModal('alertModal')">Aceptar</button>
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>

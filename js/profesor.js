@@ -5,6 +5,16 @@ if (!activeUserJSON) {
 }
 const activeUser = JSON.parse(activeUserJSON);
 
+// --- MANEJO DE MODAL DE NOTIFICACIÓN ---
+function openAlertModalProfesor(message) {
+    document.getElementById('alertMessageProfesor').textContent = message;
+    document.getElementById('alertModalProfesor').classList.add('show');
+}
+
+function closeAlertModalProfesor() {
+    document.getElementById('alertModalProfesor').classList.remove('show');
+}
+
 //-- Cargar datos asignados al profesor ---//
 async function cargarDatosAsignados() {
     try {
@@ -20,7 +30,7 @@ async function cargarDatosAsignados() {
             materiaSelect.innerHTML = '<option value="">Seleccionar materia</option>';
 
             asignaciones.forEach((asig, index) => {
-                const optionText = `${asig.materia} (${asig.anio} ${asig.division})`;
+                const optionText = asig.materia;
                 materiaSelect.innerHTML += `<option value="${index}">${optionText}</option>`;
             });
 
@@ -51,9 +61,8 @@ function crearFilaEstudiante() {
         ${Array(11).fill('<td><input type="number" min="1" max="10" class="nota" maxlength="2"></td>').join('')}
         <td class="final-container">
             <input type="number" min="1" max="10" class="nota" maxlength="2" readonly>
-            <span class="remove-row">X</span>
         </td>
-    </tr>`;
+        <td><input type="text" name="observaciones" class="nota"></td> </tr>`;
 }
 
 // --- Reordenar números de filas ---
@@ -256,28 +265,29 @@ if(notificarBtn) {
 }
 
 
-// Lógica para guardar datos en el servidor (función auxiliar)
+// Lógica para guardar datos en el servidor 
 function guardarDatosEnServidor(materia) {
     const notasDeAlumnos = [];
     document.querySelectorAll("#tabla-estudiantes tr").forEach(fila => {
         const alumnoEmail = fila.dataset.email;
         const nombreAlumno = fila.querySelector('input[name="nombre"]').value.trim();
         if (alumnoEmail && nombreAlumno) {
-            const inputs = Array.from(fila.querySelectorAll('input[type="number"]'));
+            const inputsNumericos = Array.from(fila.querySelectorAll('input[type="number"]'));
+            const inputObservaciones = fila.querySelector('input[name="observaciones"]');
+
             notasDeAlumnos.push({
                 alumno_email: alumnoEmail,
-                nota_1Cuat: inputs[2]?.value || null,
-                nota_2Cuat: inputs[6]?.value || null,
-                intensificacion: inputs[9]?.value || null,
-                diciembre: inputs[10]?.value || null,
-                febrero: inputs[11]?.value || null,
-                final: inputs[12]?.value || null,
-                observaciones: `Profesor: ${activeUser.fullname}`, 
+                nota_1Cuat: inputsNumericos[2]?.value || null,
+                nota_2Cuat: inputsNumericos[6]?.value || null,
+                intensificacion: inputsNumericos[9]?.value || null,
+                diciembre: inputsNumericos[10]?.value || null,
+                febrero: inputsNumericos[11]?.value || null,
+                final: inputsNumericos[12]?.value || null,
+                observaciones: inputObservaciones?.value || null,
             });
         }
     });
 
-    // Enviar a la API
     fetch('../api/save_grades.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -290,34 +300,39 @@ function guardarDatosEnServidor(materia) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert("Notas guardadas correctamente. Los alumnos verán sus calificaciones.");
+            // ANTES: alert("Notas guardadas correctamente...");
+            // AHORA:
+            openAlertModalProfesor("Notas guardadas correctamente. Los alumnos verán sus calificaciones.");
             localStorage.setItem("notificacionAlumno", `¡El profesor de ${materia} cargó tus notas!`);
         } else {
-            alert(`Hubo un error al guardar en la Planilla: ${data.message}`);
+            // ANTES: alert(`Hubo un error...`);
+            // AHORA:
+            openAlertModalProfesor(`Hubo un error al guardar en la Planilla: ${data.message}`);
         }
     })
     .catch(e => {
-        alert("Error de conexión con el servidor al guardar notas.");
+        // ANTES: alert("Error de conexión...");
+        // AHORA:
+        openAlertModalProfesor("Error de conexión con el servidor al guardar notas.");
         console.error(e);
     });
 }
 
 
 // Guardar
-
 if (guardarBtn) {
     guardarBtn.addEventListener("click", () => {
-        // 1. OBTENER EL VALOR ANTES DE CAMBIAR LA INTERFAZ
         const materia = getMateriaSeleccionada();
         const materiaLimpia = materia.replace(/\s+/g, ' ').trim();
 
-        // 2. VALIDAR LA MATERIA
         if (!materiaLimpia || materiaLimpia === "Seleccionar materia") {
-            alert("ADVERTENCIA: No se seleccionó una materia. Los cambios no se guardarán en la Planilla. Por favor, haga clic en 'Modificar' para seleccionar una materia.");
-            return; // Detiene la ejecución si no hay materia
+            // ANTES: alert("ADVERTENCIA: No se seleccionó una materia...");
+            // AHORA:
+            openAlertModalProfesor("ADVERTENCIA: No se seleccionó una materia. Los cambios no se guardarán en la Planilla. Por favor, haga clic en 'Modificar' para seleccionar una materia.");
+            return;
         }
 
-        // 3. SI LA VALIDACIÓN ES EXITOSA, CAMBIAR LA INTERFAZ
+        // El resto del código no cambia
         document.querySelectorAll("select").forEach(select => {
             const valor = getSelectText(select);
             const span = document.createElement("span");
@@ -333,7 +348,6 @@ if (guardarBtn) {
         notificarBtn.style.display = "inline-block";
         exportarBtn.style.display = "inline-block";
 
-        // 4. GUARDAR LOS DATOS EN EL SERVIDOR
         guardarDatosEnServidor(materiaLimpia);
     });
 }

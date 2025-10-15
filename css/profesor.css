@@ -294,3 +294,57 @@ p {
 .menu-10{
   text-align: left;
 }
+
+/* --- ESTILOS PARA LA VENTANA MODAL DEL PROFESOR --- */
+.modal-profesor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: none; /* Oculto por defecto */
+  justify-content: center;
+  align-items: center;
+  z-index: 3000; /* Un z-index alto para estar por encima de todo */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal-profesor.show {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-contenido-profesor {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 90%;
+  max-width: 450px;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.modal-profesor.show .modal-contenido-profesor {
+  transform: scale(1);
+}
+
+.modal-contenido-profesor p {
+  font-size: 18px;
+  color: #333;
+  margin: 0 0 25px 0;
+}
+
+.modal-contenido-profesor button {
+  padding: 12px 30px;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}

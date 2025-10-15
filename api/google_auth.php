@@ -25,7 +25,7 @@ try {
 
     // 1. VERIFICAR SI EL USUARIO YA EXISTE EN LA TABLA 'usuarios'
     // Si existe aquí, se considera un usuario activo y aprobado.
-    $stmt = $pdo->prepare("SELECT email, fullname, role FROM usuarios WHERE email = :email");
+    $stmt = $pdo->prepare("SELECT email, fullname, role, dni FROM usuarios WHERE email = :email");
     $stmt->bindParam(':email', $email);
     $stmt->execute();
     $user = $stmt->fetch();

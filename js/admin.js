@@ -76,10 +76,15 @@ function openEditModal(email) {
 
 function openDeleteModal(email) {
     document.getElementById('deleteMessage').textContent = `¿Estás seguro de que quieres eliminar al usuario ${email}?`;
+    
     const confirmBtn = document.getElementById('confirmDeleteBtn');
+    confirmBtn.textContent = 'Eliminar'; // Restablecemos el texto
+    confirmBtn.className = 'btn btn-danger'; // Restablecemos la clase
+
     const newConfirmBtn = confirmBtn.cloneNode(true);
     confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
     newConfirmBtn.onclick = () => handleDeleteUser(email);
+    
     openModal('deleteModal');
 }
 
@@ -266,7 +271,7 @@ async function cargarSolicitudes() {
                     </div>
                     <div class="contenedor-botones">
                         <button onclick="openApprovalModal('${userReq.id}', '${userReq.email}', '${userReq.fullname}', '${userReq.dni}')">Aprobar</button>
-                        <button onclick="rechazarUsuario('${userReq.id}')">Rechazar</button>
+                        <button onclick="openRejectModal('${userReq.id}', '${userReq.fullname}')">Rechazar</button>
                     </div>
                 </div>`;
             pendingList.appendChild(li);
@@ -289,13 +294,15 @@ function openApprovalModal(id, email, fullname, dni) {
     openModal('approvalModal');
 }
 
+// admin.js
+
 async function handleApproveUser(id, email, fullname, dni) {
     const password = document.getElementById('approvePassword').value;
     const role = document.getElementById('approveRoleSelect').value;
     const approveBtn = document.getElementById('confirmApproveBtn');
 
     if (!password || !role) {
-        alert("Debe asignar una contraseña y un rol.");
+        openAlertModal("Debe asignar una contraseña y un rol.");
         return;
     }
     
@@ -310,27 +317,46 @@ async function handleApproveUser(id, email, fullname, dni) {
         const data = await response.json();
 
         if (data.success) {
-            alert(`Usuario ${fullname} aprobado como ${role}.`);
+            openAlertModal(`Usuario ${fullname} aprobado como ${role}.`);
+            
             closeModal('approvalModal');
             cargarUsuarios();
             cargarSolicitudes();
         } else {
-            alert(data.message || 'Error al aprobar usuario.');
+        
+            openAlertModal(data.message || 'Error al aprobar usuario.');
         }
 
     } catch (e) {
-        alert("Error de conexión al servidor al aprobar.");
+        openAlertModal("Error de conexión al servidor al aprobar.");
         console.error(e);
     } finally {
         approveBtn.disabled = false;
     }
 }
 
-async function rechazarUsuario(id) {
-    if (!confirm("¿Seguro que quieres rechazar esta solicitud?")) return;
+// --- NUEVAS FUNCIONES PARA RECHAZAR CON MODALES ---
+
+// 1. Abre el modal de confirmación
+function openRejectModal(id, fullname) {
+    // Reutilizamos el 'deleteModal' que ya existe
+    document.getElementById('deleteMessage').textContent = `¿Estás seguro de que quieres rechazar la solicitud de ${fullname}?`;
     
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    confirmBtn.textContent = 'Rechazar'; // Cambiamos el texto del botón
+    confirmBtn.className = 'btn btn-danger'; // Aseguramos el estilo de peligro
+
+    // Limpiamos eventos anteriores y asignamos la nueva acción de rechazo
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    newConfirmBtn.onclick = () => handleRejectUser(id);
+
+    openModal('deleteModal');
+}
+
+// 2. Ejecuta la lógica de rechazo después de confirmar
+async function handleRejectUser(id) {
     try {
-        // Asumimos un endpoint para eliminar el pendiente
         const response = await fetch('../api/delete_pending.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -338,16 +364,26 @@ async function rechazarUsuario(id) {
         });
         const data = await response.json();
 
+        closeModal('deleteModal'); // Cerramos el modal de confirmación
+
         if (data.success) {
-            alert("Solicitud rechazada correctamente.");
-            cargarSolicitudes();
+            // Mostramos el nuevo modal de notificación de éxito
+            openAlertModal("Solicitud rechazada correctamente.");
+            cargarSolicitudes(); // Recargamos la lista
         } else {
-            alert(data.message || 'Error al rechazar solicitud.');
+            openAlertModal(data.message || 'Error al rechazar la solicitud.');
         }
     } catch (e) {
-        alert("Error de conexión con el servidor.");
+        closeModal('deleteModal');
+        openAlertModal("Error de conexión con el servidor.");
         console.error(e);
     }
+}
+
+// 3. Función genérica para abrir el modal de notificación
+function openAlertModal(message) {
+    document.getElementById('alertMessage').textContent = message;
+    openModal('alertModal');
 }
 
 /* ------------------------------------------

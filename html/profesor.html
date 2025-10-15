@@ -113,6 +113,7 @@
                                                 <th colspan="5">2° CUATRIMESTRE</th>
                                                 <th colspan="2">INTENSIFICACIÓN</th>
                                                 <th rowspan="2">CALIFICACIÓN FINAL</th>
+                                                <th rowspan="2">OBSERVACIONES</th> </tr>
                                         </tr>
                                         <tr>
                                                 <th>CALIFICACIONES/VALORACIONES PARCIALES</th>
@@ -165,6 +166,13 @@
                 <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
                 <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+                <div id="alertModalProfesor" class="modal-profesor">
+  <div class="modal-contenido-profesor">
+    <p id="alertMessageProfesor"></p>
+    <button onclick="closeAlertModalProfesor()">Aceptar</button>
+  </div>
+</div>
 
 
 </body>
