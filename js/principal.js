@@ -97,7 +97,12 @@ async function register() {
         const data = await response.json();
 
         if (data.success) {
+<<<<<<< HEAD
         showCustomAlert("Tu solicitud fue enviada al administrador. Espera su aprobación.");
+=======
+            alert("Tu solicitud fue enviada al administrador. Espera su aprobación.");
+            showLogin();
+>>>>>>> 10d1695100edca15ba3ec2004d4fc43abcfc04bd
         } else {
             errorMsg.innerHTML = data.message || 'Error al enviar solicitud.';
         }
@@ -134,6 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
 window.history.pushState(null, null, window.location.href);
 window.onpopstate = function () {
     window.history.go(1);
+<<<<<<< HEAD
 };
 
 
@@ -210,3 +216,6 @@ async function handleGoogleCredentialResponse(response) {
         console.error(e);
     }
 }
+=======
+};
+>>>>>>> 10d1695100edca15ba3ec2004d4fc43abcfc04bd

@@ -64,7 +64,7 @@ function actualizarOrden() {
     });
 }
 
-// --- Validaciones ---
+// --- Validaciones (Mantenidas) ---
 function aplicarValidaciones() {
     const dniInput = document.getElementById("dni");
     if (dniInput) {
@@ -339,7 +339,7 @@ if (guardarBtn) {
 }
 
 
-// --- Navegación con Enter ---
+// --- Navegación con Enter (Mantenida) ---
 function configurarNavegacion() {
     document.querySelectorAll("input[type='number'], input[type='text']").forEach((input) => {
         input.removeEventListener("keydown", navegarConEnter);
@@ -356,7 +356,7 @@ function navegarConEnter(event) {
     }
 }
 
-// --- Eliminar fila ---
+// --- Eliminar fila (Mantenida) ---
 document.addEventListener("click", (e) => {
     if (e.target.classList.contains("remove-row")) {
         e.target.closest("tr").remove();
@@ -364,7 +364,7 @@ document.addEventListener("click", (e) => {
     }
 });
 
-// --- Bloquear botón atrás ---
+// --- Bloquear botón atrás (Mantenida) ---
 window.history.pushState(null, null, window.location.href);
 window.onpopstate = function () {
     window.history.go(-1);
