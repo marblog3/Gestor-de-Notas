@@ -39,27 +39,34 @@
     <section>
       <h2>Asignar Profesor a Materia</h2>
 
-      <label for="profesorSelect"><b>Profesor:</b></label>
-      <select id="profesorSelect"></select>
+      <label for="profesorSelect" class="profe"><b>Profesor:</b></label><br>
+      <select id="profesorSelect"></select><br>
 
-      <label for="materiaInput"><b>Materia:</b></label>
-      <input type="text" id="materiaInput" placeholder="Ej: Matemática">
+      <label for="materiaInput"><b>Materia:</b></label><br>
+      <input type="text" id="materiaInput" placeholder="Ej: Matemática"><br>
 
-      <label for="anioInputProf"><b>Año:</b></label>
+      <label for="anioInputProf"><b>Año:</b></label><br>
       <select id="anioInputProf">
         <option value="">Seleccionar año</option>
+        <option value="1ro">1ro</option>
+        <option value="2do">2do</option>
+        <option value="3ro">3ro</option>
         <option value="4to">4to</option>
         <option value="5to">5to</option>
         <option value="6to">6to</option>
         <option value="7mo">7mo</option>
-      </select>
+      </select><br>
 
-      <label for="divisionInputProf"><b>División:</b></label>
-      <select id="divisionInputProf">
+      <label for="divisionInputProf"><b>División:</b></label><br>
+      <select id="divisionInputProf"><br>
         <option value="">Seleccionar división</option>
-        <option value="4ta">4ta</option>
-        <option value="5ta">5ta</option>
-        <option value="6ta">6ta</option>
+        <option value="1ro">1ro</option>
+        <option value="2do">2do</option>
+        <option value="3ro">3ro</option>
+        <option value="4to">4to</option>
+        <option value="5to">5to</option>
+        <option value="6to">6to</option>
+        <option value="7mo">7mo</option>
       </select>
 
       <div class="contenedor-botones">
@@ -75,28 +82,40 @@
     <section>
       <h2>Asignar Alumno a Año / División / Especialidad</h2>
 
-      <label for="alumnoSelect"><b>Alumno:</b></label>
-      <select id="alumnoSelect"></select>
+      <label for="alumnoSelect"><b>Alumno:</b></label><br>
+      <select id="alumnoSelect"></select><br>
 
-      <label for="anioInput"><b>Año:</b></label>
+      <label for="anioInput"><b>Año:</b></label><br>
       <select id="anioInput">
         <option value="">Seleccionar año</option>
+        <option value="1ro">1ro</option>
+        <option value="2do">2do</option>
+        <option value="3ro">3ro</option>
         <option value="4to">4to</option>
         <option value="5to">5to</option>
         <option value="6to">6to</option>
         <option value="7mo">7mo</option>
-      </select>
+      </select><br>
 
-      <label for="divisionInput"><b>División:</b></label>
+      <label for="divisionInput"><b>División:</b></label><br>
       <select id="divisionInput">
         <option value="">Seleccionar división</option>
-        <option value="4ta">4ta</option>
-        <option value="5ta">5ta</option>
-        <option value="6ta">6ta</option>
-      </select>
+        <option value="1ro">1ro</option>
+        <option value="2do">2do</option>
+        <option value="3ro">3ro</option>
+        <option value="4to">4to</option>
+        <option value="5to">5to</option>
+        <option value="6to">6to</option>
+        <option value="7mo">7mo</option>
+      </select><br>
 
-      <label for="especialidadInput"><b>Especialidad:</b></label>
-      <input type="text" id="especialidadInput" value="Informática" disabled>
+    <label for="especialidadInput"><b>Especialidad:</b></label><br>
+      <select id="especialidadInput">
+        <option value="Informática">Informática</option>
+        <option value="Maestro Mayor de Obra">Maestro Mayor de Obra</option>
+        <option value="Electromecánica">Electromecánica</option>
+        <option value="Química">Química</option>
+      </select><br>
 
       <div class="contenedor-botones">
         <button onclick="asignarAlumno()">Asignar</button>

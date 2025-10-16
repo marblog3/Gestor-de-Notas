@@ -294,7 +294,8 @@ function guardarDatosEnServidor(materia) {
         body: JSON.stringify({
             grades: notasDeAlumnos,
             materia: materia,
-            profesor_email: activeUser.email
+            profesor_email: activeUser.email,
+            activeUserRole: activeUser.role
         })
     })
     .then(response => response.json())

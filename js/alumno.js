@@ -67,62 +67,84 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // --- FUNCIÓN NUEVA: Cargar las notas del alumno (MIGRADO A DB) ---
+// EN ALUMNO.JS
 async function cargarNotasDelAlumno() {
     const alumnoEmail = activeUser.email;
     const tablaMateriasBody = document.querySelector("#tabla-materias tbody");
-    
-    // Limpiamos la tabla antes de llenarla
-    tablaMateriasBody.innerHTML = ''; 
+    const tablaPendientesBody = document.querySelector("#tabla-pendientes tbody"); // Tabla para intensificación
+
+    tablaMateriasBody.innerHTML = '';
+    tablaPendientesBody.innerHTML = '';
+
+    const NOTA_APROBACION = 7; // Define la nota mínima para aprobar
 
     try {
-        // Obtenemos las notas del alumno específico
         const response = await fetch('../api/get_grades.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ alumno_email: alumnoEmail })
         });
         const notasDelAlumno = await response.json();
-        
+
         if (!notasDelAlumno || notasDelAlumno.length === 0) {
-             tablaMateriasBody.innerHTML = '<tr><td colspan="9">No hay calificaciones cargadas por el momento.</td></tr>';
-             return;
+            tablaMateriasBody.innerHTML = '<tr><td colspan="9">No hay calificaciones cargadas.</td></tr>';
+            tablaPendientesBody.innerHTML = '<tr><td colspan="11">No hay materias pendientes de aprobación.</td></tr>';
+            return;
         }
 
-        // 2. Cargamos el dato del curso del usuario (si existe)
         const userResponse = await fetch(`../api/get_user_by_email.php?email=${alumnoEmail}`);
         const userData = await userResponse.json();
         const curso = userData.success && userData.user.curso_info ? JSON.parse(userData.user.curso_info).curso : {};
-        
         const anio = curso.anio || 'N/A';
-        const especialidad = curso.especialidad || 'N/A';
 
-        // 3. Rellenamos la tabla con los datos de las notas
+        let hayPendientes = false;
         notasDelAlumno.forEach(nota => {
-            const fila = document.createElement('tr');
-            fila.innerHTML = `
+            const nota1 = parseFloat(nota.nota_1Cuat);
+            const nota2 = parseFloat(nota.nota_2Cuat);
+
+
+            // Lógica simplificada: si la nota final es menor a 7, es pendiente.
+            const esPendiente = parseFloat(nota.final) < NOTA_APROBACION;
+
+            if (esPendiente) {
+                hayPendientes = true;
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td><input type="text" class="mate1" value="${nota.materia || ''}" readonly></td>
+                    <td><input type="text" class="mate1" value="${anio}" readonly></td>
+                    <td><input type="text" class="mate1" value="${new Date().getFullYear()}" readonly></td>
+                    <td><input type="number" class="mate1" value="" readonly></td> <td><input type="number" class="mate1" value="" readonly></td> <td><input type="number" class="mate1" value="" readonly></td> <td><input type="number" class="mate1" value="" readonly></td> <td><input type="number" class="mate1" value="${nota.diciembre || ''}" readonly></td>
+                    <td><input type="number" class="mate1" value="${nota.febrero || ''}" readonly></td>
+                    <td><input type="number" class="mate1" value="${nota.final || ''}" readonly></td>
+                    <td><input type="text" class="mate1" value="" readonly></td> <td><input type="text" class="mate1" value="${nota.observaciones || ''}" readonly></td>
+                `;
+                tablaPendientesBody.appendChild(fila);
+            }
+
+            // Siempre se muestra en la tabla principal
+            const filaPrincipal = document.createElement('tr');
+            filaPrincipal.innerHTML = `
                 <td><input type="text" class="mate1" value="${nota.materia || ''}" readonly></td>
-                <td><input type="number" class="mate1" value="${anio}" readonly></td>
+                <td><input type="text" class="mate1" value="${anio}" readonly></td>
                 <td><input type="number" class="mate1" value="${nota.nota_1Cuat || ''}" readonly></td>
                 <td><input type="number" class="mate1" value="${nota.nota_2Cuat || ''}" readonly></td>
                 <td><input type="number" class="mate1" value="${nota.intensificacion || ''}" readonly></td>
                 <td><input type="number" class="mate1" value="${nota.diciembre || ''}" readonly></td>
                 <td><input type="number" class="mate1" value="${nota.febrero || ''}" readonly></td>
                 <td><input type="number" class="mate1" value="${nota.final || ''}" readonly></td>
-                <td><input type="text" class="mate1" value="${nota.observaciones || `Cargado por: ${nota.profesor_email}`}" readonly></td>
+                <td><input type="text" class="mate1" value="${nota.observaciones || ''}" readonly></td>
             `;
-            tablaMateriasBody.appendChild(fila);
+            tablaMateriasBody.appendChild(filaPrincipal);
         });
 
-        // 4. Rellenar datos generales
-        const tablaDatosGenerales = document.querySelector("#tabla-datos-generales");
-        tablaDatosGenerales.querySelector("td:nth-child(4) input").value = especialidad;
+        if (!hayPendientes) {
+            tablaPendientesBody.innerHTML = '<tr><td colspan="11">No hay materias pendientes de aprobación.</td></tr>';
+        }
 
     } catch (e) {
         console.error("Error al cargar notas del alumno desde la DB:", e);
-        tablaMateriasBody.innerHTML = '<tr><td colspan="9">Error de conexión al cargar las notas.</td></tr>';
     }
 }
-
 // --- Cargar datos personales del alumno ---
 async function cargarDatosPersonales() {
     const tabla = document.querySelector("#tabla-datos-generales");
@@ -138,12 +160,12 @@ async function cargarDatosPersonales() {
 
         const inputDni = primeraFila.cells[2].querySelector("input");
         if (inputDni) inputDni.value = activeUser.dni || "";
-        
+
         // Cargar información del curso/especialidad desde la DB
         try {
             const response = await fetch(`../api/get_user_by_email.php?email=${activeUser.email}`);
             const data = await response.json();
-            
+
             if (data.success && data.user.curso_info) {
                 const info = JSON.parse(data.user.curso_info);
                 if (info && info.curso) { // Asegurarse de que el objeto 'curso' existe
@@ -152,7 +174,7 @@ async function cargarDatosPersonales() {
                     primeraFila.cells[3].querySelector("input").value = curso.especialidad || '';
                     segundaFila.cells[0].querySelector("input").value = curso.anio || '';
                     segundaFila.cells[1].querySelector("input").value = curso.division || '';
-                    
+
                     // Ciclo lectivo automático
                     const anioActual = new Date().getFullYear();
                     primeraFila.cells[0].querySelector("input").value = anioActual;
