@@ -12,7 +12,7 @@
 .boletin th, .boletin td {
     border: 1px solid black;
     padding: 5px;
-    text-align: center;
+    text-align: left;
 }
 
 .accion-boton {
@@ -72,7 +72,12 @@
     margin-top: 20px; /* Le da un espacio superior */
     margin-bottom: 20px; /* Le da un espacio inferior */
 }
-/* Se quita el "margin-right" gigante que causaba el problema de renderizado. */
+
+.form-group, .form-group label, .form-group select {
+    margin-bottom: 15px;
+}
+
+
 
 
 .title-3 {
@@ -118,9 +123,12 @@ input {
 }
 
 #asignarProfesorForm,
-#asignarAlumnoForm {
-  text-align: right;
+#asignarAlumnoForm,
+#asignarPreceptorForm { 
+  text-align: left; /* Alineamos todo a la izquierda */
 }
+
+
 
 .input-2{
     width: 484px;
@@ -322,4 +330,21 @@ input {
   display: flex; /* Coloca los elementos hijos (botones) uno al lado del otro */
   /* Opcional: ajusta el espacio entre los botones */
   gap: 10px; /* Agrega un espacio de 10 píxeles entre ellos */
+}
+
+
+/* =================================================================
+   SOLUCIÓN PARA ALINEACIÓN DE SUBTÍTULO AÑO
+   ================================================================= */
+
+/* Asegura que todos los labels en los forms-group tomen todo el ancho y se alineen a la izquierda. */
+.form-container .form-group label {
+    /* La clave: fuerza al label a tomar toda la línea, moviendo el select abajo. */
+    display: block;
+    /* Asegura la alineación a la izquierda si el contenedor tiene text-align: center o right. */
+    text-align: left; 
+    /* Asegura que el label ocupe el espacio completo si es necesario. */
+    width: 100%; 
+    /* Opcional: Añade un pequeño margen debajo del subtítulo. */
+    margin-bottom: 5px; 
 }

@@ -63,7 +63,8 @@
       </div>
     </div>
 
-    <div class="column-layout-container">
+    <div class="column-layout-container" style="max-width: 1700px; margin: 20px auto;">
+      
       <div class="form-container">
         <h2>Asignar alumno a curso</h2>
         <form id="asignarAlumnoForm">
@@ -120,79 +121,99 @@
           <div class="form-group">
             <label for="materiaSelectAdmin">Materia:</label>
             <select id="materiaSelectAdmin" name="materiaSelectAdmin" required>
-                <option value="">Cargando materias...</option>
+              <option value="">Cargando materias...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="anioInputMateriaAdmin">Año:</label>
+            <select id="anioInputMateriaAdmin">
+              <option value="">Seleccionar año</option>
+              <option value="1ro">1ro</option>
+              <option value="2do">2do</option>
+              <option value="3ro">3ro</option>
+              <option value="4to">4to</option>
+              <option value="5to">5to</option>
+              <option value="6to">6to</option>
+              <option value="7mo">7mo</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="divisionInputMateriaAdmin">División:</label>
+            <select id="divisionInputMateriaAdmin">
+              <option value="">Seleccionar división</option>
+              <option value="1ra">1ra</option>
+              <option value="2da">2da</option>
+              <option value="3ra">3ra</option>
+              <option value="4ta">4ta</option>
+              <option value="5ta">5ta</option>
+              <option value="6ta">6ta</option>
+              <option value="7ma">7ma</option>
             </select>
           </div>
           <button type="submit">Asignar Materia</button>
         </form>
       </div>
-    </div>
-    
-    <div class="column-layout-container">
-      <div class="form-container" style="width: 100%;">
-          <h2>Asignar Preceptor a Curso</h2>
 
-          <form id="asignarPreceptorForm">
-              <div class="form-group">
-                  <label for="preceptorSelectAdmin">Preceptor:</label>
-                  <select id="preceptorSelectAdmin" name="preceptorSelectAdmin" required></select>
-              </div>
-              
-              <div class="form-group">
-                  <label for="anioInputPreceptorAdmin">Año:</label>
-                  <select id="anioInputPreceptorAdmin">
-                      <option value="">Seleccionar año</option>
-                      <option value="1ro">1ro</option>
-                      <option value="2do">2do</option>
-                      <option value="3ro">3ro</option>
-                      <option value="4to">4to</option>
-                      <option value="5to">5to</option>
-                      <option value="6to">6to</option>
-                      <option value="7mo">7mo</option>
-                  </select>
-              </div>
-
-              <div class="form-group">
-                  <label for="divisionInputPreceptorAdmin">División:</label>
-                  <select id="divisionInputPreceptorAdmin">
-                      <option value="">Seleccionar división</option>
-                      <option value="1ra">1ra</option>
-                      <option value="2da">2da</option>
-                      <option value="3ra">3ra</option>
-                      <option value="4ta">4ta</option>
-                      <option value="5ta">5ta</option>
-                      <option value="6ta">6ta</option>
-                      <option value="7ma">7ma</option>
-                  </select>
-              </div>
-
-              <button type="submit">Asignar Preceptor</button>
-          </form>
+      <div class="form-container">
+        <h2>Asignar Preceptor a Curso</h2>
+        <form id="asignarPreceptorForm">
+            <div class="form-group">
+                <label for="preceptorSelectAdmin">Preceptor:</label>
+                <select id="preceptorSelectAdmin" name="preceptorSelectAdmin" required></select>
+            </div>
+            <div class="form-group">
+                <label for="anioInputPreceptorAdmin">Año:</label>
+                <select id="anioInputPreceptorAdmin">
+                    <option value="">Seleccionar año</option>
+                    <option value="1ro">1ro</option>
+                    <option value="2do">2do</option>
+                    <option value="3ro">3ro</option>
+                    <option value="4to">4to</option>
+                    <option value="5to">5to</option>
+                    <option value="6to">6to</option>
+                    <option value="7mo">7mo</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="divisionInputPreceptorAdmin">División:</label>
+                <select id="divisionInputPreceptorAdmin">
+                    <option value="">Seleccionar división</option>
+                    <option value="1ra">1ra</option>
+                    <option value="2da">2da</option>
+                    <option value="3ra">3ra</option>
+                    <option value="4ta">4ta</option>
+                    <option value="5ta">5ta</option>
+                    <option value="6ta">6ta</option>
+                    <option value="7ma">7ma</option>
+                </select>
+            </div>
+            <button type="submit">Asignar Preceptor</button>
+        </form>
       </div>
     </div>
-    <div class="form-container" style="width: 100%;">
-        <h2>Gestionar Materias</h2>
-        
-        <div class="search-container" style="justify-content: flex-end; margin-bottom: 10px;">
-            <button onclick="openCreateMateriaModal()"><b>➕ Crear Materia</b></button>
-        </div>
+    <div class="column-layout-container" style="max-width: 1700px; margin: 20px auto;">
+        <div class="form-container">
+            <h2>Gestionar Materias</h2>
+            
+            <div class="search-container" style="justify-content: flex-end; margin-bottom: 10px;">
+                <button onclick="openCreateMateriaModal()"><b>➕ Crear Materia</b></button>
+            </div>
 
-        <table class="boletin" id="materiasTable">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre de la Materia</th>
-                    <th>Especialidad</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
+            <table class="boletin" id="materiasTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre de la Materia</th>
+                        <th>Especialidad</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
                 </tbody>
-        </table>
+            </table>
+        </div>
     </div>
-    </div>
-
-  <div id="userModal" class="modal">
+    <div id="userModal" class="modal">
     <div class="modal-contenido">
       <div class="modal-header">
         <h2 id="modalTitle"></h2>
@@ -267,6 +288,7 @@
         </form>
     </div>
   </div>
+
   <div id="deleteModal" class="modal">
     <div class="modal-contenido">
       <div class="modal-header">
@@ -283,6 +305,7 @@
       </div>
     </div>
   </div>
+
   <div id="approvalModal" class="modal">
     <div class="modal-contenido">
       <div class="modal-header">
@@ -315,7 +338,6 @@
       </div>
     </div>
   </div>
-
   <script src="../js/admin.js"></script>
 
   <div id="alertModal" class="modal">
