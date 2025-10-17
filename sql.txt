@@ -163,3 +163,51 @@ VALUES
 ('RUIZ PACHECO MARIANO', '40000017', 'mruizpacheco@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
 ('SANCHEZ DYLAN EMANUEL', '40000018', 'desanchez@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
 ('SONCO INFANTE FABIO', '40000019', 'fsoncoinfante@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO);
+
+
+
+ DEFINICIÓN DE LA TABLA `materias`
+---------------------------------------------------
+CREATE TABLE IF NOT EXISTS `materias` (
+    `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `nombre` VARCHAR(100) NOT NULL UNIQUE COMMENT 'Nombre completo de la materia.',
+    `especialidad` VARCHAR(100) NULL COMMENT 'Especialidad a la que pertenece (NULL si es común).',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Catálogo de todas las materias de la escuela.';
+
+SET @CURSO_ANIO_MMDO = '7mo';
+SET @CURSO_DIVISION_MMDO = '1ra';
+SET @CURSO_ESPECIALIDAD_MMDO = 'Maestro Mayor de Obra';
+
+SET @CURSO_INFO_ALUMNO_MMDO = JSON_OBJECT(
+    'curso', 
+    JSON_OBJECT(
+        'anio', @CURSO_ANIO_MMDO, 
+        'division', @CURSO_DIVISION_MMDO, 
+        'especialidad', @CURSO_ESPECIALIDAD_MMDO
+    )
+);
+
+
+INSERT INTO `usuarios` (fullname, dni, email, password, role, curso_info)
+VALUES 
+('Arquitecto Soto', '60123451', 'asotommdo@eest5.com', @PASSWORD_HASH, 'Profesor', '[
+  {"materia": "Diseño de Estructuras", "anio": "7mo", "division": "1ra"},
+  {"materia": "Cálculo y Presupuesto", "anio": "7mo", "division": "1ra"}
+]'),
+('Ingeniero Peralta', '60123452', 'iperaltammdo@eest5.com', @PASSWORD_HASH, 'Profesor', '[
+  {"materia": "Construcciones Avanzadas", "anio": "7mo", "division": "1ra"}
+]');
+
+
+INSERT INTO `usuarios` (fullname, dni, email, password, role, curso_info)
+VALUES 
+('ALUMNO MMDO UNO', '70000001', 'a1mmdo@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO_MMDO),
+('ALUMNO MMDO DOS', '70000002', 'a2mmdo@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO_MMDO),
+('ALUMNO MMDO TRES', '70000003', 'a3mmdo@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO_MMDO);
+
+
+INSERT INTO `usuarios` (fullname, dni, email, password, role, curso_info)
+VALUES 
+('Preceptor Martin', '80123451', 'pmartin@eest5.com', @PASSWORD_HASH, 'Preceptor', NULL),
+('Preceptor Ana', '80123452', 'afernandez@eest5.com', @PASSWORD_HASH, 'Preceptor', NULL);
