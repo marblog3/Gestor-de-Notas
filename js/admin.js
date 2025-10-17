@@ -1,14 +1,11 @@
-
 // Verifica si hay sesión activa al cargar la página
 const activeUser = sessionStorage.getItem("activeUser");
 if (!activeUser) {
-    // Si no hay sesión activa → redirige al login
     window.location.href = "principal.html";
 }
 
 
 //!-- Script para evitar volver atrás con el historial -->
-
 window.history.pushState(null, null, window.location.href);
 window.onpopstate = function () {
     window.history.go(1);
@@ -16,10 +13,8 @@ window.onpopstate = function () {
 };
 
 
-
-
 /* ------------------------------------------
- MANEJO DE MODALES
+ MANEJO DE MODALES (SE MANTIENE LOCAL)
  ------------------------------------------ */
 function openModal(modalId) {
     document.getElementById(modalId).classList.add('show');
@@ -35,8 +30,13 @@ window.addEventListener('click', (e) => {
     }
 });
 
+function openAlertModal(message) {
+    document.getElementById('alertMessage').textContent = message;
+    openModal('alertModal');
+}
+
 /* ------------------------------------------
-   LÓGICA DE GESTIÓN DE USUARIOS
+   CRUD DE USUARIOS ACTIVOS (MIGRADO A DB)
    ------------------------------------------ */
 function openCreateModal() {
     document.getElementById('userForm').reset();
@@ -50,21 +50,30 @@ function openCreateModal() {
 }
 
 function openEditModal(email) {
-    const user = JSON.parse(localStorage.getItem(email));
-    if (!user) return;
-
+    // La lógica de obtener el usuario se realiza dentro de la función async de edición
     document.getElementById('userForm').reset();
     document.getElementById('modalTitle').textContent = 'Editar Usuario';
     document.getElementById('emailError').style.display = 'none';
-
     document.getElementById('originalEmail').value = email;
-    document.getElementById('userFullname').value = user.fullname || '';
-    document.getElementById('userDni').value = user.dni || '';
     document.getElementById('userEmail').value = email;
     document.getElementById('userEmail').readOnly = true;
-    document.getElementById('userRole').value = user.role;
     document.getElementById('userPassword').placeholder = "Dejar en blanco para no cambiar";
     document.getElementById('userPassword').required = false;
+
+    // Cargar datos actuales del usuario (fetch)
+    fetch(`../api/get_user_by_email.php?email=${email}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                const user = data.user;
+                document.getElementById('userFullname').value = user.fullname || '';
+                document.getElementById('userDni').value = user.dni || '';
+                document.getElementById('userRole').value = user.role;
+            } else {
+                alert("Error al cargar datos del usuario para edición.");
+                closeModal('userModal');
+            }
+        });
 
     document.getElementById('userForm').onsubmit = handleEditUser;
     openModal('userModal');
@@ -72,14 +81,19 @@ function openEditModal(email) {
 
 function openDeleteModal(email) {
     document.getElementById('deleteMessage').textContent = `¿Estás seguro de que quieres eliminar al usuario ${email}?`;
+    
     const confirmBtn = document.getElementById('confirmDeleteBtn');
+    confirmBtn.textContent = 'Eliminar'; // Restablecemos el texto
+    confirmBtn.className = 'btn btn-danger'; // Restablecemos la clase
+
     const newConfirmBtn = confirmBtn.cloneNode(true);
     confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
     newConfirmBtn.onclick = () => handleDeleteUser(email);
+    
     openModal('deleteModal');
 }
 
-function handleCreateUser(event) {
+async function handleCreateUser(event) {
     event.preventDefault();
     const email = document.getElementById('userEmail').value;
     const password = document.getElementById('userPassword').value;
@@ -93,20 +107,28 @@ function handleCreateUser(event) {
         emailError.style.display = 'block';
         return;
     }
-    if (localStorage.getItem(email)) {
-        emailError.textContent = "Este correo ya está registrado.";
-        emailError.style.display = 'block';
-        return;
-    }
 
-    emailError.style.display = 'none';
-    const user = { email, fullname, dni, password: btoa(password), role };
-    localStorage.setItem(email, JSON.stringify(user));
-    closeModal('userModal');
-    cargarUsuarios();
+    try {
+        const response = await fetch('../api/create_user.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, role, fullname, dni })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            closeModal('userModal');
+            cargarUsuarios();
+        } else {
+            emailError.textContent = data.message;
+            emailError.style.display = 'block';
+        }
+    } catch (e) {
+        alert("Error de conexión con el servidor.");
+    }
 }
 
-function handleEditUser(event) {
+async function handleEditUser(event) {
     event.preventDefault();
     const originalEmail = document.getElementById('originalEmail').value;
     const newPassword = document.getElementById('userPassword').value;
@@ -114,58 +136,85 @@ function handleEditUser(event) {
     const newFullname = document.getElementById('userFullname').value;
     const newDni = document.getElementById('userDni').value;
 
-    const user = JSON.parse(localStorage.getItem(originalEmail));
-    user.role = newRole;
-    user.fullname = newFullname;
-    user.dni = newDni;
-    if (newPassword) {
-        user.password = btoa(newPassword);
+    try {
+        const response = await fetch('../api/edit_user.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: originalEmail, newPassword, newRole, newFullname, newDni })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            closeModal('userModal');
+            cargarUsuarios();
+        } else {
+            alert(data.message);
+        }
+    } catch (e) {
+        alert("Error de conexión con el servidor.");
     }
-    localStorage.setItem(originalEmail, JSON.stringify(user));
-    closeModal('userModal');
-    cargarUsuarios();
 }
 
-function handleDeleteUser(email) {
-    localStorage.removeItem(email);
-    closeModal('deleteModal');
-    cargarUsuarios();
+async function handleDeleteUser(email) {
+    try {
+        const response = await fetch('../api/delete_user.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            closeModal('deleteModal');
+            cargarUsuarios();
+        } else {
+            alert(data.message);
+        }
+    } catch (e) {
+        alert("Error de conexión con el servidor.");
+    }
 }
 
 /* ------------------------------------------
-   CARGA DE DATOS Y BÚSQUEDA
+   CARGA DE DATOS Y BÚSQUEDA (MIGRADO A DB)
    ------------------------------------------ */
-function cargarUsuarios() {
+async function cargarUsuarios() {
     const tbody = document.querySelector("#usersTable tbody");
-    tbody.innerHTML = "";
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key === "pendingUsers" || key.startsWith("asignacion")) continue;
-        try {
-            const user = JSON.parse(localStorage.getItem(key));
-            if (!user || !user.role) continue;
+    tbody.innerHTML = "<tr><td colspan='5'>Cargando usuarios...</td></tr>";
 
+    try {
+        const response = await fetch('../api/get_users.php');
+        const users = await response.json();
+
+        tbody.innerHTML = ""; // Limpiar el mensaje de carga
+        if (!users || users.length === 0) {
+            tbody.innerHTML = "<tr><td colspan='5'>No hay usuarios activos registrados.</td></tr>";
+        }
+
+        users.forEach(user => {
             const row = document.createElement("tr");
             row.innerHTML = `
             <td>${user.fullname || 'No especificado'}</td>
             <td>${user.dni || 'No especificado'}</td>
-            <td>${user.email || user.username}</td>
+            <td>${user.email}</td>
             <td>${user.role}</td>
             <td>
-                <button class="accion-boton-1" onclick="openEditModal('${key}')">Editar</button>
-                <button class="accion-boton" onclick="openDeleteModal('${key}')">Eliminar</button>
+                <button class="accion-boton-1" onclick="openEditModal('${user.email}')">Editar</button>
+                <button class="accion-boton" onclick="openDeleteModal('${user.email}')">Eliminar</button>
             </td>
             `;
             tbody.appendChild(row);
-        } catch (e) { console.error("Error parsing user data for key:", key) }
+        });
+    } catch (e) {
+        tbody.innerHTML = "<tr><td colspan='5'>Error al cargar usuarios del servidor.</td></tr>";
     }
-    cargarSelects();
 
-    // --- SOLUCIÓN DEFINITIVA ---
-    // Sincroniza la tabla con el buscador inmediatamente después de cargar los datos.
+    cargarSelects();
+    cargarMaterias(); // También carga materias para el select
     searchUsers();
 }
 
+// Búsqueda local (mantenemos la función original)
 function searchUsers() {
     const input = document.getElementById('searchInput');
     const filter = input.value.toUpperCase();
@@ -188,9 +237,8 @@ function searchUsers() {
     }
 }
 
-
 /* ------------------------------------------
-   MANEJO DE SOLICITUDES PENDIENTES
+   MANEJO DE SOLICITUDES PENDIENTES (MIGRADO A DB)
    ------------------------------------------ */
 function toggleSolicitudes() {
     const content = document.getElementById("solicitudesContent");
@@ -201,152 +249,391 @@ function toggleSolicitudes() {
     flecha.textContent = isHidden ? "⬆" : "⬇";
 }
 
-function cargarSolicitudes() {
+async function cargarSolicitudes() {
     const pendingList = document.getElementById("pendingList");
-    pendingList.innerHTML = "";
-    const pendingUsers = JSON.parse(localStorage.getItem("pendingUsers")) || [];
-    pendingUsers.forEach((user, index) => {
-        const date = new Date(user.requestedAt).toLocaleString();
-        const li = document.createElement("li");
-        li.innerHTML = `
+    pendingList.innerHTML = "<li>Cargando solicitudes pendientes...</li>";
+
+    try {
+        const response = await fetch('../api/get_pending.php');
+        const pendingUsers = await response.json();
+        
+        pendingList.innerHTML = "";
+
+        if (!pendingUsers || pendingUsers.length === 0) {
+             pendingList.innerHTML = '<li>No hay solicitudes pendientes.</li>';
+             return;
+        }
+
+        pendingUsers.forEach((userReq, index) => {
+            // El ID de la DB se usa como identificador único
+            const date = new Date(userReq.requested_at).toLocaleString();
+            const li = document.createElement("li");
+            li.innerHTML = `
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
                     <div>
-                        <b>${user.fullname} (${user.dni})</b><br>
-                        <span style="font-size:14px;color:#333">${user.username} (Rol: ${user.role})</span><br>
+                        <b>${userReq.fullname} (${userReq.dni})</b><br>
+                        <span style="font-size:14px;color:#333">${userReq.email}</span><br>
                         <span style="font-size:12px;color:#666">${date}</span>
                     </div>
                     <div class="contenedor-botones">
-                        <button onclick="openApprovalModal(${index})">Aprobar</button>
-                        <button onclick="rechazarUsuario(${index})">Rechazar</button>
+                        <button onclick="openApprovalModal('${userReq.id}', '${userReq.email}', '${userReq.fullname}', '${userReq.dni}')">Aprobar</button>
+                        <button onclick="openRejectModal('${userReq.id}', '${userReq.fullname}')">Rechazar</button>
                     </div>
                 </div>`;
-        pendingList.appendChild(li);
-    });
+            pendingList.appendChild(li);
+        });
+    } catch (e) {
+        pendingList.innerHTML = '<li>Error al cargar solicitudes del servidor.</li>';
+        console.error("Error al cargar solicitudes:", e);
+    }
 }
 
-function openApprovalModal(index) {
-    const pendingUsers = JSON.parse(localStorage.getItem("pendingUsers")) || [];
-    const userReq = pendingUsers[index];
-
-    document.getElementById('approveEmail').textContent = userReq.username;
-    document.getElementById('approveName').textContent = userReq.fullname;
-    document.getElementById('approveDni').textContent = userReq.dni;
+function openApprovalModal(id, email, fullname, dni) {
+    document.getElementById('approveEmail').textContent = email;
+    document.getElementById('approveName').textContent = fullname;
+    document.getElementById('approveDni').textContent = dni;
     document.getElementById('approvePassword').value = '';
 
     const confirmBtn = document.getElementById('confirmApproveBtn');
-    confirmBtn.onclick = () => handleApproveUser(index);
+    confirmBtn.onclick = () => handleApproveUser(id, email, fullname, dni);
 
     openModal('approvalModal');
 }
 
-function handleApproveUser(index) {
+async function handleApproveUser(id, email, fullname, dni) {
     const password = document.getElementById('approvePassword').value;
     const role = document.getElementById('approveRoleSelect').value;
+    const approveBtn = document.getElementById('confirmApproveBtn');
 
     if (!password || !role) {
-        alert("Debe asignar una contraseña y un rol.");
+        openAlertModal("Debe asignar una contraseña y un rol.");
         return;
     }
+    
+    approveBtn.disabled = true;
 
-    const pendingUsers = JSON.parse(localStorage.getItem("pendingUsers")) || [];
-    const userReq = pendingUsers[index];
+    try {
+        const response = await fetch('../api/approve_user.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_pendiente: id, email, fullname, dni, password, role })
+        });
+        const data = await response.json();
 
-    const newUser = {
-        email: userReq.username,
-        fullname: userReq.fullname,
-        dni: userReq.dni,
-        password: btoa(password),
-        role
-    };
+        if (data.success) {
+            openAlertModal(`Usuario ${fullname} aprobado como ${role}.`);
+            
+            closeModal('approvalModal');
+            cargarUsuarios();
+            cargarSolicitudes();
+        } else {
+        
+            openAlertModal(data.message || 'Error al aprobar usuario.');
+        }
 
-    // Guardar en localStorage
-    localStorage.setItem(newUser.email, JSON.stringify(newUser));
-
-    // Eliminar de pendientes
-    pendingUsers.splice(index, 1);
-    localStorage.setItem("pendingUsers", JSON.stringify(pendingUsers));
-
-    alert(`Usuario ${newUser.fullname} aprobado como ${role}.`);
-
-    closeModal('approvalModal');
-    cargarUsuarios();
-    cargarSolicitudes();
-}
-
-
-function rechazarUsuario(index) {
-    if (!confirm("¿Seguro que quieres rechazar esta solicitud?")) return;
-    const pendingUsers = JSON.parse(localStorage.getItem("pendingUsers")) || [];
-    pendingUsers.splice(index, 1);
-    localStorage.setItem("pendingUsers", JSON.stringify(pendingUsers));
-    cargarSolicitudes();
-}
-
-/*FORMULARIOS DE ASIGNACIÓN*/
-function cargarSelects() {
-    const profesorSelect = document.getElementById("profesorSelect");
-    const alumnoSelect = document.getElementById("alumnoSelect");
-    profesorSelect.innerHTML = '<option value="">Seleccione un profesor</option>';
-    alumnoSelect.innerHTML = '<option value="">Seleccione un alumno</option>';
-
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key === "pendingUsers" || key.startsWith("asignacion")) continue;
-
-        try {
-            const user = JSON.parse(localStorage.getItem(key));
-            if (user && user.role) {
-                if (user.role === "Profesor") {
-                    profesorSelect.innerHTML += `<option value="${user.email}">${user.fullname || user.email}</option>`;
-                }
-                if (user.role === "Alumno") {
-                    alumnoSelect.innerHTML += `<option value="${user.email}">${user.fullname || user.email}</option>`;
-                }
-            }
-        } catch (e) { }
+    } catch (e) {
+        openAlertModal("Error de conexión al servidor al aprobar.");
+        console.error(e);
+    } finally {
+        approveBtn.disabled = false;
     }
 }
 
-document.getElementById('asignarProfesorForm').addEventListener('submit', function (event) {
+// --- NUEVAS FUNCIONES PARA RECHAZAR CON MODALES ---
+
+// 1. Abre el modal de confirmación
+function openRejectModal(id, fullname) {
+    // Reutilizamos el 'deleteModal' que ya existe
+    document.getElementById('deleteMessage').textContent = `¿Estás seguro de que quieres rechazar la solicitud de ${fullname}?`;
+    
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    confirmBtn.textContent = 'Rechazar'; // Cambiamos el texto del botón
+    confirmBtn.className = 'btn btn-danger'; // Aseguramos el estilo de peligro
+
+    // Limpiamos eventos anteriores y asignamos la nueva acción de rechazo
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    newConfirmBtn.onclick = () => handleRejectUser(id);
+
+    openModal('deleteModal');
+}
+
+// 2. Ejecuta la lógica de rechazo después de confirmar
+async function handleRejectUser(id) {
+    try {
+        const response = await fetch('../api/delete_pending.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_pendiente: id })
+        });
+        const data = await response.json();
+
+        closeModal('deleteModal'); // Cerramos el modal de confirmación
+
+        if (data.success) {
+            // Mostramos el nuevo modal de notificación de éxito
+            openAlertModal("Solicitud rechazada correctamente.");
+            cargarSolicitudes(); // Recargamos la lista
+        } else {
+            openAlertModal(data.message || 'Error al rechazar la solicitud.');
+        }
+    } catch (e) {
+        closeModal('deleteModal');
+        openAlertModal("Error de conexión con el servidor.");
+        console.error(e);
+    }
+}
+
+/* ------------------------------------------
+   NUEVO CRUD DE MATERIAS
+   ------------------------------------------ */
+function openCreateMateriaModal() {
+    document.getElementById('materiaForm').reset();
+    openModal('materiaModal');
+}
+
+async function handleCreateMateria(event) {
+    event.preventDefault();
+    const nombre = document.getElementById('materiaNombre').value.trim();
+    const especialidad = document.getElementById('materiaEspecialidad').value; 
+
+    try {
+        const response = await fetch('../api/create_materia.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nombre, especialidad }) 
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            closeModal('materiaModal');
+            openAlertModal("Materia creada correctamente.");
+            cargarMaterias(); 
+        } else {
+            openAlertModal(data.message);
+        }
+    } catch (e) {
+        openAlertModal("Error de conexión con el servidor.");
+    }
+}
+
+function openDeleteMateriaModal(id, nombre) {
+    document.getElementById('deleteMessage').textContent = `¿Estás seguro de que quieres eliminar la materia "${nombre}"?`;
+    
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    confirmBtn.textContent = 'Eliminar';
+    confirmBtn.className = 'btn btn-danger'; 
+
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    newConfirmBtn.onclick = () => handleDeleteMateria(id);
+    
+    openModal('deleteModal');
+}
+
+async function handleDeleteMateria(id) {
+    try {
+        const response = await fetch('../api/delete_materia.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id })
+        });
+        const data = await response.json();
+
+        closeModal('deleteModal'); 
+
+        if (data.success) {
+            openAlertModal("Materia eliminada correctamente.");
+            cargarMaterias(); 
+        } else {
+            openAlertModal(data.message || 'Error al eliminar la materia.');
+        }
+    } catch (e) {
+        openAlertModal("Error de conexión con el servidor.");
+    }
+}
+
+
+async function cargarMaterias() {
+    const tbody = document.querySelector("#materiasTable tbody");
+    const materiaSelectAdmin = document.getElementById("materiaSelectAdmin");
+    
+    if (tbody) tbody.innerHTML = "<tr><td colspan='4'>Cargando materias...</td></tr>"; 
+    if (materiaSelectAdmin) materiaSelectAdmin.innerHTML = '<option value="">Cargando materias...</option>';
+
+    try {
+        const response = await fetch('../api/get_materias.php');
+        const materias = await response.json();
+
+        if (tbody) tbody.innerHTML = "";
+        if (materiaSelectAdmin) materiaSelectAdmin.innerHTML = '<option value="">Seleccione una materia</option>';
+        
+        materias.forEach(materia => {
+            if (tbody) {
+                // Lógica de visualización para la Especialidad (Tronco Común si es vacía)
+                const especialidadTexto = materia.especialidad && materia.especialidad.trim() !== '' 
+                                          ? materia.especialidad 
+                                          : 'Tronco Común'; 
+                
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                <td>${materia.id}</td>
+                <td>${materia.nombre}</td>
+                <td style="text-align: center;">${especialidadTexto}</td> 
+                <td>
+                    <button class="accion-boton" onclick="openDeleteMateriaModal('${materia.id}', '${materia.nombre}')">Eliminar</button>
+                </td>
+                `;
+                tbody.appendChild(row);
+            }
+            // Llenar select para asignación
+            const option = `<option value="${materia.nombre}">${materia.nombre}</option>`;
+            if (materiaSelectAdmin) materiaSelectAdmin.innerHTML += option;
+        });
+
+    } catch (e) {
+        if (tbody) tbody.innerHTML = "<tr><td colspan='4'>Error al cargar materias.</td></tr>";
+        if (materiaSelectAdmin) materiaSelectAdmin.innerHTML = '<option value="">Error al cargar</option>';
+    }
+}
+
+
+/* ------------------------------------------
+   FORMULARIOS DE ASIGNACIÓN (CORRECCIONES CLAVE)
+   ------------------------------------------ */
+async function cargarSelects() {
+    const profesorSelect = document.getElementById("profesorSelect");
+    const alumnoSelect = document.getElementById("alumnoSelect");
+    const preceptorSelectAdmin = document.getElementById("preceptorSelectAdmin"); // NUEVO SELECT
+
+    profesorSelect.innerHTML = '<option value="">Seleccione un profesor</option>';
+    alumnoSelect.innerHTML = '<option value="">Seleccione un alumno</option>';
+    if (preceptorSelectAdmin) preceptorSelectAdmin.innerHTML = '<option value="">Seleccione un preceptor</option>'; // Inicializar
+
+    try {
+        // Reutilizamos el endpoint que trae todos los usuarios activos
+        const response = await fetch('../api/get_users.php');
+        const users = await response.json();
+        
+        users.forEach(user => {
+            if (user.role === "Profesor") {
+                profesorSelect.innerHTML += `<option value="${user.email}">${user.fullname || user.email}</option>`;
+            }
+            if (user.role === "Alumno") {
+                alumnoSelect.innerHTML += `<option value="${user.email}">${user.fullname || user.email}</option>`;
+            }
+            // Poblar el nuevo select de Preceptores
+            if (user.role === "Preceptor" && preceptorSelectAdmin) {
+                preceptorSelectAdmin.innerHTML += `<option value="${user.email}">${user.fullname || user.email}</option>`;
+            }
+        });
+    } catch (e) {
+        console.error("Error al cargar selects de asignación:", e);
+    }
+}
+
+document.getElementById('asignarProfesorForm').addEventListener('submit', async function (event) {
     event.preventDefault();
     const profesor = document.getElementById("profesorSelect").value;
-    const materia = document.getElementById("materiaInput").value;
+    const materia = document.getElementById("materiaSelectAdmin").value; 
+
     if (!profesor || !materia) return alert("Seleccione profesor y materia");
 
-    const asignacionKey = `asignacion_prof_${profesor}`;
-    const asignaciones = JSON.parse(localStorage.getItem(asignacionKey)) || [];
-    if (!asignaciones.includes(materia)) {
-        asignaciones.push(materia);
-        localStorage.setItem(asignacionKey, JSON.stringify(asignaciones));
-        alert(`Materia '${materia}' asignada a ${profesor}.`);
-    } else {
-        alert("Esta materia ya está asignada a este profesor.");
+    // Estructura de datos que incluye año y división vacíos para el backend
+    const asignacion_info = { materia: materia, anio: '', division: '' };
+
+    try {
+        const response = await fetch('../api/assign_subject.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: profesor, data: asignacion_info }) 
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            alert(data.message);
+        } else {
+            alert(data.message || "Error al asignar materia.");
+        }
+    } catch (e) {
+        alert("Error de conexión con el servidor.");
     }
 });
 
-document.getElementById('asignarAlumnoForm').addEventListener('submit', function (event) {
+document.getElementById('asignarAlumnoForm').addEventListener('submit', async function (event) {
     event.preventDefault();
     const alumno = document.getElementById("alumnoSelect").value;
     const anio = document.getElementById("anioInput").value;
     const division = document.getElementById("divisionInput").value;
     const especialidad = document.getElementById("especialidadInput").value;
+    
     if (!alumno || !anio || !division || !especialidad) return alert("Complete todos los campos del alumno.");
 
-    const curso = `${anio} ${division} ${especialidad}`;
-    const asignacionKey = `asignacion_alu_${alumno}`;
-    localStorage.setItem(asignacionKey, JSON.stringify({ curso }));
-    alert(`Alumno ${alumno} asignado al curso ${curso}.`);
+    const curso_info = { anio, division, especialidad };
+    
+    try {
+        const response = await fetch('../api/assign_course.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: alumno, data: curso_info }) 
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            alert(data.message);
+        } else {
+            alert(data.message || "Error al asignar curso.");
+        }
+    } catch (e) {
+        alert("Error de conexión con el servidor.");
+    }
 });
 
+// NUEVA FUNCIÓN DE ASIGNACIÓN DE PRECEPTOR PARA EL ADMINISTRADOR
+async function asignarPreceptorAdmin(event) {
+    event.preventDefault();
+    const preceptor = document.getElementById("preceptorSelectAdmin").value;
+    const anio = document.getElementById("anioInputPreceptorAdmin").value;
+    const division = document.getElementById("divisionInputPreceptorAdmin").value;
 
-/* NICIALIZACIÓN Y OTROS*/
+    if (!preceptor || !anio || !division) {
+        return alert("Complete todos los campos para asignar el preceptor.");
+    }
+
+    const asignacion_info = { preceptor_email: preceptor, anio, division };
+
+    try {
+        // Usamos el mismo endpoint que actualiza a todos los alumnos del curso
+        const response = await fetch('../api/assign_preceptor.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: asignacion_info })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            alert(data.message);
+        } else {
+            alert(data.message || "Error al asignar preceptor.");
+        }
+    } catch (e) {
+        alert("Error de conexión con el servidor al asignar preceptor.");
+        console.error(e);
+    }
+}
+
+// Listener para el nuevo formulario de Asignar Preceptor
+document.getElementById('asignarPreceptorForm').addEventListener('submit', asignarPreceptorAdmin);
+
+
+/* INICIALIZACIÓN Y OTROS */
 function logout() {
     sessionStorage.removeItem("activeUser");
     window.location.href = "principal.html";
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Usamos un pequeño retraso para combatir el autocompletado agresivo de algunos navegadores
+    // Esto asegura que la búsqueda se resetee al cargar la página
     setTimeout(() => {
         document.getElementById('searchInput').value = '';
     }, 100);
@@ -356,4 +643,3 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarUsuarios();
     cargarSolicitudes();
 });
-a

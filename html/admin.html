@@ -73,20 +73,43 @@
           </div>
           <div class="form-group">
             <label for="anioInput">Año:</label>
-            <input type="number" id="anioInput" name="anioInput" placeholder="Ej: 5" class="input-2" required>
+            <select id="anioInput">
+              <option value="">Seleccionar año</option>
+              <option value="1ro">1ro</option>
+              <option value="2do">2do</option>
+              <option value="3ro">3ro</option>
+              <option value="4to">4to</option>
+              <option value="5to">5to</option>
+              <option value="6to">6to</option>
+              <option value="7mo">7mo</option>
+            </select>
           </div>
           <div class="form-group">
             <label for="divisionInput">División:</label>
-            <input type="text" id="divisionInput" name="divisionInput" placeholder="Ej: 2da" class="input-2" required>
+            <select id="divisionInput">
+              <option value="">Seleccionar división</option>
+              <option value="1ra">1ra</option>
+              <option value="2da">2da</option>
+              <option value="3ra">3ra</option>
+              <option value="4ta">4ta</option>
+              <option value="5ta">5ta</option>
+              <option value="6ta">6ta</option>
+              <option value="7ma">7ma</option>
+            </select>
           </div>
           <div class="form-group">
             <label for="especialidadInput">Especialidad:</label>
-            <input type="text" id="especialidadInput" name="especialidadInput" placeholder="Ej: Informática"
-              class="input-2" required>
+            <select id="especialidadInput">
+              <option value="Informática">Informática</option>
+              <option value="Maestro Mayor de Obra">Maestro Mayor de Obra</option>
+              <option value="Electromecánica">Electromecánica</option>
+              <option value="Química">Química</option>
+            </select>
           </div>
           <button type="submit">Asignar Alumno</button>
         </form>
       </div>
+      
       <div class="form-container">
         <h2>Asignar profesor a materia</h2>
         <form id="asignarProfesorForm">
@@ -95,16 +118,79 @@
             <select id="profesorSelect" name="profesorSelect" required></select>
           </div>
           <div class="form-group">
-            <label for="materiaInput">Materia:</label>
-            <input type="text" id="materiaInput" name="materiaInput" placeholder="Ej: Programación" class="input-2"
-              required>
+            <label for="materiaSelectAdmin">Materia:</label>
+            <select id="materiaSelectAdmin" name="materiaSelectAdmin" required>
+                <option value="">Cargando materias...</option>
+            </select>
           </div>
           <button type="submit">Asignar Materia</button>
         </form>
       </div>
     </div>
+    
+    <div class="column-layout-container">
+      <div class="form-container" style="width: 100%;">
+          <h2>Asignar Preceptor a Curso</h2>
 
-  </div>
+          <form id="asignarPreceptorForm">
+              <div class="form-group">
+                  <label for="preceptorSelectAdmin">Preceptor:</label>
+                  <select id="preceptorSelectAdmin" name="preceptorSelectAdmin" required></select>
+              </div>
+              
+              <div class="form-group">
+                  <label for="anioInputPreceptorAdmin">Año:</label>
+                  <select id="anioInputPreceptorAdmin">
+                      <option value="">Seleccionar año</option>
+                      <option value="1ro">1ro</option>
+                      <option value="2do">2do</option>
+                      <option value="3ro">3ro</option>
+                      <option value="4to">4to</option>
+                      <option value="5to">5to</option>
+                      <option value="6to">6to</option>
+                      <option value="7mo">7mo</option>
+                  </select>
+              </div>
+
+              <div class="form-group">
+                  <label for="divisionInputPreceptorAdmin">División:</label>
+                  <select id="divisionInputPreceptorAdmin">
+                      <option value="">Seleccionar división</option>
+                      <option value="1ra">1ra</option>
+                      <option value="2da">2da</option>
+                      <option value="3ra">3ra</option>
+                      <option value="4ta">4ta</option>
+                      <option value="5ta">5ta</option>
+                      <option value="6ta">6ta</option>
+                      <option value="7ma">7ma</option>
+                  </select>
+              </div>
+
+              <button type="submit">Asignar Preceptor</button>
+          </form>
+      </div>
+    </div>
+    <div class="form-container" style="width: 100%;">
+        <h2>Gestionar Materias</h2>
+        
+        <div class="search-container" style="justify-content: flex-end; margin-bottom: 10px;">
+            <button onclick="openCreateMateriaModal()"><b>➕ Crear Materia</b></button>
+        </div>
+
+        <table class="boletin" id="materiasTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre de la Materia</th>
+                    <th>Especialidad</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
+    </div>
+    </div>
 
   <div id="userModal" class="modal">
     <div class="modal-contenido">
@@ -147,6 +233,38 @@
           <button type="submit" class="btn btn-submit">Guardar</button>
         </div>
       </form>
+    </div>
+  </div>
+  
+  <div id="materiaModal" class="modal">
+    <div class="modal-contenido">
+        <div class="modal-header">
+            <h2>Crear Nueva Materia</h2>
+            <button class="cerrar-btn" onclick="closeModal('materiaModal')">&times;</button>
+        </div>
+        <form id="materiaForm" onsubmit="handleCreateMateria(event)">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="materiaNombre">Nombre de la Materia</label>
+                    <input type="text" id="materiaNombre" placeholder="Ej: Programación" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="materiaEspecialidad">Especialidad (Opcional)</label>
+                    <select id="materiaEspecialidad">
+                        <option value="">Ninguna / Tronco Común</option>
+                        <option value="Informática">Informática</option>
+                        <option value="Maestro Mayor de Obra">Maestro Mayor de Obra</option>
+                        <option value="Electromecánica">Electromecánica</option>
+                        <option value="Química">Química</option>
+                    </select>
+                </div>
+                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel" onclick="closeModal('materiaModal')">Cancelar</button>
+                <button type="submit" class="btn btn-submit">Guardar</button>
+            </div>
+        </form>
     </div>
   </div>
   <div id="deleteModal" class="modal">
@@ -197,8 +315,23 @@
       </div>
     </div>
   </div>
-  
+
   <script src="../js/admin.js"></script>
+
+  <div id="alertModal" class="modal">
+    <div class="modal-contenido">
+      <div class="modal-header">
+        <h2>Notificación</h2>
+        <button class="cerrar-btn" onclick="closeModal('alertModal')">&times;</button>
+      </div>
+      <div class="modal-body" style="text-align: center; font-size: 18px;">
+        <p id="alertMessage"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-submit" onclick="closeModal('alertModal')">Aceptar</button>
+      </div>
+    </div>
+  </div>
 </body>
 
-</html>a
+</html>

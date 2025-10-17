@@ -74,11 +74,12 @@
 #register-container button {
     width: 100%;
     max-width: 200px;
-    margin: 15px auto;
+    margin: 20px auto;
     display: block;
     border-radius: 8px;
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
 
 #login-container button { background-color: #27ae60; }
 #register-container button { background-color: #e74c3c; }
@@ -92,5 +93,53 @@
 .switch {
     text-align: center;
     margin-top: 10px;
+}
+
+/* --- Estilos para el contenedor del botón de Google --- */
+.google-login-container {
+    margin-top: 20px; /* Espacio superior */
+    display: flex;
+    justify-content: center; /* Centra el botón horizontalmente */
+}
+
+/* --- Estilos para la Ventana Modal Personalizada --- */
+.modal-overlay {
+  position: fixed; /* Se posiciona sobre toda la página */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+  display: none; /* Oculta por defecto */
+  justify-content: center;
+  align-items: center;
+  z-index: 2000; /* Asegura que esté por encima de todo */
+}
+
+.modal-box {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+}
+
+.modal-box p {
+  font-size: 18px;
+  margin: 0 0 20px 0; /* Espacio entre el texto y el botón */
+  color: #333;
+}
+
+.modal-box button {
+  padding: 10px 25px;
+  background-color: #27ae60; /* Mismo color que el botón de Iniciar Sesión */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
 }
 

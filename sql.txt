@@ -1,0 +1,165 @@
+/**
+ * -------------------------------------------------------------------
+ * SCRIPT DE CONFIGURACIÓN Y POBLACIÓN DE LA BASE DE DATOS
+ * SISTEMA GESTOR DE NOTAS - E.E.S.T. N°5
+ * -------------------------------------------------------------------
+ *
+ * Propósito: Crea las tres tablas principales (usuarios, usuarios_en_espera, notas)
+ * y realiza la inserción inicial de usuarios para el curso 7mo 4ta.
+ *
+ * NOTA DE SEGURIDAD:
+ * La variable @PASSWORD_HASH contiene el hash seguro para la contraseña
+ * generada previamente. Todos los usuarios insertados usarán esta misma
+ * contraseña inicial.
+ *
+ */
+
+-- 1. SELECCIÓN DE LA BASE DE DATOS
+---------------------------------------------------
+USE `sistema_gestion_eest5`;
+
+-- ---------------------------------------------------
+-- 2. DEFINICIÓN DE LA TABLA `usuarios_en_espera`
+--    Almacena las solicitudes de registro que esperan la aprobación del Administrador.
+---------------------------------------------------
+CREATE TABLE IF NOT EXISTS `usuarios_en_espera` (
+    `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `fullname` VARCHAR(100) NOT NULL COMMENT 'Nombre completo del solicitante.',
+    `dni` VARCHAR(15) NOT NULL UNIQUE COMMENT 'DNI del solicitante.',
+    `email` VARCHAR(100) NOT NULL UNIQUE COMMENT 'Correo institucional (username).',
+    `requested_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha y hora de la solicitud.',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Usuarios que han solicitado registro y esperan aprobación del Admin.';
+
+-- ---------------------------------------------------
+-- 3. DEFINICIÓN DE LA TABLA `usuarios`
+--    Almacena todos los usuarios activos del sistema con sus roles y asignaciones.
+---------------------------------------------------
+CREATE TABLE IF NOT EXISTS `usuarios` (
+    `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `fullname` VARCHAR(100) NOT NULL COMMENT 'Nombre completo del usuario.',
+    `dni` VARCHAR(15) NOT NULL UNIQUE COMMENT 'DNI del usuario.',
+    `email` VARCHAR(100) NOT NULL UNIQUE COMMENT 'Correo institucional (username).',
+    `password` VARCHAR(255) NOT NULL COMMENT 'Contraseña hasheada (usar password_hash de PHP).',
+    `role` ENUM('Administrador', 'Profesor', 'Preceptor', 'Alumno') NOT NULL COMMENT 'Rol asignado al usuario.',
+    `curso_info` JSON NULL COMMENT 'Almacena asignaciones: curso (Alumno) o materias (Profesor/Preceptor).',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Usuarios activos en el sistema con roles asignados.';
+
+-- NOTA: Se recomienda insertar un usuario administrador fijo manualmente tras crear las tablas.
+
+-- ---------------------------------------------------
+-- 4. DEFINICIÓN DE LA TABLA `notas`
+--    Centraliza el registro de calificaciones de los estudiantes.
+---------------------------------------------------
+CREATE TABLE IF NOT EXISTS `notas` (
+    `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `alumno_email` VARCHAR(100) NOT NULL COMMENT 'Email del alumno.',
+    `materia` VARCHAR(100) NOT NULL,
+    `profesor_email` VARCHAR(100) NOT NULL COMMENT 'Email del profesor que cargó la nota.',
+    `fecha_carga` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `curso_anio` INT(2) NULL,
+    
+    -- Calificaciones y períodos de intensificación
+    `nota_1Cuat` DECIMAL(4, 2) NULL,
+    `nota_2Cuat` DECIMAL(4, 2) NULL,
+    `intensificacion` DECIMAL(4, 2) NULL,
+    `diciembre` DECIMAL(4, 2) NULL,
+    `febrero` DECIMAL(4, 2) NULL,
+    `final` DECIMAL(4, 2) NULL,
+    `observaciones` TEXT NULL,
+    
+    PRIMARY KEY (`id`),
+    -- Índice para búsquedas rápidas de notas por alumno y materia
+    INDEX `idx_alumno_materia` (`alumno_email`, `materia`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Calificaciones detalladas de los estudiantes.';
+
+
+-- ***************************************************
+-- PARTE 2: INSERCIÓN DE DATOS INICIALES (PROFESORES, PRECEPTORA Y ALUMNOS)
+-- ***************************************************
+
+-- 5. CONFIGURACIÓN DE VARIABLES GLOBALES
+---------------------------------------------------
+
+-- Contraseña en hash (corresponde a la contraseña en texto claro utilizada para el setup)
+SET @PASSWORD_HASH = '$2y$10$mlO8dk8E7FGu4itL.45JpOLl7mVsBg8VkXvRI8ewxiEs5tZGG1B9G'; 
+
+-- Variables para el curso de ciclo superior
+SET @CURSO_ANIO = '7mo';
+SET @CURSO_DIVISION = '4ta';
+SET @CURSO_ESPECIALIDAD = 'Informática';
+
+-- Estructura JSON para la asignación del curso 7mo 4ta
+SET @CURSO_INFO_ALUMNO = JSON_OBJECT(
+    'curso', 
+    JSON_OBJECT(
+        'anio', @CURSO_ANIO, 
+        'division', @CURSO_DIVISION, 
+        'especialidad', @CURSO_ESPECIALIDAD
+    )
+);
+
+-- ---------------------------------------------------
+-- 6. INSERCIÓN DE PROFESORES
+--    Asigna el rol 'Profesor' y sus materias y curso a través del campo `curso_info` (JSON).
+---------------------------------------------------
+INSERT INTO `usuarios` (fullname, dni, email, password, role, curso_info)
+VALUES 
+('Gimenez Cesar', '20123456', 'cgimenez@eest5.com', @PASSWORD_HASH, 'Profesor', '[
+  {"materia": "Instalación, mantenimiento y reparación de redes informáticas", "anio": "7mo", "division": "4ta"},
+  {"materia": "Instalación, mantenimiento y reparación de sistemas computacionales", "anio": "7mo", "division": "4ta"},
+  {"materia": "Evaluación de proyectos", "anio": "7mo", "division": "4ta"},
+  {"materia": "Prácticas profesionalizantes del sector informática", "anio": "7mo", "division": "4ta"}
+]'),
+('Guido Gandolfo', '21123456', 'ggandolfo@eest5.com', @PASSWORD_HASH, 'Profesor', '[
+  {"materia": "Instalación, mantenimiento y reparación de redes informáticas", "anio": "7mo", "division": "4ta"},
+  {"materia": "Proyecto, diseño e implementación de sistemas computacionales", "anio": "7mo", "division": "4ta"},
+  {"materia": "Base de datos", "anio": "7mo", "division": "4ta"},
+  {"materia": "Prácticas profesionalizantes del sector informática", "anio": "7mo", "division": "4ta"}
+]'),
+('Lo Bue Octavio', '22123456', 'olobue@eest5.com', @PASSWORD_HASH, 'Profesor', '[
+  {"materia": "Modelos y sistemas", "anio": "7mo", "division": "4ta"}
+]'),
+('Matias Pacheco', '23123456', 'apacheco@eest5.com', @PASSWORD_HASH, 'Profesor', '[
+  {"materia": "Emprendimientos productivos y desarrollo local", "anio": "7mo", "division": "4ta"}
+]'),
+('Ricardo Garcia', '24123456', 'rgarcia@eest5.com', @PASSWORD_HASH, 'Profesor', '[
+  {"materia": "Instalación, mantenimiento y reparación de sistemas computacionales", "anio": "7mo", "division": "4ta"}
+]'),
+('Matias Paladino', '25123456', 'mfpaladinovela@eest5.com', @PASSWORD_HASH, 'Profesor', '[
+  {"materia": "Proyecto, diseño e implementación de sistemas computacionales", "anio": "7mo", "division": "4ta"}
+]');
+
+-- ---------------------------------------------------
+-- 7. INSERCIÓN DE PRECEPTORA
+--    Asigna el rol 'Preceptor'. Tiene permisos globales, por lo que `curso_info` es NULL.
+---------------------------------------------------
+INSERT INTO `usuarios` (fullname, dni, email, password, role, curso_info)
+VALUES ('Marianela', '30123456', 'marianela@eest5.com', @PASSWORD_HASH, 'Preceptor', NULL);
+
+-- ---------------------------------------------------
+-- 8. INSERCIÓN DE ALUMNOS
+--    Asigna el rol 'Alumno' y el curso 7mo 4ta - Informática a cada estudiante.
+---------------------------------------------------
+INSERT INTO `usuarios` (fullname, dni, email, password, role, curso_info)
+VALUES 
+('ABACA ABIGAIL LUCIA', '40000001', 'alabaca@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
+('ALVAREZ IVAN DANIEL', '40000002', 'idalvarez@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
+('AVENDAÑO SANTA CRUZ DYLAN ENRIQUE', '40000003', 'deavendano@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
+('BALBONI CORONEL DYLAN LEONEL', '40000004', 'dlbalbonicoronel@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
+('BELAWSKY LAUTARO EZEQUIEL', '40000005', 'lebelawsky@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
+('BENITEZ DINORA SELENE NADINE', '40000006', 'dsnbenitez@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
+('BENITEZ RAMIREZ MARIA VIANNEY', '40000007', 'mvbenitezramirez@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
+('CANTERO MILAGROS EDITH', '40000008', 'mcantero@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
+('CANTERO DOMINGUEZ EDUARDO', '40000009', 'ecanterodominguez@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
+('CHURRUARIN FRANCO BAUTISTA', '40000010', 'fbchurruarin@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
+('CRISTEFF NICANOR IGNACIO', '40000011', 'nicristeff@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
+('GOMEZ FACUNDO DAVID', '40000012', 'fdgomez@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
+('GOMEZ KEVIN GABRIEL', '40000013', 'kggomez@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
+('MOLERO AGUSTIN LEONEL', '40000014', 'almolero@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
+('MOREYRA ROCIO AILEN', '40000015', 'ramoreyra@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
+('QUIROGA AMBAR NAHIARA', '40000016', 'aquiroga@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
+('RUIZ PACHECO MARIANO', '40000017', 'mruizpacheco@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
+('SANCHEZ DYLAN EMANUEL', '40000018', 'desanchez@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
+('SONCO INFANTE FABIO', '40000019', 'fsoncoinfante@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO);

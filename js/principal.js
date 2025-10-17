@@ -12,40 +12,42 @@ function showRegister() {
     document.getElementById('error-msg').innerHTML = '';
 }
 
-// LOGIN
-function login() {
+// LOGIN - MIGRADOS A PHP
+async function login() {
     const username = document.getElementById('login-username').value.trim();
     const password = document.getElementById('login-password').value;
+    const errorMsg = document.getElementById('error-msg');
 
     if (!username || !password) {
-        document.getElementById('error-msg').innerHTML = 'Complete todos los campos';
+        errorMsg.innerHTML = 'Complete todos los campos';
         return;
     }
 
-    // ADMIN FIJO
-    if (username === "admin@eest5.com" && password === "admin123") {
-        sessionStorage.setItem("activeUser", JSON.stringify({ email: username, role: "Administrador" }));
-        window.location.href = "admin.html";
-        return;
-    }
-
-    // Validar correo institucional
     if (!username.endsWith("@eest5.com")) {
-        document.getElementById('error-msg').innerHTML = "Debe usar un correo institucional (@eest5.com)";
+        errorMsg.innerHTML = "Debe usar un correo institucional (@eest5.com)";
         return;
     }
 
-    const savedUser = localStorage.getItem(username);
-    if (savedUser) {
-        const user = JSON.parse(savedUser);
-        if (user.password === btoa(password)) {
+    try {
+        const response = await fetch('../api/login.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            const user = data.user;
             sessionStorage.setItem("activeUser", JSON.stringify(user));
+            errorMsg.innerHTML = '';
             redirectByRole(user.role);
         } else {
-            document.getElementById('error-msg').innerHTML = 'Contraseña incorrecta';
+            errorMsg.innerHTML = data.message || 'Credenciales incorrectas';
         }
-    } else {
-        document.getElementById('error-msg').innerHTML = 'Usuario no encontrado';
+
+    } catch (e) {
+        errorMsg.innerHTML = 'Error de conexión con el servidor.';
+        console.error(e);
     }
 }
 
@@ -69,33 +71,40 @@ function redirectByRole(role) {
     }
 }
 
-// REGISTRO
-function register() {
+// REGISTRO - MIGRADO A PHP
+async function register() {
     const fullname = document.getElementById('register-fullname').value.trim();
     const dni = document.getElementById('register-dni').value.trim();
     const username = document.getElementById('register-username').value.trim();
+    const errorMsg = document.getElementById('register-error-msg');
 
     if (!fullname || !dni || !username) {
-        document.getElementById('register-error-msg').innerHTML = 'Complete todos los campos';
+        errorMsg.innerHTML = 'Complete todos los campos';
         return;
     }
 
     if (!username.endsWith("@eest5.com")) {
-        document.getElementById('register-error-msg').innerHTML = "Debe usar un correo institucional (@eest5.com)";
+        errorMsg.innerHTML = "Debe usar un correo institucional (@eest5.com)";
         return;
     }
 
-    const pendingUsers = JSON.parse(localStorage.getItem("pendingUsers")) || [];
-    pendingUsers.push({
-        username,
-        fullname,
-        dni,
-        requestedAt: new Date().toISOString()
-    });
-    localStorage.setItem("pendingUsers", JSON.stringify(pendingUsers));
+    try {
+        const response = await fetch('../api/register.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ fullname, dni, username })
+        });
+        const data = await response.json();
 
-    alert("Tu solicitud fue enviada al administrador. Espera su aprobación.");
-    showLogin();
+        if (data.success) {
+        showCustomAlert("Tu solicitud fue enviada al administrador. Espera su aprobación.");
+        } else {
+            errorMsg.innerHTML = data.message || 'Error al enviar solicitud.';
+        }
+    } catch (e) {
+        errorMsg.innerHTML = 'Error de conexión con el servidor.';
+        console.error(e);
+    }
 }
 
 // Tecla Enter para login/registro
@@ -110,22 +119,94 @@ document.addEventListener("keydown", function (event) {
     }
 });
 
-// Al cargar: si hay sesión activa, NO redirige automáticamente,
-// solo evita entrar si se escribe manualmente "principal.html"
+// Evita la redirección si ya hay sesión activa
 document.addEventListener("DOMContentLoaded", () => {
     const activeUser = sessionStorage.getItem("activeUser");
     if (activeUser) {
         const user = JSON.parse(activeUser);
         if (!window.location.pathname.endsWith("principal.html")) return;
-        // Mostrar mensaje y redirigir a su página
         alert("Ya tienes una sesión activa.");
         redirectByRole(user.role);
     }
 });
 
-// Evitar volver atrás al presionar el botón del navegador (solo mantiene la página actual)
+// Evitar volver atrás al presionar el botón del navegador
 window.history.pushState(null, null, window.location.href);
 window.onpopstate = function () {
     window.history.go(1);
 };
-a
+
+
+// =======================================================
+// ===== LÓGICA PARA GOOGLE SIGN-IN Y MODAL PERSONALIZADO =====
+// =======================================================
+
+// --- Funciones para la Ventana Modal ---
+function showCustomAlert(message) {
+  document.getElementById('custom-alert-message').textContent = message;
+  document.getElementById('custom-alert-overlay').style.display = 'flex';
+}
+
+function closeCustomAlert() {
+  document.getElementById('custom-alert-overlay').style.display = 'none';
+  showLogin(); // Muestra el formulario de login después de cerrar
+}
+
+// --- Lógica de Google Sign-In ---
+
+// Función para decodificar el token JWT de Google
+function parseJwt(token) {
+    try {
+        let base64Url = token.split('.')[1];
+        let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        let jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+    } catch (e) {
+        return null;
+    }
+}
+
+// Función que se ejecuta cuando Google devuelve una credencial
+async function handleGoogleCredentialResponse(response) {
+    const data = parseJwt(response.credential);
+    if (!data) {
+        document.getElementById('error-msg').innerHTML = "Error al procesar la respuesta de Google.";
+        return;
+    }
+
+    const userEmail = data.email;
+    const userName = data.name;
+
+    // 1. Validar que sea un correo institucional
+    if (!userEmail.endsWith("@eest5.com")) {
+        document.getElementById('error-msg').innerHTML = "Debe usar un correo institucional (@eest5.com)";
+        return;
+    }
+
+    // 2. Enviar datos a un nuevo script PHP para que verifique o registre
+    try {
+        const res = await fetch('../api/google_auth.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: userEmail, fullname: userName })
+        });
+        const result = await res.json();
+
+        if (result.success && result.action === 'login') {
+            // Si el usuario existe, PHP nos devuelve sus datos y lo logueamos
+            sessionStorage.setItem("activeUser", JSON.stringify(result.user));
+            redirectByRole(result.user.role);
+        } else if (result.success && result.action === 'pending') {
+            // Si el usuario no existía, se agregó a pendientes
+            showCustomAlert("Tu solicitud con Google fue enviada. Espera la aprobación del administrador.");
+        } else {
+            // Cualquier otro error
+            document.getElementById('error-msg').innerHTML = result.message || 'Ocurrió un error.';
+        }
+    } catch (e) {
+        document.getElementById('error-msg').innerHTML = 'Error de conexión con el servidor.';
+        console.error(e);
+    }
+}

@@ -21,14 +21,17 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+
+
 .th-2 {
   font-size: 20px;
   /* Agrandar el texto de la celda */
-  min-width: 180px;
+  min-width: 270px;
   /* Aumenta este valor si necesitas que sean aún más largos */
   height: 50px;
   padding: 10px;
   /* Añadir un poco de espacio interno */
+ 
 }
 
 
@@ -73,11 +76,14 @@
   display: block;
 }
 
+
+
 .mate1 {
   border-color: transparent;
-  width: 70%;
+  width: 75%;
   pointer-events: none;/* evita clics o foco */
   opacity: 0.6; /* lo hace ver desactivado */
+  text-align: center;
   
 }
 
