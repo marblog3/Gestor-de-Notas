@@ -15,39 +15,27 @@ function closeAlertModalProfesor() {
     document.getElementById('alertModalProfesor').classList.remove('show');
 }
 
-//-- Cargar datos asignados al profesor (MODIFICADA para evitar paréntesis vacíos) ---//
+// Variable global para guardar las asignaciones del profesor
+let profesorAsignaciones = [];
+
+//-- Cargar datos asignados al profesor (MODIFICADA para que el filtro funcione) ---//
 async function cargarDatosAsignados() {
     try {
-        // Usa el email del usuario activo para buscar sus datos, incluyendo curso_info
         const response = await fetch(`../api/get_user_by_email.php?email=${activeUser.email}`);
         const data = await response.json();
 
-        // 1. Validar que la respuesta sea exitosa y contenga 'curso_info'
         if (data.success && data.user.curso_info) {
-            
-            // 2. Parsear el JSON del campo curso_info
-            const asignaciones = JSON.parse(data.user.curso_info);
+            profesorAsignaciones = JSON.parse(data.user.curso_info); // Guarda las asignaciones globalmente
             const materiaSelect = document.getElementById("materia-seleccionada");
             const anioSelect = document.getElementById("anio-select");
             const divisionSelect = document.getElementById("division-select");
 
             materiaSelect.innerHTML = '<option value="">Seleccionar materia</option>';
 
-            // 3. Iterar y llenar el select solo si es un array válido
-            if (Array.isArray(asignaciones)) {
-                asignaciones.forEach((asig, index) => {
-                    
-                    // --- CORRECCIÓN PARA EVITAR PARÉNTESIS VACÍOS ---
-                    let suffix = '';
-                    // Solo añade (Año División) si existe Año O División
-                    if (asig.anio || asig.division) {
-                        suffix = ` (${asig.anio || ''} ${asig.division || ''})`;
-                    }
-                    
+            if (Array.isArray(profesorAsignaciones)) {
+                profesorAsignaciones.forEach((asig, index) => {
+                    let suffix = (asig.anio || asig.division) ? ` (${asig.anio || ''} ${asig.division || ''})` : '';
                     const optionText = `${asig.materia}${suffix}`;
-                    // --------------------------------------------------
-
-                    // El value es el índice para recuperar la asignación al seleccionar
                     materiaSelect.innerHTML += `<option value="${index}">${optionText}</option>`;
                 });
             }
@@ -55,13 +43,15 @@ async function cargarDatosAsignados() {
             materiaSelect.addEventListener('change', (e) => {
                 const selectedIndex = e.target.value;
                 if (selectedIndex !== "") {
-                    const asignacionSeleccionada = asignaciones[selectedIndex];
+                    const asignacionSeleccionada = profesorAsignaciones[selectedIndex];
                     anioSelect.value = asignacionSeleccionada.anio;
                     divisionSelect.value = asignacionSeleccionada.division;
-                    cargarAlumnos(); // <-- AHORA DISPARA LA CARGA DE ALUMNOS FILTRADOS
+                    cargarAlumnos(); // <-- Dispara la carga de alumnos filtrados
                 } else {
+                    // Si se selecciona la opción vacía, limpia los campos y la tabla
                     anioSelect.value = "";
                     divisionSelect.value = "";
+                    cargarAlumnos(); 
                 }
             });
         }
@@ -80,7 +70,7 @@ function crearFilaEstudiante() {
         <td class="final-container">
             <input type="number" min="1" max="10" class="nota" maxlength="2" readonly>
         </td>
-        <td><input type="text" name="observaciones" class="nota"></td> </tr>`;
+    </tr>`;
 }
 
 // --- Reordenar números de filas ---
@@ -131,29 +121,21 @@ function aplicarValidaciones() {
 }
 
 
-// --- Cargar Alumnos desde la DB (FILTRADO POR MATERIA SELECCIONADA) ---
+// --- Cargar Alumnos desde la DB (FILTRADO) ---
 async function cargarAlumnos() {
     const tablaEstudiantes = document.getElementById('tabla-estudiantes');
     tablaEstudiantes.innerHTML = ''; // Limpiamos
 
-    // 1. Obtener la materia, año y división seleccionados por el profesor
     const materiaSelect = document.getElementById("materia-seleccionada");
     const selectedIndex = materiaSelect.value;
     
-    // Si no hay materia seleccionada (o es la opción por defecto), no carga alumnos.
     if (selectedIndex === "") {
         tablaEstudiantes.innerHTML = '<tr><td colspan="15">Seleccione una materia y curso para cargar los alumnos.</td></tr>';
         return;
     }
-
-    // El JSON con todas las asignaciones del profesor debe estar disponible globalmente o recargado
-    // (Asumiremos que 'cargarDatosAsignados' ha guardado las asignaciones en una variable accesible o las recargamos).
-    // Para simplificar, recargamos el usuario activo:
-    const userResponse = await fetch(`../api/get_user_by_email.php?email=${activeUser.email}`);
-    const userData = await userResponse.json();
-    const asignaciones = userData.success && userData.user.curso_info ? JSON.parse(userData.user.curso_info) : [];
     
-    const asignacionSeleccionada = asignaciones[selectedIndex];
+    // Usamos las asignaciones globales que cargó cargarDatosAsignados()
+    const asignacionSeleccionada = profesorAsignaciones[selectedIndex];
     const anio = asignacionSeleccionada.anio;
     const division = asignacionSeleccionada.division;
 
@@ -163,11 +145,10 @@ async function cargarAlumnos() {
     }
 
     try {
-        // 2. Llama a la API de filtrado por curso (get_users_by_course.php)
+        // 1. Llama a la API de filtrado por curso (get_users_by_course.php)
         const response = await fetch(`../api/get_users_by_course.php?anio=${anio}&division=${division}&role=Alumno`);
         const alumnos = await response.json();
         
-        // El resto de la lógica de pintado...
         if (alumnos && alumnos.length > 0) {
             alumnos.forEach((alumno, index) => {
                 const fila = document.createElement("tr");
@@ -180,7 +161,7 @@ async function cargarAlumnos() {
                         <input type="number" min="1" max="10" class="nota" maxlength="2" readonly>
                         <span class="remove-row">X</span>
                     </td>
-                    <td><input type="text" name="observaciones" class="nota"></td> 
+                    
                 `;
                 tablaEstudiantes.appendChild(fila);
             });
@@ -192,7 +173,6 @@ async function cargarAlumnos() {
         tablaEstudiantes.innerHTML = '<tr><td colspan="15">Error al comunicarse con el servidor.</td></tr>';
     }
     
-    // Asegurarse de que se cargan las notas después de cargar la lista de alumnos correcta
     actualizarOrden();
     configurarNavegacion();
     aplicarValidaciones();
@@ -207,8 +187,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (inputDni) inputDni.value = activeUser.dni || "";
 
     establecerCicloLectivoAutomatico();
-    cargarDatosAsignados(); // Carga las materias, años y divisiones asignadas
-    cargarAlumnos();
+    cargarDatosAsignados(); 
+    // SE ELIMINÓ LA LLAMADA DIRECTA A cargarAlumnos() AQUÍ.
 });
 
 
@@ -283,8 +263,7 @@ async function cargarNotasExistentes() {
             // Final: index 12
             inputs[12].value = nota.final || '';
             // Observaciones: index 13 (si es un input[type="text"])
-            const inputObs = tr.querySelector('input[name="observaciones"]');
-            if (inputObs) inputObs.value = nota.observaciones || '';
+          
         });
 
     } catch (error) {

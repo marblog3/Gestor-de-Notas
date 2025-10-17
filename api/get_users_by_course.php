@@ -5,7 +5,6 @@ require 'db_config.php';
 
 $anio = $_GET['anio'] ?? null;
 $division = $_GET['division'] ?? null;
-// El rol es opcional; por defecto, buscará solo Alumnos, ya que se usa para poblar el select de alumnos.
 $role = $_GET['role'] ?? 'Alumno'; 
 
 if (!$anio || !$division) {
@@ -17,18 +16,16 @@ if (!$anio || !$division) {
 try {
     $pdo = connectDB();
     
-    // Consulta SQL que usa JSON_CONTAINS para buscar la estructura del curso.
-    // Busca usuarios con el rol especificado (por defecto 'Alumno') Y donde el JSON curso_info 
-    // contenga un objeto 'curso' con el año y la división especificados.
+    // Consulta SQL que usa JSON_EXTRACT para buscar coincidencias exactas en las claves anio y division.
+    // Esto es más robusto que JSON_CONTAINS cuando hay otras claves en el objeto JSON (como especialidad).
     $sql = "
         SELECT fullname, dni, email, role, curso_info 
         FROM usuarios 
         WHERE role = :role 
-        AND JSON_CONTAINS(
-            curso_info, 
-            JSON_OBJECT('curso', JSON_OBJECT('anio', :anio, 'division', :division)),
-            '$.curso'
-        )
+        
+        AND JSON_UNQUOTE(JSON_EXTRACT(curso_info, '$.curso.anio')) = :anio
+        AND JSON_UNQUOTE(JSON_EXTRACT(curso_info, '$.curso.division')) = :division
+        
         ORDER BY fullname ASC
     ";
     

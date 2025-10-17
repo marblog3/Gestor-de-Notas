@@ -280,12 +280,16 @@ function revisarBoletinPreceptor(alumnoEmail) {
 }
 
 
+
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
     cargarSelects(); 
     cargarMateriasParaSelect(); 
     
-    // Listener para los filtros del curso
+    // Listener para los filtros del curso - se disparan al cambiar
     document.getElementById("filtroAnio").addEventListener('change', cargarAlumnosFiltrados);
     document.getElementById("filtroDivision").addEventListener('change', cargarAlumnosFiltrados);
+    
+    // AÑADIDO: Llama al filtro una vez para cargar los alumnos iniciales (ej. 7mo 4ta)
+    cargarAlumnosFiltrados(); 
 });
