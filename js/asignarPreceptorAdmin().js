@@ -1,4 +1,4 @@
-// En admin.js, agregar la nueva función y el listener del formulario:
+
 
 async function asignarPreceptorAdmin(event) {
     event.preventDefault();

@@ -447,6 +447,7 @@ window.onpopstate = function () {
 };
 
 
+
 function getMateriaSeleccionada() {
     const select = document.getElementById("materia-seleccionada");
     // Devuelve el texto completo de la opción seleccionada, ej: "Matemática (4to 4ta)"
