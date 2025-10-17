@@ -211,3 +211,24 @@ INSERT INTO `usuarios` (fullname, dni, email, password, role, curso_info)
 VALUES 
 ('Preceptor Martin', '80123451', 'pmartin@eest5.com', @PASSWORD_HASH, 'Preceptor', NULL),
 ('Preceptor Ana', '80123452', 'afernandez@eest5.com', @PASSWORD_HASH, 'Preceptor', NULL);
+
+
+-- 9. DEFINICIÓN DE LA TABLA `cursos`
+---------------------------------------------------
+CREATE TABLE IF NOT EXISTS `cursos` (
+    `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `anio` VARCHAR(5) NOT NULL,
+    `division` VARCHAR(5) NOT NULL,
+    `especialidad` VARCHAR(100) NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_curso` (`anio`, `division`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Catálogo de años/divisiones existentes en la escuela.';
+
+-- 10. INSERCIÓN DE CURSOS DE 7MO AÑO
+---------------------------------------------------
+INSERT INTO `cursos` (anio, division, especialidad)
+VALUES
+('7mo', '1ra', 'Maestro Mayor de Obra'),
+('7mo', '2da', 'Química'),
+('7mo', '3ra', 'Electromecánica'),
+('7mo', '4ta', 'Informática');

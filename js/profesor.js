@@ -52,15 +52,13 @@ async function cargarDatosAsignados() {
                 });
             }
 
-            // 4. Configurar el evento 'change' para rellenar Año y División
             materiaSelect.addEventListener('change', (e) => {
                 const selectedIndex = e.target.value;
                 if (selectedIndex !== "") {
-                    // Obtiene la asignación completa usando el índice (value)
                     const asignacionSeleccionada = asignaciones[selectedIndex];
                     anioSelect.value = asignacionSeleccionada.anio;
                     divisionSelect.value = asignacionSeleccionada.division;
-                    cargarNotasExistentes(); // Cargar notas después de seleccionar
+                    cargarAlumnos(); // <-- AHORA DISPARA LA CARGA DE ALUMNOS FILTRADOS
                 } else {
                     anioSelect.value = "";
                     divisionSelect.value = "";
@@ -133,19 +131,44 @@ function aplicarValidaciones() {
 }
 
 
-// --- Cargar Alumnos desde la DB ---
+// --- Cargar Alumnos desde la DB (FILTRADO POR MATERIA SELECCIONADA) ---
 async function cargarAlumnos() {
     const tablaEstudiantes = document.getElementById('tabla-estudiantes');
     tablaEstudiantes.innerHTML = ''; // Limpiamos
 
-    try {
-        const response = await fetch('../api/get_users.php');
-        const users = await response.json();
-        
-        // Filtra solo alumnos
-        const alumnos = users.filter(u => u.role === "Alumno");
+    // 1. Obtener la materia, año y división seleccionados por el profesor
+    const materiaSelect = document.getElementById("materia-seleccionada");
+    const selectedIndex = materiaSelect.value;
+    
+    // Si no hay materia seleccionada (o es la opción por defecto), no carga alumnos.
+    if (selectedIndex === "") {
+        tablaEstudiantes.innerHTML = '<tr><td colspan="15">Seleccione una materia y curso para cargar los alumnos.</td></tr>';
+        return;
+    }
 
-        if (alumnos.length > 0) {
+    // El JSON con todas las asignaciones del profesor debe estar disponible globalmente o recargado
+    // (Asumiremos que 'cargarDatosAsignados' ha guardado las asignaciones en una variable accesible o las recargamos).
+    // Para simplificar, recargamos el usuario activo:
+    const userResponse = await fetch(`../api/get_user_by_email.php?email=${activeUser.email}`);
+    const userData = await userResponse.json();
+    const asignaciones = userData.success && userData.user.curso_info ? JSON.parse(userData.user.curso_info) : [];
+    
+    const asignacionSeleccionada = asignaciones[selectedIndex];
+    const anio = asignacionSeleccionada.anio;
+    const division = asignacionSeleccionada.division;
+
+    if (!anio || !division) {
+        tablaEstudiantes.innerHTML = '<tr><td colspan="15">La materia seleccionada no tiene asignado un Año/División.</td></tr>';
+        return;
+    }
+
+    try {
+        // 2. Llama a la API de filtrado por curso (get_users_by_course.php)
+        const response = await fetch(`../api/get_users_by_course.php?anio=${anio}&division=${division}&role=Alumno`);
+        const alumnos = await response.json();
+        
+        // El resto de la lógica de pintado...
+        if (alumnos && alumnos.length > 0) {
             alumnos.forEach((alumno, index) => {
                 const fila = document.createElement("tr");
                 fila.dataset.email = alumno.email; 
@@ -157,23 +180,23 @@ async function cargarAlumnos() {
                         <input type="number" min="1" max="10" class="nota" maxlength="2" readonly>
                         <span class="remove-row">X</span>
                     </td>
+                    <td><input type="text" name="observaciones" class="nota"></td> 
                 `;
                 tablaEstudiantes.appendChild(fila);
             });
         } else {
-            // Si no hay alumnos, crea filas vacías como fallback visual
-            for (let i = 0; i < 12; i++) {
-                tablaEstudiantes.insertAdjacentHTML("beforeend", crearFilaEstudiante());
-            }
+            tablaEstudiantes.innerHTML = '<tr><td colspan="15">No se encontraron alumnos para este curso/materia.</td></tr>';
         }
     } catch (e) {
-        console.error("Error al cargar alumnos desde la DB:", e);
+        console.error("Error al cargar alumnos desde la DB (filtrado):", e);
+        tablaEstudiantes.innerHTML = '<tr><td colspan="15">Error al comunicarse con el servidor.</td></tr>';
     }
     
+    // Asegurarse de que se cargan las notas después de cargar la lista de alumnos correcta
     actualizarOrden();
     configurarNavegacion();
     aplicarValidaciones();
-    // La carga de notas se hace al seleccionar la materia en el evento 'change'
+    cargarNotasExistentes(); 
 }
 
 

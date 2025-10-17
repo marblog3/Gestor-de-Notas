@@ -1,8 +1,10 @@
 // Verifica si hay sesión activa al cargar la página
-const activeUser = sessionStorage.getItem("activeUser");
-if (!activeUser) {
+const activeUserJSON = sessionStorage.getItem("activeUser");
+if (!activeUserJSON) {
     window.location.href = "principal.html";
 }
+const activeUser = JSON.parse(activeUserJSON);
+
 
 window.history.pushState(null, null, window.location.href);
 window.onpopstate = function () {
@@ -12,20 +14,22 @@ window.onpopstate = function () {
 
 function logout() {
     sessionStorage.removeItem("activeUser");
-    // Limpiar variables de revisión si existen al cerrar sesión
+    // Limpiar variables de revisión al cerrar sesión
     sessionStorage.removeItem("reviewingUserEmail");
     sessionStorage.removeItem("reviewerRole");
     window.location.replace("principal.html");
 }
 
-// FUNCIÓN MIGRADA: Carga Profesores y Alumnos desde la DB
+/* ------------------------------------------
+   FUNCIONES DE ASIGNACIÓN (Carga de Selects)
+   ------------------------------------------ */
+
+// Carga selectores de Profesor y Alumno (sin filtrar por curso aún)
 async function cargarSelects() {
     const profesorSelect = document.getElementById("profesorSelect");
     const alumnoSelect = document.getElementById("alumnoSelect");
 
-    profesorSelect.innerHTML = "<option value=''>Cargando...</option>";
-    alumnoSelect.innerHTML = "<option value=''>Cargando...</option>";
-
+    // Lógica para cargar todos los profesores y alumnos en los selects de asignación (para que el Admin pueda asignarlos).
     try {
         const response = await fetch('../api/get_users.php');
         const users = await response.json();
@@ -42,7 +46,6 @@ async function cargarSelects() {
             }
         });
         
-        // Listener para cargar las asignaciones del profesor seleccionado
         profesorSelect.addEventListener('change', (e) => {
             cargarAsignacionesProfesor(e.target.value);
         });
@@ -54,7 +57,7 @@ async function cargarSelects() {
     }
 }
 
-// FUNCIÓN DE PRECEPTORÍA: Carga las materias desde el nuevo endpoint para el SELECT
+// Carga las materias desde el nuevo endpoint para el SELECT de asignación de materias
 async function cargarMateriasParaSelect() {
     const materiaSelect = document.getElementById("materiaInputPreceptor");
     if (!materiaSelect) return;
@@ -76,7 +79,7 @@ async function cargarMateriasParaSelect() {
     }
 }
 
-// FUNCIÓN DE PRECEPTORÍA: Carga las asignaciones de un profesor específico
+// Carga las asignaciones de un profesor específico
 async function cargarAsignacionesProfesor(profesorEmail) {
     const listaMateriasAsignadas = document.getElementById("materiasList");
     listaMateriasAsignadas.innerHTML = '<li>Cargando asignaciones...</li>';
@@ -114,8 +117,7 @@ async function cargarAsignacionesProfesor(profesorEmail) {
     }
 }
 
-
-// FUNCIÓN ACTUALIZADA: Asigna materia, año y división a un profesor
+// Asigna materia, año y división a un profesor
 async function asignarMateria() {
     const profesor = document.getElementById("profesorSelect").value;
     const materia = document.getElementById("materiaInputPreceptor").value;
@@ -138,7 +140,7 @@ async function asignarMateria() {
 
         if (data.success) {
             alert(data.message);
-            cargarAsignacionesProfesor(profesor); // Recarga la lista de asignaciones
+            cargarAsignacionesProfesor(profesor); 
         } else {
             alert(data.message || "Error al asignar materia.");
         }
@@ -148,7 +150,7 @@ async function asignarMateria() {
     }
 }
 
-// FUNCIÓN MIGRADA: Asigna curso a alumno usando el endpoint de la DB
+// Asigna curso a alumno usando el endpoint de la DB
 async function asignarAlumno() {
     const alumno = document.getElementById("alumnoSelect").value;
     const anio = document.getElementById("anioInput").value;
@@ -163,7 +165,7 @@ async function asignarAlumno() {
         const response = await fetch('../api/assign_course.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: alumno, data: curso_info }) // Usa la clave 'data'
+            body: JSON.stringify({ email: alumno, data: curso_info }) 
         });
         const data = await response.json();
 
@@ -180,58 +182,101 @@ async function asignarAlumno() {
     }
 }
 
+/* ------------------------------------------
+   LÓGICA DE CONTROL DE CURSO (PRECEPTOR) - NUEVA
+   ------------------------------------------ */
 
-// --- NUEVAS FUNCIONES DE REVISIÓN DE BOLETINES ---
+// Función principal para cargar y mostrar la tabla de alumnos y profesores filtrados
+async function cargarAlumnosFiltrados() {
+    const anio = document.getElementById("filtroAnio").value;
+    const division = document.getElementById("filtroDivision").value;
+    const tbodyAlumnos = document.querySelector("#alumnosPreceptorTable tbody");
+    const tbodyProfesores = document.querySelector("#profesoresCursoTable tbody");
+    
+    tbodyAlumnos.innerHTML = '<tr><td colspan="5">Cargando...</td></tr>';
+    tbodyProfesores.innerHTML = '<tr><td colspan="3">Cargando...</td></tr>';
 
-// 1. Carga el select de alumnos que tienen notas cargadas
-async function cargarAlumnosConNotas() {
-    const select = document.getElementById("boletinAlumnoSelect");
+    if (!anio || !division) {
+        tbodyAlumnos.innerHTML = '<tr><td colspan="5">Por favor, seleccione un Año y una División.</td></tr>';
+        tbodyProfesores.innerHTML = '<tr><td colspan="3">Por favor, seleccione un curso.</td></tr>';
+        return;
+    }
     
     try {
-        // Nuevo endpoint para obtener solo alumnos con notas
-        const response = await fetch('../api/get_alumnos_con_notas.php');
-        const data = await response.json();
+        // --- 1. Cargar Alumnos del Curso (Requiere la API get_users_by_course.php) ---
+        const alumnosResponse = await fetch(`../api/get_users_by_course.php?anio=${anio}&division=${division}&role=Alumno`);
+        const alumnos = await alumnosResponse.json();
 
-        if (data.success && data.alumnos.length > 0) {
-            select.innerHTML = '<option value="">Seleccione un alumno</option>';
-            data.alumnos.forEach(alumno => {
-                // El valor es el email (identificador único)
-                select.innerHTML += `<option value="${alumno.alumno_email}">${alumno.fullname || alumno.alumno_email}</option>`;
+        // --- 2. Cargar Profesores del Curso (Requiere la API get_profesores_by_course.php) ---
+        const profesoresResponse = await fetch(`../api/get_profesores_by_course.php?anio=${anio}&division=${division}`);
+        const profesores = await profesoresResponse.json();
+        
+        // MOSTRAR ALUMNOS
+        if (alumnos.length > 0) {
+            tbodyAlumnos.innerHTML = '';
+            alumnos.forEach(alumno => {
+                const cursoInfo = JSON.parse(alumno.curso_info).curso;
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${alumno.fullname}</td>
+                    <td>${alumno.dni}</td>
+                    <td>${cursoInfo.anio} ${cursoInfo.division}</td>
+                    <td>${cursoInfo.especialidad}</td>
+                    <td>
+                        <button onclick="revisarBoletinPreceptor('${alumno.email}')">Ver Boletín</button>
+                    </td>
+                `;
+                tbodyAlumnos.appendChild(row);
             });
         } else {
-            select.innerHTML = '<option value="">Ningún alumno tiene notas cargadas.</option>';
+            tbodyAlumnos.innerHTML = '<tr><td colspan="5">No se encontraron alumnos en este curso.</td></tr>';
+        }
+        
+        // MOSTRAR PROFESORES
+        if (profesores.length > 0) {
+            tbodyProfesores.innerHTML = '';
+            // Función para agrupar materias por profesor
+            const profesoresMap = new Map();
+            profesores.forEach(p => {
+                if (!profesoresMap.has(p.email)) {
+                    profesoresMap.set(p.email, { fullname: p.fullname, email: p.email, materias: [] });
+                }
+                profesoresMap.get(p.email).materias.push(p.materia);
+            });
+
+            profesoresMap.forEach(profesor => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${profesor.fullname}</td>
+                    <td>${profesor.email}</td>
+                    <td>${profesor.materias.join(', ')}</td>
+                `;
+                tbodyProfesores.appendChild(row);
+            });
+
+        } else {
+            tbodyProfesores.innerHTML = '<tr><td colspan="3">No hay profesores asignados directamente a este curso.</td></tr>';
         }
 
     } catch (e) {
-        console.error("Error al cargar alumnos con notas:", e);
-        select.innerHTML = '<option value="">Error al cargar la lista.</option>';
+        console.error("Error general al cargar curso:", e);
+        tbodyAlumnos.innerHTML = '<tr><td colspan="5">Error de conexión con el servidor.</td></tr>';
+        tbodyProfesores.innerHTML = '<tr><td colspan="3">Error de conexión con el servidor.</td></tr>';
     }
 }
 
-// 2. Redirige a la vista del boletín del alumno seleccionado
-function revisarBoletin() {
-    const select = document.getElementById("boletinAlumnoSelect");
-    const alumnoEmail = select.value;
-    const statusMsg = document.getElementById("boletinStatus");
-    const activeUserObj = JSON.parse(activeUser); // Obtener el objeto del preceptor logueado
 
-    if (!alumnoEmail) {
-        statusMsg.textContent = "Por favor, seleccione un alumno.";
-        statusMsg.style.color = "red";
-        return;
-    }
-
-    // 1. Guardar el email del alumno que el preceptor quiere ver (CRÍTICO)
+// Redirecciona al boletín en modo gestión para el Preceptor
+function revisarBoletinPreceptor(alumnoEmail) {
+    // 1. Guardar el email del alumno que el Preceptor quiere ver (CRÍTICO)
     sessionStorage.setItem("reviewingUserEmail", alumnoEmail);
     
     // 2. Guardar el rol del revisor (Preceptor)
-    if (activeUserObj) {
-        sessionStorage.setItem("reviewerRole", activeUserObj.role);
-    }
+    sessionStorage.setItem("reviewerRole", activeUser.role); 
 
     // 3. Redirigir a la vista de boletín (alumno.html)
-    // El alumno.js deberá leer reviewingUserEmail en lugar de activeUser.email
-    window.location.href = "alumno.html";
+    // El Preceptor puede modificar las notas
+    window.location.href = `../html/alumno.html?mode=edit&alumno=${alumnoEmail}`; 
 }
 
 
@@ -239,5 +284,8 @@ function revisarBoletin() {
 document.addEventListener('DOMContentLoaded', () => {
     cargarSelects(); 
     cargarMateriasParaSelect(); 
-    cargarAlumnosConNotas(); // Carga la lista de alumnos para revisión
+    
+    // Listener para los filtros del curso
+    document.getElementById("filtroAnio").addEventListener('change', cargarAlumnosFiltrados);
+    document.getElementById("filtroDivision").addEventListener('change', cargarAlumnosFiltrados);
 });

@@ -125,21 +125,77 @@
     </section>
     
     <hr>
-
+    
     <section>
-      <h2>Revisión de Boletines de Alumnos</h2>
+        <h2>Control de Cursos y Revisión de Boletines</h2>
 
-      <label for="boletinAlumnoSelect"><b>Seleccionar Alumno:</b></label><br>
-      <select id="boletinAlumnoSelect">
-        <option value="">Cargando alumnos con notas...</option>
-      </select><br>
+        <div style="display: flex; gap: 20px; align-items: flex-end; margin-bottom: 20px;">
+          
+          <div class="form-group">
+            <label for="filtroAnio"><b>Filtrar por Año:</b></label>
+            <select id="filtroAnio">
+                <option value="">Todos los Años</option>
+                <option value="1ro">1ro</option>
+                <option value="2do">2do</option>
+                <option value="3ro">3ro</option>
+                <option value="4to">4to</option>
+                <option value="5to">5to</option>
+                <option value="6to">6to</option>
+                <option value="7mo">7mo</option>
+            </select>
+          </div>
 
-      <div class="contenedor-botones">
-        <button onclick="revisarBoletin()">Ver Boletín</button>
-      </div>
+          <div class="form-group">
+            <label for="filtroDivision"><b>Filtrar por División:</b></label>
+            <select id="filtroDivision">
+                <option value="">Todas las Divisiones</option>
+                <option value="1ra">1ra</option>
+                <option value="2da">2da</option>
+                <option value="3ra">3ra</option>
+                <option value="4ta">4ta</option>
+                <option value="5ta">5ta</option>
+                <option value="6ta">6ta</option>
+                <option value="7ma">7ma</option>
+            </select>
+          </div>
 
-      <p id="boletinStatus"></p>
+          <button onclick="cargarAlumnosFiltrados()" style="max-width: 150px; margin-bottom: 5px;">Cargar Curso</button>
+        </div>
+        
+        <h3>Alumnos del Curso Seleccionado</h3>
+        <table class="boletin" id="alumnosPreceptorTable">
+            <thead>
+                <tr>
+                    <th>Nombre Completo</th>
+                    <th>DNI</th>
+                    <th>Curso</th>
+                    <th>Especialidad</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="5">Seleccione un año y división para cargar los alumnos.</td></tr>
+            </tbody>
+        </table>
+        
+        <br>
+        
+        <h3>Profesores del Curso</h3>
+        <table class="boletin" id="profesoresCursoTable">
+            <thead>
+                <tr>
+                    <th>Profesor</th>
+                    <th>Email</th>
+                    <th>Materias que dicta</th>
+                </tr>
+            </thead>
+            <tbody>
+                 <tr><td colspan="3">La lista de profesores se cargará al seleccionar un curso.</td></tr>
+            </tbody>
+        </table>
+
     </section>
+    
   </div>
 
   <script src="../js/preceptor.js"></script>

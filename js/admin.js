@@ -643,3 +643,121 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarUsuarios();
     cargarSolicitudes();
 });
+
+/* ------------------------------------------
+   LÓGICA DE FILTRADO POR CURSO (NUEVA)
+   ------------------------------------------ */
+
+// Variable global para almacenar todos los alumnos cargados
+let allAlumnos = []; 
+
+// Función modificada para cargar todos los usuarios, guardando los alumnos en allAlumnos
+async function cargarUsuarios() {
+    const tbody = document.querySelector("#usersTable tbody");
+    tbody.innerHTML = "<tr><td colspan='5'>Cargando usuarios...</td></tr>";
+    
+    try {
+        const response = await fetch('../api/get_users.php');
+        const users = await response.json();
+        
+        // Limpiamos la lista global de alumnos y la llenamos para el filtro
+        allAlumnos = users.filter(u => u.role === "Alumno");
+        
+        // Cargar todos los usuarios en la tabla de Admin por defecto (incluye Profesores/Preceptores)
+        displayUsersInAdminTable(users);
+
+    } catch (e) {
+        tbody.innerHTML = "<tr><td colspan='5'>Error al cargar usuarios del servidor.</td></tr>";
+    }
+
+    cargarSelects();
+    cargarMaterias();
+}
+
+// Función que dibuja la tabla de usuarios con el formato del Admin
+function displayUsersInAdminTable(users) {
+    const tbody = document.querySelector("#usersTable tbody");
+    tbody.innerHTML = "";
+
+    if (!users || users.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='5'>No hay usuarios activos registrados.</td></tr>";
+        return;
+    }
+
+    users.forEach(user => {
+        const row = document.createElement("tr");
+        const acciones = user.role === 'Alumno' ? 
+            `<button class="accion-boton-1" onclick="revisarBoletinAdmin('${user.email}')">Ver Boletín</button>` :
+            `<button class="accion-boton-1" onclick="openEditModal('${user.email}')">Editar</button>
+             <button class="accion-boton" onclick="openDeleteModal('${user.email}')">Eliminar</button>`;
+
+        row.innerHTML = `
+        <td>${user.fullname || 'No especificado'}</td>
+        <td>${user.dni || 'No especificado'}</td>
+        <td>${user.email}</td>
+        <td>${user.role}</td>
+        <td>${acciones}</td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// Función para simular la redirección a la vista del alumno
+function revisarBoletinAdmin(alumnoEmail) {
+    // 1. Guardar el email del alumno que el Admin quiere ver
+    sessionStorage.setItem("reviewingUserEmail", alumnoEmail);
+    
+    // 2. Guardar el rol del revisor (Administrador)
+    sessionStorage.setItem("reviewerRole", "Administrador"); 
+
+    // 3. Redirigir a la vista de boletín (alumno.html)
+    window.location.href = "alumno.html";
+}
+
+
+/* ------------------------------------------
+   FUNCIÓN DE FILTRADO PARA ASIGNAR ALUMNO A CURSO (NUEVA LÓGICA)
+   ------------------------------------------ */
+async function cargarAlumnosPorCurso(anio, division) {
+    const alumnoSelect = document.getElementById("alumnoSelect");
+    alumnoSelect.innerHTML = '<option value="">Cargando...</option>';
+
+    if (!anio || !division) {
+        alumnoSelect.innerHTML = '<option value="">Seleccione Año y División</option>';
+        return;
+    }
+
+    try {
+        const response = await fetch(`../api/get_users_by_course.php?anio=${anio}&division=${division}`);
+        const alumnos = await response.json();
+
+        alumnoSelect.innerHTML = '<option value="">Seleccione un alumno</option>';
+
+        if (alumnos.length > 0) {
+            alumnos.forEach(alumno => {
+                alumnoSelect.innerHTML += `<option value="${alumno.email}">${alumno.fullname || alumno.email}</option>`;
+            });
+        } else {
+            alumnoSelect.innerHTML = '<option value="">No hay alumnos en este curso</option>';
+        }
+
+    } catch (e) {
+        console.error("Error al cargar alumnos por curso:", e);
+        alumnoSelect.innerHTML = '<option value="">Error al cargar alumnos</option>';
+    }
+}
+
+
+document.getElementById('anioInput').addEventListener('change', updateAlumnoSelect);
+document.getElementById('divisionInput').addEventListener('change', updateAlumnoSelect);
+
+function updateAlumnoSelect() {
+    const anio = document.getElementById('anioInput').value;
+    const division = document.getElementById('divisionInput').value;
+    if (anio && division) {
+        cargarAlumnosPorCurso(anio, division);
+    } else {
+        document.getElementById("alumnoSelect").innerHTML = '<option value="">Seleccione Año y División</option>';
+    }
+}
+
