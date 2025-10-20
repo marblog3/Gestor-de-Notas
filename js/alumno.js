@@ -20,7 +20,6 @@ if (!targetUserEmail) {
 }
 
 
-
 window.history.pushState(null, null, window.location.href);
 window.onpopstate = function () {
     window.history.go(1);
@@ -124,29 +123,59 @@ async function cargarNotasDelAlumno() {
 
         let hayPendientes = false;
         notasDelAlumno.forEach(nota => {
-            const notaFinal = parseFloat(nota.final);
+            const nota1 = parseFloat(nota.nota_1Cuat) || 0;
+            const nota2 = parseFloat(nota.nota_2Cuat) || 0;
+            const febrero = parseFloat(nota.febrero) || 0;
+            
+            // 1. CALCULAR NOTA FINAL VISIBLE (La de la DB o el promedio)
+            let notaFinal = parseFloat(nota.final);
+            
+            // Si la nota final es NULL, la calculamos si hay notas de cuatrimestre para mostrar algo.
+            if (isNaN(notaFinal) && (nota1 > 0 || nota2 > 0)) {
+                notaFinal = (nota1 + nota2) / 2;
+            } else if (isNaN(notaFinal)) {
+                notaFinal = 0; // Usar 0 para la lógica de pendientes si no hay nada
+            }
+
+            // 2. LÓGICA DE PENDIENTE (Es pendiente si la nota final es menor a 7 Y Febrero también es menor a 7)
+            let esPendiente = false;
+            
+            // Si la nota final (guardada en DB o promedio calculado) es menor a 7
+            if (notaFinal < NOTA_APROBACION) {
+                // Y si el intento de febrero también fue menor a 7 (o no se intentó), ES PENDIENTE.
+                if (febrero < NOTA_APROBACION) {
+                     esPendiente = true;
+                }
+            }
+            
+            // Determinar cómo se mostrará la calificación final
+            const finalDisplay = (notaFinal > 0 || nota.final !== null) ? notaFinal.toFixed(2) : '';
 
 
-            // Lógica para Materias Pendientes (Se mantiene la estructura original)
-            const esPendiente = notaFinal < NOTA_APROBACION;
-
+            // 3. POBLAR TABLA PENDIENTES
             if (esPendiente) {
                 hayPendientes = true;
-                const fila = document.createElement('tr');
-                // Se mantiene la estructura original de 12 columnas para la tabla de pendientes (con observaciones)
-                fila.innerHTML = `
+                const filaPendiente = document.createElement('tr');
+                
+                // Nota: Se mantiene la estructura original de 12 columnas para la tabla de pendientes (con observaciones)
+                filaPendiente.innerHTML = `
                     <td><input type="text" class="mate1" value="${nota.materia || ''}" readonly></td>
                     <td><input type="text" class="mate1" value="${anio}" readonly></td>
                     <td><input type="text" class="mate1" value="${new Date().getFullYear()}" readonly></td>
-                    <td><input type="number" class="mate1" value="" readonly></td> <td><input type="number" class="mate1" value="" readonly></td> <td><input type="number" class="mate1" value="" readonly></td> <td><input type="number" class="mate1" value="" readonly></td> <td><input type="number" class="mate1" value="${nota.diciembre || ''}" readonly></td>
+                    <td><input type="number" class="mate1" value="" readonly></td> 
+                    <td><input type="number" class="mate1" value="" readonly></td> 
+                    <td><input type="number" class="mate1" value="" readonly></td> 
+                    <td><input type="number" class="mate1" value="" readonly></td> 
+                    <td><input type="number" class="mate1" value="${nota.diciembre || ''}" readonly></td>
                     <td><input type="number" class="mate1" value="${nota.febrero || ''}" readonly></td>
-                    <td><input type="number" class="mate1" value="${notaFinal || ''}" readonly></td>
-                    <td><input type="text" class="mate1" value="" readonly></td> <td><input type="text" class="mate1" value="${nota.observaciones || ''}" readonly></td>
+                    <td><input type="number" class="mate1" value="${finalDisplay}" readonly></td>
+                    <td><input type="text" class="mate1" value="" readonly></td> 
+                    <td><input type="text" class="mate1" value="${nota.observaciones || ''}" readonly></td>
                 `;
-                tablaPendientesBody.appendChild(fila);
+                tablaPendientesBody.appendChild(filaPendiente);
             }
 
-            // Lógica para la TABLA PRINCIPAL (Estructura de 8 celdas, quitando Observaciones)
+            // 4. POBLAR TABLA PRINCIPAL (Estructura de 8 celdas, quitando Observaciones)
             const filaPrincipal = document.createElement('tr');
             filaPrincipal.innerHTML = `
                 <td><input type="text" class="mate1" value="${nota.materia || ''}" readonly></td>
@@ -156,7 +185,7 @@ async function cargarNotasDelAlumno() {
                 <td><input type="number" class="mate1" value="${nota.intensificacion || ''}" readonly></td>
                 <td><input type="number" class="mate1" value="${nota.diciembre || ''}" readonly></td>
                 <td><input type="number" class="mate1" value="${nota.febrero || ''}" readonly></td>
-                <td><input type="number" class="mate1" value="${notaFinal || ''}" readonly></td>
+                <td><input type="number" class="mate1" value="${finalDisplay}" readonly></td>
                 `;
             tablaMateriasBody.appendChild(filaPrincipal);
         });

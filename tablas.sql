@@ -1,27 +1,7 @@
-/**
- * -------------------------------------------------------------------
- * SCRIPT DE CONFIGURACIÓN Y POBLACIÓN DE LA BASE DE DATOS
- * SISTEMA GESTOR DE NOTAS - E.E.S.T. N°5
- * -------------------------------------------------------------------
- *
- * Propósito: Crea las tres tablas principales (usuarios, usuarios_en_espera, notas)
- * y realiza la inserción inicial de usuarios para el curso 7mo 4ta.
- *
- * NOTA DE SEGURIDAD:
- * La variable @PASSWORD_HASH contiene el hash seguro para la contraseña
- * generada previamente. Todos los usuarios insertados usarán esta misma
- * contraseña inicial.
- *
- */
 
--- 1. SELECCIÓN DE LA BASE DE DATOS
----------------------------------------------------
 USE `sistema_gestion_eest5`;
 
--- ---------------------------------------------------
--- 2. DEFINICIÓN DE LA TABLA `usuarios_en_espera`
---    Almacena las solicitudes de registro que esperan la aprobación del Administrador.
----------------------------------------------------
+
 CREATE TABLE IF NOT EXISTS `usuarios_en_espera` (
     `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     `fullname` VARCHAR(100) NOT NULL COMMENT 'Nombre completo del solicitante.',
@@ -31,10 +11,7 @@ CREATE TABLE IF NOT EXISTS `usuarios_en_espera` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Usuarios que han solicitado registro y esperan aprobación del Admin.';
 
--- ---------------------------------------------------
--- 3. DEFINICIÓN DE LA TABLA `usuarios`
---    Almacena todos los usuarios activos del sistema con sus roles y asignaciones.
----------------------------------------------------
+
 CREATE TABLE IF NOT EXISTS `usuarios` (
     `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     `fullname` VARCHAR(100) NOT NULL COMMENT 'Nombre completo del usuario.',
@@ -46,12 +23,6 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Usuarios activos en el sistema con roles asignados.';
 
--- NOTA: Se recomienda insertar un usuario administrador fijo manualmente tras crear las tablas.
-
--- ---------------------------------------------------
--- 4. DEFINICIÓN DE LA TABLA `notas`
---    Centraliza el registro de calificaciones de los estudiantes.
----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `notas` (
     `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     `alumno_email` VARCHAR(100) NOT NULL COMMENT 'Email del alumno.',
@@ -74,23 +45,13 @@ CREATE TABLE IF NOT EXISTS `notas` (
     INDEX `idx_alumno_materia` (`alumno_email`, `materia`) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Calificaciones detalladas de los estudiantes.';
 
-
--- ***************************************************
--- PARTE 2: INSERCIÓN DE DATOS INICIALES (PROFESORES, PRECEPTORA Y ALUMNOS)
--- ***************************************************
-
--- 5. CONFIGURACIÓN DE VARIABLES GLOBALES
----------------------------------------------------
-
--- Contraseña en hash (corresponde a la contraseña en texto claro utilizada para el setup)
 SET @PASSWORD_HASH = '$2y$10$mlO8dk8E7FGu4itL.45JpOLl7mVsBg8VkXvRI8ewxiEs5tZGG1B9G'; 
 
--- Variables para el curso de ciclo superior
+
 SET @CURSO_ANIO = '7mo';
 SET @CURSO_DIVISION = '4ta';
 SET @CURSO_ESPECIALIDAD = 'Informática';
 
--- Estructura JSON para la asignación del curso 7mo 4ta
 SET @CURSO_INFO_ALUMNO = JSON_OBJECT(
     'curso', 
     JSON_OBJECT(
@@ -100,10 +61,6 @@ SET @CURSO_INFO_ALUMNO = JSON_OBJECT(
     )
 );
 
--- ---------------------------------------------------
--- 6. INSERCIÓN DE PROFESORES
---    Asigna el rol 'Profesor' y sus materias y curso a través del campo `curso_info` (JSON).
----------------------------------------------------
 INSERT INTO `usuarios` (fullname, dni, email, password, role, curso_info)
 VALUES 
 ('Gimenez Cesar', '20123456', 'cgimenez@eest5.com', @PASSWORD_HASH, 'Profesor', '[
@@ -131,17 +88,11 @@ VALUES
   {"materia": "Proyecto, diseño e implementación de sistemas computacionales", "anio": "7mo", "division": "4ta"}
 ]');
 
--- ---------------------------------------------------
--- 7. INSERCIÓN DE PRECEPTORA
---    Asigna el rol 'Preceptor'. Tiene permisos globales, por lo que `curso_info` es NULL.
----------------------------------------------------
+
 INSERT INTO `usuarios` (fullname, dni, email, password, role, curso_info)
 VALUES ('Marianela', '30123456', 'marianela@eest5.com', @PASSWORD_HASH, 'Preceptor', NULL);
 
--- ---------------------------------------------------
--- 8. INSERCIÓN DE ALUMNOS
---    Asigna el rol 'Alumno' y el curso 7mo 4ta - Informática a cada estudiante.
----------------------------------------------------
+
 INSERT INTO `usuarios` (fullname, dni, email, password, role, curso_info)
 VALUES 
 ('ABACA ABIGAIL LUCIA', '40000001', 'alabaca@eest5.com', @PASSWORD_HASH, 'Alumno', @CURSO_INFO_ALUMNO),
@@ -166,8 +117,6 @@ VALUES
 
 
 
- DEFINICIÓN DE LA TABLA `materias`
----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `materias` (
     `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     `nombre` VARCHAR(100) NOT NULL UNIQUE COMMENT 'Nombre completo de la materia.',
@@ -213,8 +162,6 @@ VALUES
 ('Preceptor Ana', '80123452', 'afernandez@eest5.com', @PASSWORD_HASH, 'Preceptor', NULL);
 
 
--- 9. DEFINICIÓN DE LA TABLA `cursos`
----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `cursos` (
     `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     `anio` VARCHAR(5) NOT NULL,
@@ -224,8 +171,6 @@ CREATE TABLE IF NOT EXISTS `cursos` (
     UNIQUE KEY `uk_curso` (`anio`, `division`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Catálogo de años/divisiones existentes en la escuela.';
 
--- 10. INSERCIÓN DE CURSOS DE 7MO AÑO
----------------------------------------------------
 INSERT INTO `cursos` (anio, division, especialidad)
 VALUES
 ('7mo', '1ra', 'Maestro Mayor de Obra'),
