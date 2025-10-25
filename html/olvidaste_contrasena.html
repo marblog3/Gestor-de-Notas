@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restablecer Contraseña</title>
+  <link rel="website icon" type="png" href="..\img\logo.png">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/principal.css">
+</head>
+
+<header class="mi-header">
+  <div class="header-left1">
+    <img src="../img/logo.png" alt="Logo" class="header-logo1">
+    <h1 class="header-title1">E.E.S.T.N°5</h1>
+  </div>
+</header>
+
+<body>
+
+  <div class="container" id="reset-container">
+    <h2>Restablecer Contraseña</h2><br>
+    <div id="reset-error-msg" class="error"></div>
+    <p style="font-size: 16px; margin-bottom: 20px;">
+        Solo los usuarios que ya fueron aprobados y tienen una contraseña generada por el Admin pueden usar esta opción.
+    </p>
+
+    <input type="email" id="reset-email" placeholder="Correo institucional" required>
+    <input type="password" id="reset-old-password" placeholder="Contraseña anterior (dada por Admin)" required>
+    <input type="password" id="reset-new-password" placeholder="Nueva Contraseña" required>
+    <input type="password" id="reset-confirm-password" placeholder="Confirmar Nueva Contraseña" required>
+    
+    <button onclick="handleResetPassword()"><b>Restablecer Contraseña</b></button>
+    <div class="switch">
+      <b>Volver a</b> <a href="principal.html"><b>Iniciar Sesión</b></a>
+    </div>
+
+    <p style="font-size: 14px; margin-top: 20px;">
+        Si olvidaste la contraseña dada por el Admin, contacta a: <a href="mailto:admin@eest5.com">admin@eest5.com</a> [cite: 233]
+    </p>
+  </div>
+
+  <script src="../js/reset_password.js"></script>
+</body>
+</html>

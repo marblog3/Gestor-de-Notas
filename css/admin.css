@@ -348,3 +348,59 @@ input {
     /* Opcional: Añade un pequeño margen debajo del subtítulo. */
     margin-bottom: 5px; 
 }
+
+/* =================================================================
+   ADMIN.CSS - SOLUCIÓN DE LAYOUT VERTICAL PARA GESTIÓN
+   ================================================================= */
+
+/* 1. MODIFICAR: Eliminar la disposición de columnas (flex) 
+   para que los bloques Gestionar Materias y Profesores por Curso se apilen. */
+.column-layout-container {
+    /* Eliminamos display: flex para que los contenedores se apilen verticalmente. */
+    display: block; 
+    max-width: 1700px; 
+    margin: 20px auto;
+}
+
+/* 2. MODIFICAR: Forzar a cada contenedor a usar el 100% del ancho. */
+.column-layout-container .form-container {
+    /* Aquí forzamos el ancho y agregamos margen para separación vertical */
+    width: 100%; 
+    min-width: 100%;
+    margin-bottom: 40px; /* Separación entre Gestión de Materias y Profesores por Curso */
+    padding: 0;
+}
+
+/* --- Contenedores de Tablas de Scroll (Mantener para altura y borde) --- */
+.form-container > div[style*="max-height: 400px"] {
+    max-height: 400px !important; 
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    margin-top: 5px; 
+}
+
+/* Asegura que los selects de filtro de materias ocupen el 100% */
+#filtroEspecialidadMateria {
+    width: 100%;
+    max-width: none;
+}
+
+/* Asegura que la tabla ocupe el 100% del ancho dentro del contenedor de scroll */
+#profesoresFiltradosTable, 
+#materiasTable {
+    min-width: 100%;
+    margin-top: 0;
+}
+
+/* Ajuste para los selects de filtro de profesores para que ocupen todo el ancho apilados */
+/* Este ajuste aplica a los selects de Año y División dentro de Profesores por Curso */
+.form-container > div[style*="display: flex"] {
+    display: block !important;
+    gap: 0 !important;
+}
+
+.form-container > div[style*="display: block"] select {
+     margin-bottom: 15px; /* Separación vertical entre Año y División */
+     width: 100%;
+}

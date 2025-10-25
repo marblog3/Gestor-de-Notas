@@ -702,3 +702,7 @@ function establecerCicloLectivoAutomatico() {
         }
     }
 }
+function logout() {
+  sessionStorage.removeItem("activeUser");
+  window.location.replace("principal.html");
+}
