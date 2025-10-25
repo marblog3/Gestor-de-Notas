@@ -1,5 +1,5 @@
-USE `sistema_gestion_eest5`;
 
+USE `sistema_gestion_eest5`;
 
 
 CREATE TABLE IF NOT EXISTS `usuarios_en_espera` (
