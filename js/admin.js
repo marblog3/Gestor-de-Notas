@@ -232,39 +232,7 @@ function searchUsers() {
             </td>
             `;
             tbody.appendChild(row);
-<<<<<<< HEAD
             resultsFound = true;
-=======
-        });
-    } catch (e) {
-        tbody.innerHTML = "<tr><td colspan='5'>Error al cargar usuarios del servidor.</td></tr>";
-    }
-
-    cargarSelects();
-    // NOTA: cargarMaterias() se llama sin filtro aquí para llenar la tabla de gestión
-    cargarMaterias(); 
-    searchUsers();
-}
-
-// Búsqueda local (mantenemos la función original)
-function searchUsers() {
-    const input = document.getElementById('searchInput');
-    const filter = input.value.toUpperCase();
-    const table = document.getElementById('usersTable');
-    const tr = table.getElementsByTagName('tr');
-
-    for (let i = 1; i < tr.length; i++) {
-        let visible = false;
-        const tds = tr[i].getElementsByTagName('td');
-        for (let j = 0; j < tds.length; j++) {
-            const td = tds[j];
-            if (td) {
-                if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
-                    visible = true;
-                    break;
-                }
-            }
->>>>>>> e681bd413a7bae8aace3a21981f3d0020344a1e6
         }
     });
     
@@ -591,10 +559,6 @@ async function handleCreateMateria(event) {
         if (data.success) {
             closeModal('materiaModal');
             openAlertModal("Materia creada correctamente.");
-<<<<<<< HEAD
-=======
-            // Una vez creada, recargamos el cache global para el filtro
->>>>>>> e681bd413a7bae8aace3a21981f3d0020344a1e6
             allMateriasCache = []; 
             cargarMaterias(); 
         } else {
@@ -632,10 +596,6 @@ async function handleDeleteMateria(id) {
 
         if (data.success) {
             openAlertModal("Materia eliminada correctamente.");
-<<<<<<< HEAD
-=======
-            // Recargar el cache global y la lista
->>>>>>> e681bd413a7bae8aace3a21981f3d0020344a1e6
             allMateriasCache = [];
             cargarMaterias(); 
         } else {
@@ -647,7 +607,6 @@ async function handleDeleteMateria(id) {
 }
 
 /* ------------------------------------------
-<<<<<<< HEAD
    FILTRO DE PROFESORES POR CURSO (NUEVA FUNCIÓN)
    ------------------------------------------ */
 
@@ -700,54 +659,6 @@ async function cargarProfesoresFiltrados() {
     } catch (e) {
         console.error("Error al cargar profesores filtrados:", e);
         tbodyProfesores.innerHTML = '<tr><td colspan="2">Error de conexión con el servidor.</td></tr>';
-=======
-   LÓGICA DE FILTRADO DINÁMICO DE MATERIAS
-   ------------------------------------------ */
-
-let allMateriasCache = []; 
-
-/**
- * Función central que consulta la DB para obtener la especialidad del curso.
- * NOTA: Usa un endpoint PHP para consultar la tabla 'cursos'.
- */
-async function getEspecialidadFromCurso(anio, division) {
-    if (!anio || !division) return null;
-    try {
-        const response = await fetch(`../api/get_especialidad.php?anio=${anio}&division=${division}`);
-        const data = await response.json();
-        
-        if (data.success) {
-            return data.especialidad;
-        }
-        return null;
-    } catch (e) {
-        console.error("Fallo al obtener especialidad:", e);
-        return null;
-    }
-}
-
-
-/**
- * Carga o filtra las materias y actualiza la tabla de gestión y el select de asignación.
- * @param {string|null} filterEspecialidad - Especialidad por la que filtrar (ej. 'Informática').
- */
-async function cargarMaterias(filterEspecialidad = null) {
-    const tbody = document.querySelector("#materiasTable tbody");
-    const materiaSelectAdmin = document.getElementById("materiaSelectAdmin");
-    
-    // Si la caché está vacía, cargar desde el servidor (código de carga inicial)
-    if (allMateriasCache.length === 0) {
-        if (tbody) tbody.innerHTML = "<tr><td colspan='4'>Cargando materias...</td></tr>"; 
-        if (materiaSelectAdmin) materiaSelectAdmin.innerHTML = '<option value="">Cargando materias...</option>';
-        try {
-            const response = await fetch('../api/get_materias.php');
-            allMateriasCache = await response.json();
-        } catch (e) {
-            if (tbody) tbody.innerHTML = "<tr><td colspan='4'>Error al cargar materias.</td></tr>";
-            if (materiaSelectAdmin) materiaSelectAdmin.innerHTML = '<option value="">Error al cargar</option>';
-            return;
-        }
->>>>>>> e681bd413a7bae8aace3a21981f3d0020344a1e6
     }
 
     // Aplicar Filtro:
@@ -882,24 +793,12 @@ document.getElementById('asignarProfesorForm').addEventListener('submit', async 
     event.preventDefault();
     const profesor = document.getElementById("profesorSelect").value;
     const materia = document.getElementById("materiaSelectAdmin").value; 
-<<<<<<< HEAD
     const anio = document.getElementById("anioSelectProfesor").value;
     const division = document.getElementById("divisionSelectProfesor").value;
     // const turno = document.getElementById("turnoSelectProfesor").value; // El turno no se guarda en asignaciones de profesor
     
     if (!profesor || !materia || !anio || !division) return alert("Complete Profesor, Materia, Año y División.");
 
-=======
-    
-    // Obtener Año y División de los selectores de filtro para enviarlos
-    const anio = document.getElementById("anioSelectProfesor").value;
-    const division = document.getElementById("divisionSelectProfesor").value;
-
-
-    if (!profesor || !materia || !anio || !division) return alert("Complete Profesor, Materia, Año y División.");
-
-    // Estructura de datos para enviar la asignación completa
->>>>>>> e681bd413a7bae8aace3a21981f3d0020344a1e6
     const asignacion_info = { materia: materia, anio: anio, division: division };
 
     try {
@@ -967,10 +866,7 @@ async function asignarPreceptorAdmin(event) {
     const asignacion_info = { preceptor_email: preceptor, anio, division, turno };
 
     try {
-<<<<<<< HEAD
         // assign_preceptor.php se encarga de buscar a todos los alumnos del curso y actualizar su JSON
-=======
->>>>>>> e681bd413a7bae8aace3a21981f3d0020344a1e6
         const response = await fetch('../api/assign_preceptor.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -988,10 +884,6 @@ async function asignarPreceptorAdmin(event) {
     }
 }
 
-<<<<<<< HEAD
-=======
-document.getElementById('asignarPreceptorForm').addEventListener('submit', asignarPreceptorAdmin);
->>>>>>> e681bd413a7bae8aace3a21981f3d0020344a1e6
 
 
 /* INICIALIZACIÓN Y OTROS */
@@ -1005,7 +897,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('searchInput').value = '';
     document.getElementById('solicitudesContent').style.display = 'none';
 
-<<<<<<< HEAD
     cargarUsuarios(); // Carga usuarios y llama a cargarMaterias() y cargarSolicitudes()
     
     // Configurar el filtrado de la tabla de GESTIONAR MATERIAS
@@ -1044,12 +935,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Cargar la tabla de profesores al inicio
     cargarProfesoresFiltrados(); 
-=======
-    cargarUsuarios();
-    cargarSolicitudes();
-    
-    // Configurar el filtrado DEPUÉS de la carga inicial de materias
-    // La primera llamada a cargarMaterias() se hace dentro de cargarUsuarios()
-    setupMateriaFiltering();
->>>>>>> e681bd413a7bae8aace3a21981f3d0020344a1e6
 });
