@@ -307,5 +307,16 @@
   font-style: italic;
 }
 
-
+/* MODIFICACIÓN en css/alumno.css (F.16) */
+.obs-3 {
+  /* width: 1700px;  <-- Antes */
+  width: 95%; /* Asegura que se adapte al contenedor padre (boletin-container) */
+  box-sizing: border-box; 
+  height: 30px;
+  font-size: 25px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border-color: transparent;
+  margin: 0 auto;
+  display: block;
+}
 
