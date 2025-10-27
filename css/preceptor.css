@@ -19,6 +19,30 @@ h2, h3 {
     background-color: #3b4a3c;
 }
 
+/* Estilos para el contenedor FLEX que hará que los bloques se alineen horizontalmente */
+.column-layout-container {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan en móvil */
+    gap: 30px; /* Espacio entre los bloques */
+    justify-content: flex-start;
+}
+
+/* Ajuste de ancho de los bloques de asignación */
+.column-layout-container .form-container {
+    /* Permitimos que cada sección ocupe casi el 50% para que dos quepan en una fila */
+    flex: 1 1 45%; 
+}
+
+/* Aseguramos que la lista de materias/alumnos asignados se vea bien */
+#materiasList, #alumnosList {
+    margin-top: 15px;
+    padding-left: 20px;
+    list-style-type: disc;
+}
+
+.text-left-align {
+    text-align: left !important;
+}
  
 
 

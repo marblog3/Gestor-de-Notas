@@ -45,7 +45,7 @@ async function cargarSelects() {
                 alumnoSelect.innerHTML += `<option value="${user.email}">${user.fullname || user.email}</option>`;
             }
         });
-        
+
         profesorSelect.addEventListener('change', (e) => {
             cargarAsignacionesProfesor(e.target.value);
         });
@@ -62,7 +62,7 @@ async function cargarMateriasParaSelect() {
     const materiaSelect = document.getElementById("materiaInputPreceptor");
     if (!materiaSelect) return;
     materiaSelect.innerHTML = "<option value=''>Cargando materias...</option>";
-    
+
     try {
         const response = await fetch('../api/get_materias.php');
         const materias = await response.json();
@@ -94,7 +94,7 @@ async function cargarAsignacionesProfesor(profesorEmail) {
         const data = await response.json();
 
         listaMateriasAsignadas.innerHTML = '';
-        
+
         if (data.success && data.user.curso_info) {
             const asignaciones = JSON.parse(data.user.curso_info);
 
@@ -123,12 +123,13 @@ async function asignarMateria() {
     const materia = document.getElementById("materiaInputPreceptor").value;
     const anio = document.getElementById("anioInputProf").value;
     const division = document.getElementById("divisionInputProf").value;
+    const turno = document.getElementById("turnoInputProfesor").value; // NUEVO: Captura del turno
 
-    if (!profesor || !materia || materia === 'Seleccionar materia' || !anio || !division) {
-        return alert("Complete todos los campos para asignar la materia.");
+    if (!profesor || !materia || materia === 'Seleccionar materia' || !anio || !division || !turno) {
+        return alert("Complete todos los campos para asignar la materia, incluyendo el Turno.");
     }
 
-    const asignacion_info = { materia, anio, division };
+    const asignacion_info = { materia, anio, division, turno }; // NUEVO: Incluye el turno
 
     try {
         const response = await fetch('../api/assign_subject.php', {
@@ -140,7 +141,7 @@ async function asignarMateria() {
 
         if (data.success) {
             alert(data.message);
-            cargarAsignacionesProfesor(profesor); 
+            cargarAsignacionesProfesor(profesor);
         } else {
             alert(data.message || "Error al asignar materia.");
         }
@@ -156,22 +157,23 @@ async function asignarAlumno() {
     const anio = document.getElementById("anioInput").value;
     const division = document.getElementById("divisionInput").value;
     const especialidad = document.getElementById("especialidadInput").value;
+    const turno = document.getElementById("turnoInputAlumno").value; // NUEVO: Captura del turno
 
-    if (!alumno || !anio || !division || !especialidad) return alert("Complete todos los campos");
+    if (!alumno || !anio || !division || !especialidad || !turno) return alert("Complete todos los campos, incluyendo el Turno."); // Validación de turno
 
-    const curso_info = { anio, division, especialidad };
+    const curso_info = { anio, division, especialidad, turno }; // NUEVO: Incluye el turno en el objeto
 
     try {
         const response = await fetch('../api/assign_course.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: alumno, data: curso_info }) 
+            body: JSON.stringify({ email: alumno, data: curso_info })
         });
         const data = await response.json();
 
         if (data.success) {
             const li = document.createElement("li");
-            li.textContent = `${alumno} → Año ${anio}, División ${division}, Especialidad ${especialidad}`;
+            li.textContent = `${alumno} → Año ${anio}, División ${division}, Especialidad ${especialidad}, Turno ${turno}`;
             document.getElementById("alumnosList").appendChild(li);
             alert(data.message);
         } else {
@@ -183,7 +185,7 @@ async function asignarAlumno() {
 }
 
 /* ------------------------------------------
-   LÓGICA DE CONTROL DE CURSO (PRECEPTOR) - NUEVA
+   LÓGICA DE CONTROL DE CURSO (PRECEPTOR)
    ------------------------------------------ */
 
 // Función principal para cargar y mostrar la tabla de alumnos y profesores filtrados
@@ -192,7 +194,7 @@ async function cargarAlumnosFiltrados() {
     const division = document.getElementById("filtroDivision").value;
     const tbodyAlumnos = document.querySelector("#alumnosPreceptorTable tbody");
     const tbodyProfesores = document.querySelector("#profesoresCursoTable tbody");
-    
+
     tbodyAlumnos.innerHTML = '<tr><td colspan="5">Cargando...</td></tr>';
     tbodyProfesores.innerHTML = '<tr><td colspan="3">Cargando...</td></tr>';
 
@@ -201,7 +203,7 @@ async function cargarAlumnosFiltrados() {
         tbodyProfesores.innerHTML = '<tr><td colspan="3">Por favor, seleccione un curso.</td></tr>';
         return;
     }
-    
+
     try {
         // --- 1. Cargar Alumnos del Curso (Requiere la API get_users_by_course.php) ---
         const alumnosResponse = await fetch(`../api/get_users_by_course.php?anio=${anio}&division=${division}&role=Alumno`);
@@ -210,7 +212,7 @@ async function cargarAlumnosFiltrados() {
         // --- 2. Cargar Profesores del Curso (Requiere la API get_profesores_by_course.php) ---
         const profesoresResponse = await fetch(`../api/get_profesores_by_course.php?anio=${anio}&division=${division}`);
         const profesores = await profesoresResponse.json();
-        
+
         // MOSTRAR ALUMNOS
         if (alumnos.length > 0) {
             tbodyAlumnos.innerHTML = '';
@@ -231,7 +233,7 @@ async function cargarAlumnosFiltrados() {
         } else {
             tbodyAlumnos.innerHTML = '<tr><td colspan="5">No se encontraron alumnos en este curso.</td></tr>';
         }
-        
+
         // MOSTRAR PROFESORES
         if (profesores.length > 0) {
             tbodyProfesores.innerHTML = '';
@@ -249,8 +251,8 @@ async function cargarAlumnosFiltrados() {
                 row.innerHTML = `
                     <td>${profesor.fullname}</td>
                     <td>${profesor.email}</td>
-                    <td>${profesor.materias.join(', ')}</td>
-                `;
+                    <td class="text-left-align">${profesor.materias.join(', ')}</td>
+                `; // CLASE AÑADIDA AQUÍ
                 tbodyProfesores.appendChild(row);
             });
 
@@ -270,26 +272,26 @@ async function cargarAlumnosFiltrados() {
 function revisarBoletinPreceptor(alumnoEmail) {
     // 1. Guardar el email del alumno que el Preceptor quiere ver (CRÍTICO)
     sessionStorage.setItem("reviewingUserEmail", alumnoEmail);
-    
+
     // 2. Guardar el rol del revisor (Preceptor)
-    sessionStorage.setItem("reviewerRole", activeUser.role); 
+    sessionStorage.setItem("reviewerRole", activeUser.role);
 
     // 3. Redirigir a la vista de boletín (alumno.html)
     // El Preceptor puede modificar las notas
-    window.location.href = `../html/alumno.html?mode=edit&alumno=${alumnoEmail}`; 
+    window.location.href = `../html/alumno.html?mode=edit&alumno=${alumnoEmail}`;
 }
 
 
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
-    cargarSelects(); 
-    cargarMateriasParaSelect(); 
-    
+    cargarSelects();
+    cargarMateriasParaSelect();
+
     // Listener para los filtros del curso - se disparan al cambiar
     document.getElementById("filtroAnio").addEventListener('change', cargarAlumnosFiltrados);
     document.getElementById("filtroDivision").addEventListener('change', cargarAlumnosFiltrados);
-    
+
     // AÑADIDO: Llama al filtro una vez para cargar los alumnos iniciales (ej. 7mo 4ta)
-    cargarAlumnosFiltrados(); 
+    cargarAlumnosFiltrados();
 });
