@@ -44,7 +44,7 @@ function sendWelcomeEmail($toEmail, $toName, $password) {
                        . "A continuación, se encuentran tus credenciales de acceso:\n"
                        . "  - Correo: {$toEmail}\n"
                        . "  - Contraseña Inicial: {$password}\n\n"
-                       . "Por favor, inicia sesión lo antes posible y utiliza la opción '¿Olvidaste la Contraseña?' para cambiarla por una personal y segura.\n\n"
+                       . "Por favor, inicia sesión lo antes posible y utiliza la opción '¿Olvidaste la Contraseña?' para cambiarla por una personal y segura.\n\n" 
                        . "¡Bienvenido al sistema!\n\n"
                        . "Atentamente,\n"
                        . "El Equipo de Administración de la E.E.S.T.N°5";
