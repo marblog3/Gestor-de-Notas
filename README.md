@@ -1,49 +1,104 @@
- ** Sistema de gestion de notas
+¡Absolutamente\! Tienes toda la razón, ese `README.md` estaba muy desactualizado y no reflejaba la estructura real de tu proyecto ni el archivo de base de datos correcto.
 
-  Descripción
-El presente proyecto consiste en el desarrollo de un Gestor de Notas para la
-Escuela.
-El sistema permitirá gestionar alumnos, profesores, personal escolar y las
-calificaciones, teniendo en cuenta las particularidades de una escuela técnica (materias
-áulicas y de taller).
+Lo he reescrito por completo para que sea profesional, preciso y sirva como una verdadera carta de presentación para tu proyecto "Gestor de Notas".
 
-  Tecnología elegida
-PHP
-Js
-Css3
-html5
+Aquí tienes el contenido mejorado para que lo copies y pegues en tu archivo `README.md`:
 
-Se eligió esta tecnología por su capacidad de combinar datos estructurados (tablas SQL) con información flexible 
+-----
 
- Instalación y configuración
-1. Instalar *tablas.sql** desde [https://github.com/marblog3/Gestor-de-Notas.git]
-2. Crear una base de datos llamada `sistema_gestion_eest5`.
-3. Ejecutar los siguientes archivos SQL en orden:
-   - `taablas.sql` (creación de tablas)
+# Gestor de Notas E.E.S.T.N°5
 
-   Estructura del proyecto
- GESTOR-DE-NOTAS
- ┣  .vscode
- ┣  api
- ┣  css
- ┣  html
- ┣  img
- ┣  js
- ┗  README.md
+Un sistema web integral para la administración de calificaciones, usuarios y asignaciones académicas, diseñado para la E.E.S.T.N°5.
 
+## 📚 Descripción
 
- Casos de uso
- -Gestionar notas de alumnos
- -Administrar usuarios
- -Gestionar roles
- -Gestion de profesores
- -Gestion de materias
+El **Gestor de Notas** es una aplicación web full-stack diseñada para reemplazar el sistema tradicional de planillas en papel. El sistema centraliza la información en una base de datos MySQL y provee interfaces de usuario diferenciadas para los cuatro roles clave de la institución:
 
+  * **Administrador:** Tiene control total sobre el sistema, incluyendo la aprobación de nuevos usuarios, la gestión de perfiles, la creación de materias y la asignación de cursos y preceptores.
+  * **Preceptor:** Administra la asignación de alumnos a sus cursos correspondientes y puede visualizar el estado académico de los estudiantes a su cargo.
+  * **Profesor:** Accede a sus planillas de calificaciones digitales, carga notas parciales y de intensificación, calcula promedios automáticamente y puede exportar sus planillas a Excel.
+  * **Alumno:** Consulta su "Boletín del Alumno" digital en tiempo real, donde puede ver sus calificaciones, notas finales y observaciones. También puede exportar su boletín.
 
- Autores
-Desarrollado por estudiantes de 7° año – 4ta  informatica
-Gomez Kevin, Benitez Maria, Abaca Lucia, Quiroga Ambar
-E.E.S.T. N°5 “General Manuel N. Savio.”  
- Ciclo lectivo 2025
+## 🛠️ Stack de Tecnologías
 
- 
+Este proyecto fue construido utilizando un stack de tecnologías web clásico, enfocado en la robustez y la seguridad:
+
+  * **Frontend:** HTML5, CSS3, JavaScript (ES6+).
+  * **Backend (API):** PHP 8 (utilizando **PDO** para conexiones seguras a la base de datos).
+  * **Base de Datos:** MySQL (MariaDB).
+  * **Intercambio de Datos:** JSON (para la comunicación asíncrona entre el cliente JS y la API de PHP).
+
+Se eligió esta arquitectura por su fiabilidad, amplia documentación y facilidad de despliegue en entornos de hosting comunes (y para desarrollo local con XAMPP), permitiendo un desarrollo full-stack cohesivo y seguro.
+
+## 🚀 Instalación y Configuración
+
+Sigue estos pasos para ejecutar el proyecto en un entorno de desarrollo local (como XAMPP).
+
+### Prerrequisitos
+
+Asegúrate de tener instalado un servidor web local compatible con PHP y MySQL.
+
+  * **XAMPP** (Recomendado): [https://www.apachefriends.org/es/index.html](https://www.apachefriends.org/es/index.html)
+
+### Pasos
+
+1.  **Clonar el Repositorio:**
+
+    ```bash
+    git clone https://github.com/marblog3/Gestor-de-Notas.git
+    ```
+
+    O descarga el ZIP y descomprímelo.
+
+2.  **Mover Archivos del Proyecto:**
+
+      * Mueve la carpeta completa del proyecto (ej. `gestor-de-notas-ultima`) al directorio `htdocs` de tu instalación de XAMPP.
+      * (Ej. `C:/xampp/htdocs/gestor-de-notas-ultima`)
+
+3.  **Configurar la Base de Datos:**
+
+      * Inicia los módulos de **Apache** y **MySQL** desde el panel de control de XAMPP.
+      * Abre tu navegador y ve a `http://localhost/phpmyadmin/`.
+      * Crea una nueva base de datos llamada: **`sistema_gestion_eest5`**.
+      * Selecciona la base de datos recién creada.
+      * Haz clic en la pestaña "Importar".
+      * Selecciona el archivo **`sistema_gestion_eest5.sql`** (ubicado en la raíz de este proyecto) y haz clic en "Continuar".
+
+4.  **Verificar la Configuración:**
+
+      * Asegúrate de que la configuración en `api/db_config.php` coincida con la de tu servidor MySQL. Por defecto, está configurado para:
+          * `DB_HOST`: 'localhost'
+          * `DB_NAME`: 'sistema\_gestion\_eest5'
+          * `DB_USER`: 'root'
+          * `DB_PASS`: '' (vacío)
+
+5.  **Acceder a la Aplicación:**
+
+      * ¡Listo\! Abre la aplicación desde tu navegador en:
+      * `http://localhost/gestor-de-notas-ultima/html/principal.html`
+
+## 📂 Estructura del Proyecto
+
+```
+gestor-de-notas-ultima/
+┣ 📂 .vscode/       (Configuración del editor)
+┣ 📂 api/           (Backend: Lógica de PHP, endpoints y conexión a BD)
+┣ 📂 css/           (Hojas de estilo: base.css, admin.css, profesor.css, etc.)
+┣ 📂 html/          (Vistas: admin.html, profesor.html, alumno.html, etc.)
+┣ 📂 img/           (Recursos gráficos, ej: logo.png)
+┣ 📂 js/            (Frontend: Lógica JS por rol: admin.js, profesor.js, etc.)
+┣ 📜 README.md       (Esta documentación)
+┗ 📜 sistema_gestion_eest5.sql (Script de la Base de Datos)
+```
+
+## 👨‍💻 Autores
+
+Desarrollado por estudiantes de 7° 4° de Informática como parte del proyecto final de "Evaluación de Proyecto".
+
+  * **Benitez, Maria Vianney** (Líder de Proyecto, Full-Stack Developer)
+  * **Gomez, Kevin** (Developer)
+  * **Abaca, Lucia** (Developer)
+  * **Quiroga, Ambar** (Developer)
+
+**E.E.S.T. N°5 "General Manuel N. Savio"**
+Ciclo Lectivo 2025
