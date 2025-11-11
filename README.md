@@ -6,7 +6,7 @@
 
 Un sistema web integral para la administración de calificaciones, usuarios y asignaciones académicas, diseñado para la E.E.S.T.N°5.
 
-## 📚 Descripción
+## Descripción
 
 El **Gestor de Notas** es una aplicación web full-stack diseñada para reemplazar el sistema tradicional de planillas en papel. El sistema centraliza la información en una base de datos MySQL y provee interfaces de usuario diferenciadas para los cuatro roles clave de la institución:
 
@@ -15,7 +15,7 @@ El **Gestor de Notas** es una aplicación web full-stack diseñada para reemplaz
   * **Profesor:** Accede a sus planillas de calificaciones digitales, carga notas parciales y de intensificación, calcula promedios automáticamente y puede exportar sus planillas a Excel.
   * **Alumno:** Consulta su "Boletín del Alumno" digital en tiempo real, donde puede ver sus calificaciones, notas finales y observaciones. También puede exportar su boletín.
 
-## 🛠️ Stack de Tecnologías
+## Stack de Tecnologías
 
 Este proyecto fue construido utilizando un stack de tecnologías web clásico, enfocado en la robustez y la seguridad:
 
@@ -26,7 +26,7 @@ Este proyecto fue construido utilizando un stack de tecnologías web clásico, e
 
 Se eligió esta arquitectura por su fiabilidad, amplia documentación y facilidad de despliegue en entornos de hosting comunes (y para desarrollo local con XAMPP), permitiendo un desarrollo full-stack cohesivo y seguro.
 
-## 🚀 Instalación y Configuración
+## Instalación y Configuración
 
 Sigue estos pasos para ejecutar el proyecto en un entorno de desarrollo local (como XAMPP).
 
@@ -73,7 +73,7 @@ Asegúrate de tener instalado un servidor web local compatible con PHP y MySQL.
       * ¡Listo\! Abre la aplicación desde tu navegador en:
       * `http://localhost/gestor-de-notas/html/principal.html`
 
-## 📂 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 gestor-de-notas/
@@ -87,7 +87,7 @@ gestor-de-notas/
 ┗ 📜 sistema_gestion_eest5.sql (Script de la Base de Datos)
 ```
 
-## 👨‍💻 Autores
+## Autores
 
 Desarrollado por estudiantes de 7° 4° de Informática como parte del proyecto final de "Evaluación de Proyecto".
 
