@@ -1,8 +1,4 @@
-¡Absolutamente\! Tienes toda la razón, ese `README.md` estaba muy desactualizado y no reflejaba la estructura real de tu proyecto ni el archivo de base de datos correcto.
 
-Lo he reescrito por completo para que sea profesional, preciso y sirva como una verdadera carta de presentación para tu proyecto "Gestor de Notas".
-
-Aquí tienes el contenido mejorado para que lo copies y pegues en tu archivo `README.md`:
 
 -----
 
@@ -52,8 +48,8 @@ Asegúrate de tener instalado un servidor web local compatible con PHP y MySQL.
 
 2.  **Mover Archivos del Proyecto:**
 
-      * Mueve la carpeta completa del proyecto (ej. `gestor-de-notas-ultima`) al directorio `htdocs` de tu instalación de XAMPP.
-      * (Ej. `C:/xampp/htdocs/gestor-de-notas-ultima`)
+      * Mueve la carpeta completa del proyecto (ej. `gestor-de-notas`) al directorio `htdocs` de tu instalación de XAMPP.
+      * (Ej. `C:/xampp/htdocs/gestor-de-notas`)
 
 3.  **Configurar la Base de Datos:**
 
@@ -75,12 +71,12 @@ Asegúrate de tener instalado un servidor web local compatible con PHP y MySQL.
 5.  **Acceder a la Aplicación:**
 
       * ¡Listo\! Abre la aplicación desde tu navegador en:
-      * `http://localhost/gestor-de-notas-ultima/html/principal.html`
+      * `http://localhost/gestor-de-notas/html/principal.html`
 
 ## 📂 Estructura del Proyecto
 
 ```
-gestor-de-notas-ultima/
+gestor-de-notas/
 ┣ 📂 .vscode/       (Configuración del editor)
 ┣ 📂 api/           (Backend: Lógica de PHP, endpoints y conexión a BD)
 ┣ 📂 css/           (Hojas de estilo: base.css, admin.css, profesor.css, etc.)
@@ -95,10 +91,10 @@ gestor-de-notas-ultima/
 
 Desarrollado por estudiantes de 7° 4° de Informática como parte del proyecto final de "Evaluación de Proyecto".
 
-  * **Benitez, Maria Vianney** (Líder de Proyecto, Full-Stack Developer)
-  * **Gomez, Kevin** (Developer)
-  * **Abaca, Lucia** (Developer)
-  * **Quiroga, Ambar** (Developer)
+  * **Benitez, Maria** 
+  * **Gomez, Kevin** 
+  * **Abaca, Lucia** 
+
 
 **E.E.S.T. N°5 "General Manuel N. Savio"**
 Ciclo Lectivo 2025
