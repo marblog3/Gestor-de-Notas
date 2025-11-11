@@ -1,5 +1,4 @@
 <?php
-// api/reset_password.php
 header('Content-Type: application/json');
 require 'db_config.php';
 

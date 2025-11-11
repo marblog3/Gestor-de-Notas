@@ -97,7 +97,7 @@ async function register() {
         const data = await response.json();
 
         if (data.success) {
-        showCustomAlert("Tu solicitud fue enviada al administrador. Espera su aprobación.");
+            showCustomAlert("Tu solicitud fue enviada al administrador. Espera su aprobación.");
         } else {
             errorMsg.innerHTML = data.message || 'Error al enviar solicitud.';
         }
@@ -128,7 +128,46 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Ya tienes una sesión activa.");
         redirectByRole(user.role);
     }
+
+    // --- VALIDACIÓN DE INPUTS MEJORADA ---
+
+    // 1. Registro: Nombre Completo
+    const registerFullnameInput = document.getElementById('register-fullname');
+    if (registerFullnameInput) {
+        registerFullnameInput.maxLength = 50; // Límite de 50 caracteres
+        registerFullnameInput.addEventListener('input', function (e) {
+            // Solo permite letras, acentos, ñ, espacios y apóstrofes
+            e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s']/g, '');
+        });
+    }
+
+    // 2. Registro: DNI (Formateo 99.999.999)
+    const registerDniInput = document.getElementById('register-dni');
+    if (registerDniInput) {
+        registerDniInput.addEventListener('input', formatearDNI); // Llama a la función reutilizable
+    }
+
+    // 3. Registro: Email (forzar minúsculas)
+    const registerUsernameInput = document.getElementById('register-username');
+    if (registerUsernameInput) {
+        registerUsernameInput.addEventListener('input', function (e) {
+            e.target.value = e.target.value.toLowerCase();
+        });
+    }
+
+    // 4. Login: Email (forzar minúsculas)
+    const loginUsernameInput = document.getElementById('login-username');
+    if (loginUsernameInput) {
+        loginUsernameInput.addEventListener('input', function (e) {
+            e.target.value = e.target.value.toLowerCase();
+        });
+    }
+    // --- FIN DE VALIDACIÓN ---
+
+
 });
+
+
 
 // Evitar volver atrás al presionar el botón del navegador
 window.history.pushState(null, null, window.location.href);
@@ -143,13 +182,13 @@ window.onpopstate = function () {
 
 // --- Funciones para la Ventana Modal ---
 function showCustomAlert(message) {
-  document.getElementById('custom-alert-message').textContent = message;
-  document.getElementById('custom-alert-overlay').style.display = 'flex';
+    document.getElementById('custom-alert-message').textContent = message;
+    document.getElementById('custom-alert-overlay').style.display = 'flex';
 }
 
 function closeCustomAlert() {
-  document.getElementById('custom-alert-overlay').style.display = 'none';
-  showLogin(); // Muestra el formulario de login después de cerrar
+    document.getElementById('custom-alert-overlay').style.display = 'none';
+    showLogin(); // Muestra el formulario de login después de cerrar
 }
 
 // --- Lógica de Google Sign-In ---
@@ -159,7 +198,7 @@ function parseJwt(token) {
     try {
         let base64Url = token.split('.')[1];
         let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        let jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        let jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));
         return JSON.parse(jsonPayload);
@@ -209,4 +248,25 @@ async function handleGoogleCredentialResponse(response) {
         document.getElementById('error-msg').innerHTML = 'Error de conexión con el servidor.';
         console.error(e);
     }
+}
+
+/**
+ * Función reutilizable para formatear DNI (xx.xxx.xxx)
+ */
+function formatearDNI(e) {
+    let val = e.target.value.replace(/[^0-9]/g, ''); // 1. Solo números
+    val = val.substring(0, 8); // 2. Limitar a 8 dígitos
+
+    let formattedVal = '';
+    if (val.length > 5) {
+        // Formato 12.345.678
+        formattedVal = val.substring(0, 2) + '.' + val.substring(2, 5) + '.' + val.substring(5);
+    } else if (val.length > 2) {
+        // Formato 12.345
+        formattedVal = val.substring(0, 2) + '.' + val.substring(2);
+    } else {
+        // Formato 12
+        formattedVal = val;
+    }
+    e.target.value = formattedVal;
 }

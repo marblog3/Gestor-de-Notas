@@ -83,7 +83,7 @@ function openEditModal(email) {
 
 function openDeleteModal(email) {
     document.getElementById('deleteMessage').textContent = `¿Estás seguro de que quieres eliminar al usuario ${email}?`;
-    
+
     const confirmBtn = document.getElementById('confirmDeleteBtn');
     confirmBtn.textContent = 'Eliminar';
     confirmBtn.className = 'btn btn-danger';
@@ -91,7 +91,7 @@ function openDeleteModal(email) {
     const newConfirmBtn = confirmBtn.cloneNode(true);
     confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
     newConfirmBtn.onclick = () => handleDeleteUser(email);
-    
+
     openModal('deleteModal');
 }
 
@@ -189,21 +189,21 @@ async function cargarUsuarios() {
     try {
         const response = await fetch('../api/get_users.php');
         allUsersCache = await response.json(); // Cargar cache
-        
+
         if (!allUsersCache || allUsersCache.length === 0) {
             tbody.innerHTML = "<tr><td colspan='5'>No hay usuarios activos registrados.</td></tr>";
         }
-        
+
         searchUsers(); // Muestra todos los usuarios y aplica cualquier filtro de búsqueda activo
-        
+
     } catch (e) {
         tbody.innerHTML = "<tr><td colspan='5'>Error al cargar usuarios del servidor.</td></tr>";
         console.error("Error al cargar usuarios:", e);
     }
 
-    cargarSelects();
-    cargarMaterias(); 
-    cargarSolicitudes();
+    cargarSelects(); // Carga los selects de asignación
+    cargarMaterias(); // Carga la tabla y el select de materias
+    cargarSolicitudes(); // Carga las solicitudes pendientes
 }
 
 // Búsqueda local (Mantiene la función)
@@ -211,14 +211,14 @@ function searchUsers() {
     const input = document.getElementById('searchInput');
     const filter = input.value.toUpperCase();
     const tbody = document.querySelector("#usersTable tbody");
-    
+
     tbody.innerHTML = "";
     let resultsFound = false;
 
     allUsersCache.forEach(user => {
         // Concatenar campos clave para la búsqueda
         const userText = `${user.fullname} ${user.dni} ${user.email} ${user.role}`.toUpperCase();
-        
+
         if (userText.indexOf(filter) > -1) {
             const row = document.createElement("tr");
             row.innerHTML = `
@@ -235,7 +235,7 @@ function searchUsers() {
             resultsFound = true;
         }
     });
-    
+
     if (!resultsFound) {
         tbody.innerHTML = "<tr><td colspan='5'>No se encontraron resultados.</td></tr>";
     }
@@ -264,12 +264,12 @@ async function cargarSolicitudes() {
     try {
         const response = await fetch('../api/get_pending.php');
         const pendingUsers = await response.json();
-        
+
         pendingList.innerHTML = "";
 
         if (!pendingUsers || pendingUsers.length === 0) {
-             pendingList.innerHTML = '<li>No hay solicitudes pendientes.</li>';
-             return;
+            pendingList.innerHTML = '<li>No hay solicitudes pendientes.</li>';
+            return;
         }
 
         pendingUsers.forEach((userReq, index) => {
@@ -315,7 +315,7 @@ async function handleApproveUser(id, email, fullname, dni) {
         openAlertModal("Debe asignar un rol.");
         return;
     }
-    
+
     approveBtn.disabled = true;
 
     try {
@@ -324,7 +324,7 @@ async function handleApproveUser(id, email, fullname, dni) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id_pendiente: id, email, fullname, dni, role })
         });
-        
+
         const data = await response.json();
 
         if (!response.ok && data.message) {
@@ -334,7 +334,7 @@ async function handleApproveUser(id, email, fullname, dni) {
         if (data.success) {
             const autoPassword = data.auto_password || 'N/A (Verifique logs/email)';
             openAlertModal(`Usuario ${fullname} aprobado como ${role}. Contraseña generada: ${autoPassword}. La contraseña fue enviada al correo.`);
-            
+
             closeModal('approvalModal');
             cargarUsuarios();
             cargarSolicitudes();
@@ -353,7 +353,7 @@ async function handleApproveUser(id, email, fullname, dni) {
 // --- FUNCIONES PARA RECHAZAR SOLICITUD ---
 function openRejectModal(id, fullname) {
     document.getElementById('deleteMessage').textContent = `¿Estás seguro de que quieres rechazar la solicitud de ${fullname}?`;
-    
+
     const confirmBtn = document.getElementById('confirmDeleteBtn');
     confirmBtn.textContent = 'Rechazar';
     confirmBtn.className = 'btn btn-danger';
@@ -390,16 +390,17 @@ async function handleRejectUser(id) {
 }
 
 /* ------------------------------------------
-   CRUD DE MATERIAS & FILTRADO DINÁMICO
+   CRUD DE MATERIAS & FILTRADO DINÁMICO (dependiente de curso)
    ------------------------------------------ */
-let allMateriasCache = []; 
+let allMateriasCache = [];
 
 async function getEspecialidadFromCurso(anio, division) {
     if (!anio || !division) return null;
     try {
+        // Usa la API para obtener la especialidad del curso desde la DB
         const response = await fetch(`../api/get_especialidad.php?anio=${anio}&division=${division}`);
         const data = await response.json();
-        
+
         if (data.success) {
             return data.especialidad;
         }
@@ -410,6 +411,59 @@ async function getEspecialidadFromCurso(anio, division) {
     }
 }
 
+/**
+ * Carga las materias disponibles para asignación, filtrando por la especialidad seleccionada.
+ * @param {Array} materiasCache - El caché de todas las materias.
+ */
+async function loadMateriasForCourse(materiasCache) {
+    const anioSelected = document.getElementById("anioSelectProfesor").value;
+    const divisionSelected = document.getElementById("divisionSelectProfesor").value;
+    const especialidadSelected = document.getElementById("especialidadSelectProfesor").value;
+    const materiaSelectAdmin = document.getElementById("materiaSelectAdmin");
+
+    if (!materiaSelectAdmin) return;
+
+    materiaSelectAdmin.innerHTML = '<option value="">Cargando materias...</option>';
+
+    if (!anioSelected || !divisionSelected || !especialidadSelected) {
+        materiaSelectAdmin.innerHTML = `<option value="">Seleccione Año, División y Especialidad</option>`;
+        return;
+    }
+
+    const especialidadFiltro = especialidadSelected;
+    const isCicloBasico = especialidadFiltro === 'Ciclo Básico';
+
+    let filteredMateriasForSelect = materiasCache;
+
+    if (isCicloBasico) {
+        // Lógica para Ciclo Básico (1ro a 3ro): Incluye materias de Ciclo Básico, Tronco Común y NULL/No definido.
+        filteredMateriasForSelect = materiasCache.filter(m =>
+            m.especialidad === 'Ciclo Básico' || m.especialidad === 'Tronco Común' || !m.especialidad
+        );
+    } else {
+        // Lógica para ESPECIALIZACIONES (Informática, MMO, Química, Electromecánica):
+        // Muestra SOLAMENTE las materias que coincidan EXACTAMENTE con la especialidad seleccionada.
+        // O TAMBIÉN las de Tronco Común (áulicas)
+        filteredMateriasForSelect = materiasCache.filter(m =>
+            m.especialidad === especialidadFiltro || m.especialidad === 'Tronco Común' || !m.especialidad
+        );
+    }
+
+    materiaSelectAdmin.innerHTML = '<option value="">Seleccione una materia</option>';
+    if (filteredMateriasForSelect.length === 0) {
+        const msg = `No hay materias definidas para ${especialidadFiltro} o Tronco Común.`;
+        materiaSelectAdmin.innerHTML = `<option value="">${msg}</option>`;
+    } else {
+        // Ordena las materias alfabéticamente antes de mostrarlas (para mejor UX)
+        filteredMateriasForSelect.sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+        filteredMateriasForSelect.forEach(materia => {
+            const option = `<option value="${materia.nombre}">${materia.nombre}</option>`;
+            materiaSelectAdmin.innerHTML += option;
+        });
+    }
+}
+
 
 /**
  * Carga y filtra las materias para el panel de Gestión (tabla) y el select de Asignación.
@@ -417,10 +471,10 @@ async function getEspecialidadFromCurso(anio, division) {
 async function cargarMaterias() {
     const tbodyGestion = document.querySelector("#materiasTable tbody");
     const materiaSelectAdmin = document.getElementById("materiaSelectAdmin");
-    
+
     // 1. Cargar caché si está vacía
     if (allMateriasCache.length === 0) {
-        if (tbodyGestion) tbodyGestion.innerHTML = "<tr><td colspan='4'>Cargando materias...</td></tr>"; 
+        if (tbodyGestion) tbodyGestion.innerHTML = "<tr><td colspan='4'>Cargando materias...</td></tr>";
         if (materiaSelectAdmin) materiaSelectAdmin.innerHTML = '<option value="">Cargando materias...</option>';
         try {
             const response = await fetch('../api/get_materias.php');
@@ -434,67 +488,43 @@ async function cargarMaterias() {
 
     // --- Lógica de filtrado para la TABLA DE GESTIÓN (Por Especialidad) ---
     const filtroEspecialidadTabla = document.getElementById("filtroEspecialidadMateria").value;
-    
+
     let filteredMateriasForTable = allMateriasCache;
     if (filtroEspecialidadTabla && filtroEspecialidadTabla.trim() !== '') {
-        filteredMateriasForTable = allMateriasCache.filter(m => 
-            m.especialidad === filtroEspecialidadTabla || 
+        filteredMateriasForTable = allMateriasCache.filter(m =>
+            m.especialidad === filtroEspecialidadTabla ||
             (filtroEspecialidadTabla === 'Tronco Común' && (!m.especialidad || m.especialidad === 'Tronco Común')) ||
             (filtroEspecialidadTabla === 'Ciclo Básico' && m.especialidad === 'Ciclo Básico')
         );
     }
-    
+
     // 2. Llenar la tabla de gestión (Gestionar Materias)
-    if (tbodyGestion) { 
+    if (tbodyGestion) {
         tbodyGestion.innerHTML = "";
-        filteredMateriasForTable.forEach(materia => { 
-            const especialidadTexto = materia.especialidad && materia.especialidad.trim() !== '' 
-                                      ? materia.especialidad 
-                                      : 'Tronco Común'; 
+        filteredMateriasForTable.sort((a, b) => a.nombre.localeCompare(b.nombre)); // Ordenar tabla
+        filteredMateriasForTable.forEach(materia => {
+            const especialidadTexto = materia.especialidad && materia.especialidad.trim() !== ''
+                ? materia.especialidad
+                : 'Tronco Común';
             const row = document.createElement("tr");
             row.innerHTML = `
             <td>${materia.id}</td>
             <td>${materia.nombre}</td>
-            <td style="text-align: center;">${especialidadTexto}</td> 
+            <td style="text-align: center;">${especialidadTexto}</td>
             <td>
                 <button class="accion-boton" onclick="openDeleteMateriaModal('${materia.id}', '${materia.nombre}')">Eliminar</button>
             </td>
             `;
             tbodyGestion.appendChild(row);
         });
+        if (filteredMateriasForTable.length === 0) {
+            tbodyGestion.innerHTML = `<tr><td colspan="4">No se encontraron materias para '${filtroEspecialidadTabla || 'Todas'}'.</td></tr>`;
+        }
     }
 
-    // 3. Llenar select de asignación (Filtro por curso: llama a setupMateriaFiltering para la lógica)
+    // 3. Llenar select de asignación (Filtro dinámico de materias por curso)
     if (materiaSelectAdmin) {
-        materiaSelectAdmin.innerHTML = '<option value="">Seleccione una materia</option>';
-        
-        const anioSelected = document.getElementById("anioSelectProfesor").value;
-        const divisionSelected = document.getElementById("divisionSelectProfesor").value;
-        const especialidadFiltro = await getEspecialidadFromCurso(anioSelected, divisionSelected);
-
-        if (!anioSelected || !divisionSelected) {
-             materiaSelectAdmin.innerHTML = `<option value="">Seleccione Año y División</option>`;
-             return;
-        }
-        
-        let filteredMateriasForSelect = allMateriasCache;
-        if (especialidadFiltro) {
-            filteredMateriasForSelect = allMateriasCache.filter(m => 
-                m.especialidad === especialidadFiltro || m.especialidad === 'Tronco Común' || !m.especialidad
-            );
-        }
-
-        if (filteredMateriasForSelect.length === 0) {
-            const msg = especialidadFiltro
-                ? `No hay materias para ${especialidadFiltro}.` 
-                : `No hay materias creadas.`;
-            materiaSelectAdmin.innerHTML = `<option value="">${msg}</option>`;
-        } else {
-             filteredMateriasForSelect.forEach(materia => {
-                const option = `<option value="${materia.nombre}">${materia.nombre}</option>`;
-                materiaSelectAdmin.innerHTML += option;
-            });
-        }
+        loadMateriasForCourse(allMateriasCache);
     }
 }
 
@@ -506,37 +536,49 @@ function setupMateriaTableFiltering() {
     }
 }
 
-// --- Setup para el filtro del SELECT de Asignar Profesor ---
+// --- Setup para el filtro del SELECT de Asignar Profesor (MATERIAS) ---
 function setupMateriaFiltering() {
     const anioSelect = document.getElementById("anioSelectProfesor");
     const divisionSelect = document.getElementById("divisionSelectProfesor");
+    const especialidadSelect = document.getElementById("especialidadSelectProfesor");
 
-    if (!anioSelect || !divisionSelect) return; 
+    if (!anioSelect || !divisionSelect || !especialidadSelect) return;
 
     const applyFilter = async () => {
         const anio = anioSelect.value;
         const division = divisionSelect.value;
-        
-        // Si no hay curso seleccionado, se recarga el select de asignación con la lista completa.
+
         if (!anio || !division) {
-             cargarMaterias();
-             return;
+            especialidadSelect.value = ''; // Limpiar especialidad si el curso no es completo
+            loadMateriasForCourse(allMateriasCache);
+            return;
         }
 
+        // 1. Obtener la especialidad real del curso de la DB
         const especialidad = await getEspecialidadFromCurso(anio, division);
 
-        if (especialidad) {
-            // Recarga el select de asignación filtrado por especialidad
-            cargarMaterias(); 
+        // 2. Aplicar la especialidad obtenida al selector (si se encontró)
+        if (especialidad && especialidadSelect.querySelector(`option[value="${especialidad}"]`)) {
+            especialidadSelect.value = especialidad;
         } else {
-             cargarMaterias();
+            especialidadSelect.value = ''; // Limpiar si no se encuentra o no existe la opción
+            console.warn(`Especialidad "${especialidad}" no encontrada para ${anio} ${division} o no es una opción válida.`);
         }
+        // 3. Forzar la recarga del filtro de materias
+        loadMateriasForCourse(allMateriasCache);
+
     };
 
     anioSelect.addEventListener('change', applyFilter);
     divisionSelect.addEventListener('change', applyFilter);
-    applyFilter(); 
+    // Permitir cambio manual de especialidad, pero recargar materias
+    especialidadSelect.addEventListener('change', () => loadMateriasForCourse(allMateriasCache));
+
+    // No ejecutar al inicio para evitar llamadas innecesarias sin selección
+    // applyFilter();
+    loadMateriasForCourse(allMateriasCache); // Cargar con valores iniciales (probablemente vacío)
 }
+
 
 function openCreateMateriaModal() {
     document.getElementById('materiaForm').reset();
@@ -546,40 +588,48 @@ function openCreateMateriaModal() {
 async function handleCreateMateria(event) {
     event.preventDefault();
     const nombre = document.getElementById('materiaNombre').value.trim();
-    const especialidad = document.getElementById('materiaEspecialidad').value; 
+    // Usar '' si se selecciona "Ninguna / Tronco Común" para guardar NULL en la DB
+    const especialidad = document.getElementById('materiaEspecialidad').value || null;
+
+    if (!nombre) {
+        openAlertModal("El nombre de la materia no puede estar vacío.");
+        return;
+    }
+
 
     try {
         const response = await fetch('../api/create_materia.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nombre, especialidad }) 
+            body: JSON.stringify({ nombre, especialidad }) // Enviar NULL si es Tronco Común
         });
         const data = await response.json();
 
         if (data.success) {
             closeModal('materiaModal');
             openAlertModal("Materia creada correctamente.");
-            allMateriasCache = []; 
-            cargarMaterias(); 
+            allMateriasCache = []; // Limpiar caché para forzar recarga
+            cargarMaterias();
         } else {
-            openAlertModal(data.message);
+            openAlertModal(data.message || "Error desconocido al crear materia.");
         }
     } catch (e) {
-        openAlertModal("Error de conexión con el servidor.");
+        openAlertModal("Error de conexión con el servidor al crear materia.");
     }
 }
 
 function openDeleteMateriaModal(id, nombre) {
-    document.getElementById('deleteMessage').textContent = `¿Estás seguro de que quieres eliminar la materia "${nombre}"?`;
-    
-    const confirmBtn = document.getElementById('confirmDeleteBtn');
-    confirmBtn.textContent = 'Eliminar';
-    confirmBtn.className = 'btn btn-danger'; 
+    document.getElementById('deleteMessage').textContent = `¿Estás seguro de que quieres eliminar la materia "${nombre}" (ID: ${id})? Esta acción no se puede deshacer.`;
 
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    confirmBtn.textContent = 'Eliminar Materia';
+    confirmBtn.className = 'btn btn-danger';
+
+    // Clonar y reemplazar para evitar listeners duplicados
     const newConfirmBtn = confirmBtn.cloneNode(true);
     confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
     newConfirmBtn.onclick = () => handleDeleteMateria(id);
-    
+
     openModal('deleteModal');
 }
 
@@ -592,22 +642,22 @@ async function handleDeleteMateria(id) {
         });
         const data = await response.json();
 
-        closeModal('deleteModal'); 
+        closeModal('deleteModal');
 
         if (data.success) {
             openAlertModal("Materia eliminada correctamente.");
-            allMateriasCache = [];
-            cargarMaterias(); 
+            allMateriasCache = []; // Limpiar caché
+            cargarMaterias();
         } else {
             openAlertModal(data.message || 'Error al eliminar la materia.');
         }
     } catch (e) {
-        openAlertModal("Error de conexión con el servidor.");
+        openAlertModal("Error de conexión con el servidor al eliminar materia.");
     }
 }
 
 /* ------------------------------------------
-   FILTRO DE PROFESORES POR CURSO (NUEVA FUNCIÓN)
+   FILTRO DE PROFESORES POR CURSO (TABLA)
    ------------------------------------------ */
 
 async function cargarProfesoresFiltrados() {
@@ -623,28 +673,29 @@ async function cargarProfesoresFiltrados() {
     }
 
     try {
-        // 1. Llama a la API que filtra profesores por su JSON de curso_info
         const response = await fetch(`../api/get_profesores_by_course.php?anio=${anio}&division=${division}`);
         const profesores = await response.json();
 
         tbodyProfesores.innerHTML = '';
-        
-        if (profesores.length > 0) {
-            // Agrupación para manejar las Parejas Pedagógicas
+
+        if (profesores && Array.isArray(profesores) && profesores.length > 0) {
             const profesoresMap = new Map();
             profesores.forEach(p => {
                 if (!profesoresMap.has(p.email)) {
-                    profesoresMap.set(p.email, { fullname: p.fullname, materias: [] });
+                    profesoresMap.set(p.email, { fullname: p.fullname, materias: new Set() }); // Usar Set para evitar duplicados si hay error en datos
                 }
-                profesoresMap.get(p.email).materias.push(p.materia);
+                profesoresMap.get(p.email).materias.add(p.materia);
             });
 
-            profesoresMap.forEach(profesor => {
+            // Ordenar profesores por nombre
+            const sortedProfesores = Array.from(profesoresMap.values()).sort((a, b) => a.fullname.localeCompare(b.fullname));
+
+
+            sortedProfesores.forEach(profesor => {
                 const row = document.createElement("tr");
-                const materiasDisplay = profesor.materias.length > 1 
-                    ? `Pareja Pedagógica: ${profesor.materias.join(', ')}`
-                    : profesor.materias.join(', ');
-                
+                // Convertir Set a Array, ordenar materias y unir
+                const materiasDisplay = Array.from(profesor.materias).sort().join(', ');
+
                 row.innerHTML = `
                     <td>${profesor.fullname}</td>
                     <td>${materiasDisplay}</td>
@@ -652,174 +703,230 @@ async function cargarProfesoresFiltrados() {
                 tbodyProfesores.appendChild(row);
             });
 
-        } else {
+        } else if (profesores && Array.isArray(profesores)) {
             tbodyProfesores.innerHTML = '<tr><td colspan="2">No hay profesores asignados a este curso.</td></tr>';
+        } else {
+            // Si la respuesta no es un array (posible error de PHP)
+            console.error("Respuesta inesperada al cargar profesores:", profesores);
+            tbodyProfesores.innerHTML = '<tr><td colspan="2">Error al procesar la respuesta del servidor.</td></tr>';
         }
+
 
     } catch (e) {
         console.error("Error al cargar profesores filtrados:", e);
         tbodyProfesores.innerHTML = '<tr><td colspan="2">Error de conexión con el servidor.</td></tr>';
     }
+}
 
-    // Aplicar Filtro:
-    let filteredMaterias = allMateriasCache;
-    if (filterEspecialidad) {
-        // Filtra por la especialidad obtenida O por 'Tronco Común'
-        filteredMaterias = allMateriasCache.filter(m => 
-            m.especialidad === filterEspecialidad || m.especialidad === 'Tronco Común' || !m.especialidad
-        );
+
+/**
+ * Carga los alumnos del curso seleccionado en el select de "Asignar Alumno".
+ */
+async function loadAlumnosForCourse() {
+    const anio = document.getElementById("anioInput").value;
+    const division = document.getElementById("divisionInput").value;
+    const alumnoSelect = document.getElementById("alumnoSelect");
+
+    if (!alumnoSelect) return; // Salir si el select no existe
+
+    alumnoSelect.innerHTML = '<option value="">Cargando alumnos...</option>';
+
+    if (!anio || !division) {
+        alumnoSelect.innerHTML = '<option value="">Seleccione Año y División</option>';
+        return;
     }
 
-    // 4. Llenar la tabla de gestión (SOLO si existe el tbody - sin filtro para esta tabla)
-    if (tbody && !filterEspecialidad) { // Solo actualiza la tabla de gestión en la carga inicial (sin filtro)
-        tbody.innerHTML = "";
-        allMateriasCache.forEach(materia => {
-            const especialidadTexto = materia.especialidad && materia.especialidad.trim() !== '' 
-                                      ? materia.especialidad 
-                                      : 'Tronco Común'; 
-            const row = document.createElement("tr");
-            row.innerHTML = `
-            <td>${materia.id}</td>
-            <td>${materia.nombre}</td>
-            <td style="text-align: center;">${especialidadTexto}</td> 
-            <td>
-                <button class="accion-boton" onclick="openDeleteMateriaModal('${materia.id}', '${materia.nombre}')">Eliminar</button>
-            </td>
-            `;
-            tbody.appendChild(row);
-        });
-    }
+    try {
+        // Usamos la API existente que filtra por curso y rol=Alumno
+        const response = await fetch(`../api/get_users_by_course.php?anio=${anio}&division=${division}&role=Alumno`);
+        const alumnos = await response.json();
 
+        alumnoSelect.innerHTML = '<option value="">Seleccione un alumno</option>';
 
-    // Llenar select de asignación (usa el filtro)
-    if (materiaSelectAdmin) {
-        materiaSelectAdmin.innerHTML = '<option value="">Seleccione una materia</option>';
-        
-        // Comprobar si se ha seleccionado un curso completo (para mostrar "Seleccione Año y División")
-        const anioSelected = document.getElementById("anioSelectProfesor").value;
-        const divisionSelected = document.getElementById("divisionSelectProfesor").value;
+        if (alumnos && Array.isArray(alumnos) && alumnos.length > 0) {
+            // Ordenar alumnos alfabéticamente
+            alumnos.sort((a, b) => (a.fullname || '').localeCompare(b.fullname || ''));
 
-        if (!anioSelected || !divisionSelected) {
-             materiaSelectAdmin.innerHTML = `<option value="">Seleccione Año y División</option>`;
-             return;
-        }
-
-
-        if (filteredMaterias.length === 0) {
-            const msg = filterEspecialidad 
-                ? `No hay materias para ${filterEspecialidad}.` 
-                : `No hay materias creadas.`;
-            materiaSelectAdmin.innerHTML = `<option value="">${msg}</option>`;
-        } else {
-             filteredMaterias.forEach(materia => {
-                const option = `<option value="${materia.nombre}">${materia.nombre}</option>`;
-                materiaSelectAdmin.innerHTML += option;
+            alumnos.forEach(alumno => {
+                // Se agrega el email para distinguirlos, ya que el valor es el email
+                alumnoSelect.innerHTML += `<option value="${alumno.email}">${alumno.fullname || 'Nombre no disponible'} (${alumno.email})</option>`;
             });
+        } else if (alumnos && Array.isArray(alumnos)) {
+            alumnoSelect.innerHTML = `<option value="">No hay alumnos en ${anio} ${division}</option>`;
+        } else {
+            console.error("Respuesta inesperada al cargar alumnos:", alumnos);
+            alumnoSelect.innerHTML = `<option value="">Error al cargar alumnos</option>`;
         }
+    } catch (e) {
+        console.error("Error al cargar alumnos por curso:", e);
+        alumnoSelect.innerHTML = '<option value="">Error de conexión</option>';
     }
 }
 
-function setupMateriaFiltering() {
-    // IDs de los selectores en el formulario 'Asignar profesor a materia'
-    const anioSelect = document.getElementById("anioSelectProfesor");
-    const divisionSelect = document.getElementById("divisionSelectProfesor");
+// =======================================================
+// === NUEVO CÓDIGO AÑADIDO/REEMPLAZADO EMPIEZA AQUÍ ===
+// =======================================================
 
-    if (!anioSelect || !divisionSelect) return; 
+/* ------------------------------------------
+   FUNCIÓN DE LÓGICA DE NEGOCIO: ESPECIALIDAD Y TURNO AUTOMÁTICO (EN ASIGNAR ALUMNO)
+   ------------------------------------------ */
 
-    const applyFilter = async () => {
+function setupEspecialidadAuto() {
+    const anioSelect = document.getElementById('anioInput'); // Formulario Asignar Alumno
+    const divisionSelect = document.getElementById('divisionInput'); // Formulario Asignar Alumno
+    const especialidadSelect = document.getElementById('especialidadInput'); // Formulario Asignar Alumno
+    const turnoSelect = document.getElementById('turnoInputAlumno'); // <-- Selector de Turno en Asignar Alumno
+
+    if (!anioSelect || !divisionSelect || !especialidadSelect || !turnoSelect) {
+        console.warn("Faltan elementos para la lógica de especialidad/turno automático en Asignar Alumno.");
+        return;
+    }
+
+    const updateEspecialidadYTurno = async () => {
         const anio = anioSelect.value;
         const division = divisionSelect.value;
-        
+
+        // Limpiar si no hay selección completa
         if (!anio || !division) {
-             // Si falta el año o la división, cargar todas las materias (comportamiento por defecto al inicio)
-             cargarMaterias(null);
-             return;
+            especialidadSelect.value = '';
+            turnoSelect.value = ''; // Limpiar turno también
+            return;
         }
 
-        // 1. Obtener la especialidad de la DB
-        const especialidad = await getEspecialidadFromCurso(anio, division);
+        try {
+            // Llamar a la API para obtener la información completa del curso (turno y especialidad)
+            const response = await fetch(`../api/get_course_info.php?anio=${anio}&division=${division}`);
+            const data = await response.json();
 
-        // 2. Aplicar filtro usando la especialidad obtenida
-        if (especialidad) {
-            cargarMaterias(especialidad); 
-        } else {
-             // Si no hay especialidad o no se encontró el curso
-             cargarMaterias("NoMatch");
+            if (data.success) {
+                // Asignar Especialidad si existe en la respuesta y es una opción válida en el select
+                if (data.especialidad !== undefined && especialidadSelect.querySelector(`option[value="${data.especialidad}"]`)) {
+                    especialidadSelect.value = data.especialidad;
+                } else {
+                    especialidadSelect.value = ''; // Limpiar si no se encuentra o no existe la opción
+                }
+
+                // Asignar Turno si existe en la respuesta y es una opción válida en el select
+                if (data.turno !== undefined && turnoSelect.querySelector(`option[value="${data.turno}"]`)) {
+                    turnoSelect.value = data.turno;
+                } else {
+                    turnoSelect.value = ''; // Limpiar si no se encuentra o no existe la opción
+                }
+
+            } else {
+                // Si la API falla o el curso no existe en la tabla `cursos`
+                especialidadSelect.value = '';
+                turnoSelect.value = '';
+                console.warn(data.message || `Curso ${anio} ${division} no encontrado en tabla 'cursos'.`);
+                // Opcional: Mostrar un mensaje al usuario
+                // openAlertModal(`El curso ${anio} ${division} no está definido en la base de datos.`);
+            }
+        } catch (e) {
+            console.error("Error al obtener la información del curso (Especialidad/Turno):", e);
+            especialidadSelect.value = '';
+            turnoSelect.value = '';
         }
     };
 
-    // Disparar el filtro al cambiar cualquiera de los selectores
-    anioSelect.addEventListener('change', applyFilter);
-    divisionSelect.addEventListener('change', applyFilter);
-    
-    // Ejecutar filtro al inicio (usa los valores por defecto al cargar)
-    applyFilter(); 
+    // Asocia la función al evento 'change' de ambos selectores
+    anioSelect.addEventListener('change', updateEspecialidadYTurno);
+    divisionSelect.addEventListener('change', updateEspecialidadYTurno);
 }
 
 
 /* ------------------------------------------
-   FORMULARIOS DE ASIGNACIÓN (ACTUALIZADOS)
+   FORMULARIOS DE ASIGNACIÓN (CARGA INICIAL DE SELECTS)
    ------------------------------------------ */
-async function cargarSelects() {
+async function cargarSelects() { // Se eliminó el parámetro loadAllProfessors, ahora siempre carga todos
     const profesorSelect = document.getElementById("profesorSelect");
     const alumnoSelect = document.getElementById("alumnoSelect");
     const preceptorSelectAdmin = document.getElementById("preceptorSelectAdmin");
 
-    profesorSelect.innerHTML = '<option value="">Seleccione un profesor</option>';
-    alumnoSelect.innerHTML = '<option value="">Seleccione un alumno</option>';
-    if (preceptorSelectAdmin) preceptorSelectAdmin.innerHTML = '<option value="">Seleccione un preceptor</option>';
+    // Vaciar selects antes de llenarlos
+    if (profesorSelect) profesorSelect.innerHTML = '<option value="">Cargando...</option>';
+    if (alumnoSelect) alumnoSelect.innerHTML = '<option value="">Cargando...</option>';
+    if (preceptorSelectAdmin) preceptorSelectAdmin.innerHTML = '<option value="">Cargando...</option>';
+
 
     try {
-        const response = await fetch('../api/get_users.php');
+        const response = await fetch('../api/get_users.php'); // Obtener TODOS los usuarios
         const users = await response.json();
-        
-        users.forEach(user => {
-            if (user.role === "Profesor") {
+
+        // Llenar selects con opciones iniciales
+        if (profesorSelect) profesorSelect.innerHTML = '<option value="">Seleccione un profesor</option>';
+        if (alumnoSelect) alumnoSelect.innerHTML = '<option value="">Seleccione un alumno</option>';
+        if (preceptorSelectAdmin) preceptorSelectAdmin.innerHTML = '<option value="">Seleccione un preceptor</option>';
+
+        // Filtrar y ordenar usuarios por rol y nombre
+        const profesores = users.filter(u => u.role === 'Profesor').sort((a, b) => (a.fullname || '').localeCompare(b.fullname || ''));
+        const alumnos = users.filter(u => u.role === 'Alumno').sort((a, b) => (a.fullname || '').localeCompare(b.fullname || ''));
+        const preceptores = users.filter(u => u.role === 'Preceptor').sort((a, b) => (a.fullname || '').localeCompare(b.fullname || ''));
+
+
+        // Llenar los selects
+        if (profesorSelect) {
+            profesores.forEach(user => {
                 profesorSelect.innerHTML += `<option value="${user.email}">${user.fullname || user.email}</option>`;
-            }
-            if (user.role === "Alumno") {
+            });
+        }
+        if (alumnoSelect) {
+            alumnos.forEach(user => {
                 alumnoSelect.innerHTML += `<option value="${user.email}">${user.fullname || user.email}</option>`;
-            }
-            if (user.role === "Preceptor" && preceptorSelectAdmin) {
+            });
+        }
+
+        if (preceptorSelectAdmin) {
+            preceptores.forEach(user => {
                 preceptorSelectAdmin.innerHTML += `<option value="${user.email}">${user.fullname || user.email}</option>`;
-            }
-        });
+            });
+        }
+
     } catch (e) {
         console.error("Error al cargar selects de asignación:", e);
+        if (profesorSelect) profesorSelect.innerHTML = '<option value="">Error al cargar</option>';
+        if (alumnoSelect) alumnoSelect.innerHTML = '<option value="">Error al cargar</option>';
+        if (preceptorSelectAdmin) preceptorSelectAdmin.innerHTML = '<option value="">Error al cargar</option>';
     }
 }
 
+// --- Listener para asignar Profesor (Incluye Turno) ---
 document.getElementById('asignarProfesorForm').addEventListener('submit', async function (event) {
     event.preventDefault();
     const profesor = document.getElementById("profesorSelect").value;
-    const materia = document.getElementById("materiaSelectAdmin").value; 
+    const materia = document.getElementById("materiaSelectAdmin").value;
     const anio = document.getElementById("anioSelectProfesor").value;
     const division = document.getElementById("divisionSelectProfesor").value;
-    // const turno = document.getElementById("turnoSelectProfesor").value; // El turno no se guarda en asignaciones de profesor
-    
-    if (!profesor || !materia || !anio || !division) return alert("Complete Profesor, Materia, Año y División.");
+    const turno = document.getElementById("turnoSelectProfesor").value; // Captura turno
 
-    const asignacion_info = { materia: materia, anio: anio, division: division };
+    if (!profesor || !materia || !anio || !division || !turno) {
+        alert("Complete Profesor, Materia, Año, División y Turno.");
+        return;
+    }
+
+
+    const asignacion_info = { materia: materia, anio: anio, division: division, turno: turno }; // Añadir turno
 
     try {
         const response = await fetch('../api/assign_subject.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: profesor, data: asignacion_info }) 
+            body: JSON.stringify({ email: profesor, data: asignacion_info })
         });
         const data = await response.json();
 
         if (data.success) {
             alert(data.message);
-            cargarProfesoresFiltrados(); // Actualiza la tabla de profesores
+            cargarProfesoresFiltrados(); // Actualiza la tabla de profesores por curso
         } else {
             alert(data.message || "Error al asignar materia.");
         }
     } catch (e) {
-        alert("Error de conexión con el servidor.");
+        alert("Error de conexión con el servidor al asignar materia.");
+        console.error(e);
     }
 });
 
+// --- Listener para asignar Alumno (Incluye Turno) ---
 document.getElementById('asignarAlumnoForm').addEventListener('submit', async function (event) {
     event.preventDefault();
     const alumno = document.getElementById("alumnoSelect").value;
@@ -827,30 +934,37 @@ document.getElementById('asignarAlumnoForm').addEventListener('submit', async fu
     const division = document.getElementById("divisionInput").value;
     const especialidad = document.getElementById("especialidadInput").value;
     const turno = document.getElementById("turnoInputAlumno").value; // Captura del turno
-    
-    if (!alumno || !anio || !division || !especialidad || !turno) return alert("Complete todos los campos del alumno.");
 
-    // Se asume que assign_course.php solo necesita anio, division, especialidad
-    const curso_info = { anio, division, especialidad, turno }; 
-    
+    if (!alumno || !anio || !division || !especialidad || !turno) {
+        alert("Complete todos los campos del alumno, incluyendo el Turno.");
+        return;
+    }
+
+    const curso_info = { anio, division, especialidad, turno }; // Incluir turno
+
     try {
         const response = await fetch('../api/assign_course.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: alumno, data: curso_info }) 
+            body: JSON.stringify({ email: alumno, data: curso_info })
         });
         const data = await response.json();
 
         if (data.success) {
             alert(data.message);
+            // Opcional: Limpiar formulario o actualizar alguna vista si es necesario
+            document.getElementById('asignarAlumnoForm').reset();
+            // loadAlumnosForCourse(); // Recargar select de alumnos podría ser útil
         } else {
             alert(data.message || "Error al asignar curso.");
         }
     } catch (e) {
-        alert("Error de conexión con el servidor.");
+        alert("Error de conexión con el servidor al asignar alumno.");
+        console.error(e);
     }
 });
 
+// --- Función y Listener para asignar Preceptor (Incluye Turno) ---
 async function asignarPreceptorAdmin(event) {
     event.preventDefault();
     const preceptor = document.getElementById("preceptorSelectAdmin").value;
@@ -859,14 +973,13 @@ async function asignarPreceptorAdmin(event) {
     const turno = document.getElementById("turnoInputPreceptorAdmin").value; // Captura del turno
 
     if (!preceptor || !anio || !division || !turno) {
-        return alert("Complete todos los campos para asignar el preceptor.");
+        return alert("Complete todos los campos para asignar el preceptor, incluyendo el Turno.");
     }
 
-    // Se pasa el turno, aunque la lógica del backend no lo usa directamente en el update de alumno (solo preceptor_email)
+    // Incluye el turno, aunque el backend actual no lo use directamente para actualizar al alumno
     const asignacion_info = { preceptor_email: preceptor, anio, division, turno };
 
     try {
-        // assign_preceptor.php se encarga de buscar a todos los alumnos del curso y actualizar su JSON
         const response = await fetch('../api/assign_preceptor.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -875,64 +988,129 @@ async function asignarPreceptorAdmin(event) {
         const data = await response.json();
 
         if (data.success) {
-            alert(data.message);
+            alert(data.message + ` (${data.alumnos_actualizados} alumnos actualizados)`);
+            // Opcional: Limpiar formulario
+            document.getElementById('asignarPreceptorForm').reset();
         } else {
             alert(data.message || "Error al asignar preceptor.");
         }
     } catch (e) {
-        alert("Error de conexión con el servidor.");
+        alert("Error de conexión con el servidor al asignar preceptor.");
+        console.error(e);
     }
 }
+// Listener para el formulario de asignar preceptor
+document.getElementById('asignarPreceptorForm').addEventListener('submit', asignarPreceptorAdmin);
 
 
-
-/* INICIALIZACIÓN Y OTROS */
+/* ------------------------------------------
+   INICIALIZACIÓN GENERAL (DOMContentLoaded)
+   ------------------------------------------ */
 function logout() {
     sessionStorage.removeItem("activeUser");
     window.location.href = "principal.html";
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Inicializa todos los componentes
+    // Inicializa campos y elementos
     document.getElementById('searchInput').value = '';
     document.getElementById('solicitudesContent').style.display = 'none';
 
-    cargarUsuarios(); // Carga usuarios y llama a cargarMaterias() y cargarSolicitudes()
-    
-    // Configurar el filtrado de la tabla de GESTIONAR MATERIAS
-    setupMateriaTableFiltering(); 
+    // Cargas iniciales
+    cargarUsuarios(); // Carga tabla usuarios, selects, materias, solicitudes
 
-    // Configurar el filtrado dinámico de materias para el SELECT de asignación
-    setupMateriaFiltering();
-    
-    // Configurar listeners para el filtro de profesores por curso
+    // Configurar lógica automática y filtros
+    setupEspecialidadAuto(); // Para Asignar Alumno (Especialidad y Turno)
+    setupMateriaTableFiltering(); // Para Tabla Gestionar Materias
+    setupMateriaFiltering(); // Para Select Materia en Asignar Profesor
+
+    // Configurar listeners para filtros de tablas/selects dinámicos
     document.getElementById("filtroAnioProf").addEventListener('change', cargarProfesoresFiltrados);
     document.getElementById("filtroDivisionProf").addEventListener('change', cargarProfesoresFiltrados);
+    document.getElementById("anioInput").addEventListener('change', loadAlumnosForCourse); // Para Select Alumno en Asignar Alumno
+    document.getElementById("divisionInput").addEventListener('change', loadAlumnosForCourse); // Para Select Alumno en Asignar Alumno
 
-    // Inicializar los selects de Año y División para los filtros de profesor
+    // Llenar selects de Año/División en formularios y filtros
     const anioOptions = ['1ro', '2do', '3ro', '4to', '5to', '6to', '7mo'];
     const divisionOptions = ['1ra', '2da', '3ra', '4ta', '5ta', '6ta', '7ma', '8va', '9na'];
-    
-    const fillSelect = (id, options) => {
+
+    const fillSelect = (id, options, defaultText) => {
         const select = document.getElementById(id);
         if (select) {
-            const currentVal = select.value;
-            select.innerHTML = `<option value="">Seleccionar ${id.includes('Anio') ? 'Año' : 'División'}</option>`;
+            select.innerHTML = `<option value="">${defaultText}</option>`; // Texto por defecto
             options.forEach(opt => {
-                select.innerHTML += `<option value="${opt}" ${opt === currentVal ? 'selected' : ''}>${opt}</option>`;
+                select.innerHTML += `<option value="${opt}">${opt}</option>`;
             });
         }
     };
 
-    fillSelect('anioSelectProfesor', anioOptions);
-    fillSelect('divisionSelectProfesor', divisionOptions);
-    fillSelect('anioInput', anioOptions);
-    fillSelect('divisionInput', divisionOptions);
-    fillSelect('anioInputPreceptorAdmin', anioOptions);
-    fillSelect('divisionInputPreceptorAdmin', divisionOptions);
-    fillSelect('filtroAnioProf', anioOptions);
-    fillSelect('filtroDivisionProf', divisionOptions);
+    fillSelect('anioSelectProfesor', anioOptions, 'Seleccionar año');
+    fillSelect('divisionSelectProfesor', divisionOptions, 'Seleccionar división');
+    fillSelect('anioInput', anioOptions, 'Seleccionar año'); // Form Asignar Alumno
+    fillSelect('divisionInput', divisionOptions, 'Seleccionar división'); // Form Asignar Alumno
+    fillSelect('anioInputPreceptorAdmin', anioOptions, 'Seleccionar año'); // Form Asignar Preceptor
+    fillSelect('divisionInputPreceptorAdmin', divisionOptions, 'Seleccionar división'); // Form Asignar Preceptor
+    fillSelect('filtroAnioProf', anioOptions, 'Filtrar Año'); // Filtro Tabla Profesores
+    fillSelect('filtroDivisionProf', divisionOptions, 'Filtrar División'); // Filtro Tabla Profesores
 
-    // Cargar la tabla de profesores al inicio
-    cargarProfesoresFiltrados(); 
+    // Cargas iniciales de datos filtrados (pueden mostrar mensaje "Seleccione...")
+    cargarProfesoresFiltrados();
+    loadAlumnosForCourse();
+
+    // --- Validación de Inputs ---
+
+    // 1. Modal de Usuario: Nombre Completo
+    const userFullnameInput = document.getElementById('userFullname');
+    if (userFullnameInput) {
+        userFullnameInput.maxLength = 50; // Límite de 50 caracteres
+        userFullnameInput.addEventListener('input', function (e) {
+            // Solo permite letras, acentos, ñ, espacios y apóstrofes
+            e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s']/g, '');
+        });
+    }
+
+    // 2. Modal de Usuario: DNI (Formateo 99.999.999)
+    const userDniInput = document.getElementById('userDni');
+    if (userDniInput) {
+        userDniInput.addEventListener('input', formatearDNI);
+    }
+
+    // 3. Modal de Usuario: Email (forzar minúsculas)
+    const userEmailInput = document.getElementById('userEmail');
+    if (userEmailInput) {
+        userEmailInput.addEventListener('input', function (e) {
+            e.target.value = e.target.value.toLowerCase();
+        });
+    }
+
+    // 4. Modal de Materia: Nombre de Materia
+    const materiaNombreInput = document.getElementById('materiaNombre');
+    if (materiaNombreInput) {
+        materiaNombreInput.addEventListener('input', function (e) {
+            // Permite letras, acentos, ñ, números, espacios, (), . y -
+            e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s'0-9().-]/g, '');
+        });
+    }
+    // --- FIN DE VALIDACIÓN ---
 });
+
+/**
+ * Función reutilizable para formatear DNI (xx.xxx.xxx)
+ */
+function formatearDNI(e) {
+    let val = e.target.value.replace(/[^0-9]/g, ''); // 1. Solo números
+    val = val.substring(0, 8); // 2. Limitar a 8 dígitos
+
+    let formattedVal = '';
+    if (val.length > 5) {
+        // Formato 12.345.678
+        formattedVal = val.substring(0, 2) + '.' + val.substring(2, 5) + '.' + val.substring(5);
+    } else if (val.length > 2) {
+        // Formato 12.345
+        formattedVal = val.substring(0, 2) + '.' + val.substring(2);
+    } else {
+        // Formato 12
+        formattedVal = val;
+    }
+    e.target.value = formattedVal;
+}

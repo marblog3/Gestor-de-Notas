@@ -15,40 +15,13 @@
 .tabla-3 input {
     font-size: 20px;
     text-align: center;
+    width: 200px;
 }
 
-/* Anchos de columnas específicos */
+
 .tabla-3 td:nth-child(2) input {
-    width: 350px;
-    padding: 6px;
-}
-
-.tabla-3 td:nth-child(3) input {
-    width: 250px;
-    padding: 6px;
-}
-
-.tabla-3 td:nth-child(7) input {
-    width: 250px;
-    padding: 6px;
-}
-
-.tabla-3 td:nth-child(1) input {
-    width: 50px;
-}
-
-.tabla-3 td:nth-child(4) input,
-.tabla-3 td:nth-child(5) input,
-.tabla-3 td:nth-child(6) input,
-.tabla-3 td:nth-child(8) input,
-.tabla-3 td:nth-child(9) input,
-.tabla-3 td:nth-child(10) input,
-.tabla-3 td:nth-child(11) input,
-.tabla-3 td:nth-child(12) input,
-.tabla-3 td:nth-child(13) input,
-.tabla-3 td:nth-child(14) input {
-    width: 110px;
-    padding: 6px;
+    width: 400px;
+    text-align: left;
 }
 
 
@@ -202,15 +175,6 @@
 }
 
 
-table,
-th,
-td {
-  border: 1px solid black;
-  border-collapse: collapse;
-  padding: 8px;
-  text-align: left;
-}
-
 
 .tabla-3 th, 
 .tabla-3 td {
@@ -253,10 +217,6 @@ p {
   
 }
 
-.select-1 {
-  font-size: 25px;
-  
-}
 
 .select {
 
@@ -270,6 +230,21 @@ p {
   width: 90%;
   font-size: 25px;
   text-align: center;
+  background-color: transparent;
+  border: none;
+  color: black;
+}
+
+.select-1 {
+  border: none;
+  text-align: center;
+  font-size: 25px;
+}
+
+.select-2 {
+  text-align: left;
+  border: none;
+  font-size: 25px;
 }
 
 /* --- Contenedor para la tabla-2 con scroll --- */
@@ -347,4 +322,58 @@ p {
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
+}
+
+.valoracion-select{
+  width: 220px;
+}
+
+/* === AJUSTE DEFINITIVO: COLUMNA "CALIFICACIÓN FINAL" IGUAL A LAS DEMÁS === */
+.tabla-3 td.final-container {
+  display: table-cell !important; /* Igual que el resto de las celdas */
+  vertical-align: middle !important;
+  text-align: center !important;
+  padding: 25px !important;
+  position: relative;
+}
+
+/* Input con mismo estilo que los demás */
+.tabla-3 td.final-container input.calificacion-final {
+  width: 250px;
+  height: 40px;
+  font-size: 20px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  box-sizing: border-box;
+  outline: none;
+}
+
+
+
+/* Botón X (eliminar fila) reposicionado sin alterar el centrado */
+.tabla-3 td.final-container .remove-row {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: red;
+  opacity: 0;
+  font-size: 18px;
+  cursor: pointer;
+  transition: opacity 0.2s, color 0.2s;
+  
+
+  margin-left: 6px;
+
+  font-weight: bold;
+    
+}
+
+.tabla-3 td.final-container:hover .remove-row {
+  opacity: 1;
+}
+
+.tabla-3 td.final-container .remove-row:hover {
+  color: darkred;
 }

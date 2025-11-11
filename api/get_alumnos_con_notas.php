@@ -1,5 +1,4 @@
 <?php
-// api/get_alumnos_con_notas.php
 header('Content-Type: application/json');
 require 'db_config.php';
 

@@ -1,5 +1,4 @@
 <?php
-// api/get_profesores_by_course.php
 header('Content-Type: application/json');
 require 'db_config.php';
 

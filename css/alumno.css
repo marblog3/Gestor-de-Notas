@@ -57,16 +57,30 @@
   width: 100%;
 }
 
-.obs-3 {
-  width: 1700px;
-  height: 30px;
+/* --- *** REGLA MODIFICADA: Reemplaza .obs-3 por .obs-text *** --- */
+.obs-text {
+  width: 95%; /* Ajustado al 95% del contenedor */
+  box-sizing: border-box; 
+  height: auto; /* Altura automática */
+  min-height: 30px; /* Altura mínima */
   font-size: 25px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  border-color: transparent;
-
-
-
+  
+  /* Estilos para que parezca un campo desactivado */
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  padding: 8px;
+  margin: 5px auto;
+  border-radius: 4px;
+  display: block;
+  
+  /* Comportamiento de "solo visualización" */
+  pointer-events: none; /* Evita que el mouse interactúe con el elemento */
+  user-select: none; /* Evita que el texto se pueda seleccionar (estándar) */
+  -webkit-user-select: none; /* Para Safari */
+  -moz-user-select: none;    /* Para Firefox */
 }
+
 
 .input-1 {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -305,4 +319,66 @@
 .notification-panel li.empty {
   color: #999;
   font-style: italic;
+}
+
+
+.tabla-2 {
+    table-layout: fixed;
+    width: 100%; /* O un ancho fijo en píxeles */
+    
+}
+
+
+.input-1 {
+  background-color: transparent;
+}
+
+
+/* =================================================================
+   AJUSTES PARA ALINEACIÓN Y SALTO DE TEXTO EN LA COLUMNA MATERIA
+   ================================================================= */
+
+
+/* 1. Alineación del título "MATERIA" */
+.th-2.materia {
+    width: 350px; /* Reducido para forzar el salto */
+    text-align: center; /* El título "MATERIA" se queda centrado */
+}
+
+/* 2. Alineación a la izquierda para el texto de la materia */
+/* Aplicamos el estilo a la celda que contiene el input de la materia */
+.tabla-2 tbody tr td:first-child,
+.tabla-4 tbody tr td:first-child { /* Afecta ambas tablas */
+    text-align: left; /* Alinea la celda a la izquierda */
+    vertical-align: middle; 
+}
+
+/* 3. Estilo genérico para los campos de nota/texto */
+.mate1 {
+  border-color: transparent;
+  width: 95%; 
+  pointer-events: none;
+  opacity: 0.8; /* Aumentado para que el texto principal se vea más claro */
+  text-align: center; /* Se mantiene para las columnas de notas */
+  height: auto; 
+  white-space: normal; 
+}
+
+/* Estilo específico para el TEXTAREA (columna Materia) */
+.tabla-2 tbody tr td textarea.mate1,
+.tabla-4 tbody tr td textarea.mate1 { /* Afecta ambas tablas */
+    width: 95%; 
+    height: auto; 
+    min-height: 25px; /* Altura mínima para una línea y permitir crecimiento */
+    border: none; 
+    padding: 0;
+    margin: 0;
+    text-align: left !important; /* Forzar alineación a la izquierda para el nombre */
+    background-color: transparent;
+    opacity: 1; /* Máxima visibilidad para el nombre de la materia */
+    font-size: 20px; 
+    line-height: 1.2;
+    white-space: pre-wrap; /* Permite el salto de línea para textos largos */
+    overflow: hidden; 
+    resize: none; 
 }

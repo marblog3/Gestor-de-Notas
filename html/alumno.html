@@ -35,7 +35,6 @@
 
 <body>
 
-
   <div class="boletin-container">
 
     <div class="title-container">
@@ -61,16 +60,17 @@
     <div>
       <table id="tabla-datos-generales">
         <tr>
-          <td><b>CICLO LECTIVO:</b><input type="text" name="nombre" maxlength="35" class="input-1"> </td>
-          <td><b>ESTUDIANTE:</b><input type="text" name="nombre" maxlength="35" class="input-1"disabled></td>
-          <td><b>DNI:</b><input type="text" name="dni" maxlength="8" class="input-1"disabled ></td>
-          <td><b>ESPECIALIDAD:</b><input type="text" name="nombre" maxlength="35" class="input-1"></td>
+          <td><b>CICLO LECTIVO:</b><input type="text" name="nombre" maxlength="35" class="input-1" disabled readonly> </td>
+          <td><b>ESTUDIANTE:</b><input type="text" name="nombre" maxlength="35" class="input-1" disabled readonly></td>
+          <td><b>DNI:</b><input type="text" name="dni" maxlength="8" class="input-1" disabled readonly></td>
+          <td><b>ESPECIALIDAD:</b><input type="text" name="nombre" maxlength="35" class="input-1" disabled readonly></td>
         </tr>
         <tr>
-          <td><b>AÑO:</b><input type="number" name="nombre" maxlength="20" class="input-1"></td>
-          <td><b>DIVISIÓN:</b><input type="number" name="nombre" maxlength="35" class="input-1"></td>
-          <td><b>TURNO:</b><input type="text" name="nombre" maxlength="35" class="input-1"></td>
-          <td><b>PRECEPTOR/A:</b><input type="text" name="nombre" maxlength="35" class="input-1"></td>
+          <td><b>AÑO:</b><input type="text" name="nombre" maxlength="20" class="input-1" disabled readonly></td>
+          <td><b>DIVISIÓN:</b><input type="text" name="nombre" maxlength="35" class="input-1" disabled readonly></td>
+          
+          <td><b>TURNO:</b><input type="text" name="nombre" maxlength="35" class="input-1" disabled readonly></td>
+          <td><b>PRECEPTOR/A:</b><input type="text" name="nombre" maxlength="35" class="input-1" disabled readonly></td>
         </tr>
       </table>
     </div>
@@ -78,269 +78,80 @@
     <div><br>
       <div class="scroll-tabla-2">
         <table id="tabla-materias" class="tabla-2">
-      </div>
-      <thead>
-        <tr>
-          <th rowspan="2" class="th-2">MATERIA</th>
-          <th rowspan="2" class="th-2">AÑO</th>
-          <th colspan="3" class="th-2">CUATRIMESTRE</th>
-          <th colspan="2" class="th-2">PERÍODOS DE INTENSIFICACIÓN</th>
-          <th rowspan="2" class="th-2">CALIFICACIÓN FINAL</th>
-        </tr>
-        <tr>
-          <th class="th-2">1°</th>
-          <th class="th-2">2°</th>
-          <th class="th-2">Intensificación 1° CUAT.</th>
-          <th class="th-2">DICIEMBRE</th>
-          <th class="th-2">FEBRERO</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><input type="text" class="mate1"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-        </tr>
-        <tr>
-          <td><input type="text" class="mate1"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-        </tr>
-        <tr>
-          <td><input type="text" class="mate1"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-        </tr>
-        <tr>
-          <td><input type="text" class="mate1"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-        </tr>
-        <tr>
-          <td><input type="text" class="mate1"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-        </tr>
-        <tr>
-          <td><input type="text" class="mate1"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-        </tr>
-        <tr>
-          <td><input type="text" class="mate1"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-        </tr>
-        <tr>
-          <td><input type="text" class="mate1"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-        </tr>
-        <tr>
-          <td><input type="text" class="mate1"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-        </tr>
-        <tr>
-          <td><input type="text" class="mate1"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-        </tr>
-      </tbody>
-      </table>
-    </div>
-
+          <thead>
+            <tr>
+              <th rowspan="2" class="th-2 materia">MATERIA</th>
+              <th rowspan="2" class="th-2">AÑO</th>
+              <th colspan="3" class="th-2">CUATRIMESTRE</th>
+              <th colspan="2" class="th-2">PERÍODOS DE INTENSIFICACIÓN</th>
+              <th rowspan="2" class="th-2">CALIFICACIÓN FINAL</th>
+            </tr>
+            <tr>
+              <th class="th-2">1°</th>
+              <th class="th-2">2°</th>
+              <th class="th-2">Intensificación 1° CUAT.</th>
+              <th class="th-2">DICIEMBRE</th>
+              <th class="th-2">FEBRERO</th>
+            </tr>
+          </thead>
+          <tbody>
+            </tbody>
+        </table>
+      </div> </div>
+    
 
     <div>
       <h3>MATERIAS PENDIENTES DE APROBACIÓN Y ACREDITACIÓN - INTENSIFICACIÓN</h3>
       <div class="scroll-tabla-4">
         <table id="tabla-pendientes" class="tabla-4">
-      </div>
+          <thead>
+            <tr>
+              <th rowspan="2" class="th-3">MATERIA</th>
+              <th rowspan="2" class="th-3">AÑO</th>
+              <th rowspan="2" class="th-3">CICLO LECTIVO DEL CURSADO</th>
+              <th colspan="6" class="th-3">PERÍODOS DE INTENSIFICACIÓN</th>
+              <th rowspan="2" class="th-3">CALIFICACIÓN FINAL</th>
+              <th rowspan="2" class="th-3">MODELO DE INT.</th>
+              <th rowspan="2" class="th-3">OBSERVACIONES</th>
+            </tr>
+            <tr>
+              <th class="th-3">MARZO</th>
+              <th class="th-3">JUNIO</th>
+              <th class="th-3">JULIO</th>
+              <th class="th-3">AGOSTO</th>
+              <th class="th-3">DICIEMBRE</th>
+              <th class="th-3">FEBRERO</th>
+            </tr>
+          </thead>
+          <tbody>
+            </tbody>
+        </table>
+      </div> </div><br>
 
-
-      <thead>
-        <tr>
-          <th rowspan="2" class="th-3">MATERIA</th>
-          <th rowspan="2" class="th-3">AÑO</th>
-          <th rowspan="2" class="th-3">CICLO LECTIVO DEL CURSADO</th>
-          <th colspan="6" class="th-3">PERÍODOS DE INTENSIFICACIÓN</th>
-          <th rowspan="2" class="th-3">CALIFICACIÓN FINAL</th>
-          <th rowspan="2" class="th-3">MODELO DE INT.</th>
-          <th rowspan="2" class="th-3">OBSERVACIONES</th>
-        </tr>
-        <tr>
-          <th class="th-3">MARZO</th>
-          <th class="th-3">JUNIO</th>
-          <th class="th-3">JULIO</th>
-          <th class="th-3">AGOSTO</th>
-          <th class="th-3">DICIEMBRE</th>
-          <th class="th-3">FEBRERO</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><input type="text" class="mate1"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" class="mate1"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="text" class="mate1"></td>
-        </tr>
-        </tr>
-        <tr>
-          <td><input type="text" class="mate1"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" class="mate1"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="text" class="mate1"></td>
-        </tr>
-        <tr>
-          <td><input type="text" class="mate1"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" class="mate1"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="text" class="mate1"></td>
-        </tr>
-        <tr>
-          <td><input type="text" class="mate1"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" class="mate1"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="text" class="mate1"></td>
-        </tr>
-        <tr>
-          <td><input type="text" class="mate1"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" class="mate1"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="number" min="1" max="10" class="mate1" maxlength="2"></td>
-          <td><input type="text" class="mate1"></td>
-        </tr>
-      </tbody>
-      </table>
-    </div><br>
-
+      <div style="margin-top: 30px;">
+        <h3>INASISTENCIAS TOTALES</h3>
+        <div id="inasistencias-totales-container" style="width: 50%; min-width: 400px; margin: 0 auto;">
+            </div>
+    </div>
+    
+    <br>
 
     <h3>OBSERVACIONES</h3>
-    <div>
+    <div id="observaciones-container">
       <table>
-        <td><input type="text" class="obs-3"></td>
+        <td><input type="text" class="obs-3" value="Sin observaciones." readonly></td>
       </table>
-      <table>
-        <td><input type="text" class="obs-3"></td>
-      </table>
-      <table>
-        <td><input type="text" class="obs-3"></td>
-      </table>
-      <table>
-        <td><input type="text" class="obs-3"></td>
-      </table>
-      <table>
-        <td><input type="text" class="obs-3"></td>
-      </table>
-      <table>
-        <td><input type="text" class="obs-3"></td>
-      </table>
-
     </div>
-
-
 
     <div id="botones" class="contenedor-botones">
       <button id="exportarBtn" class="btn-exportar"><b>EXPORTAR A EXCEL</b></button>
       <button><b>CONSULTAR</b></button>
     </div>
 
-
     <script src="../js/alumno.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
-
   </div>
 </body>
-
 </html>

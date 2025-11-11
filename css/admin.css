@@ -175,7 +175,56 @@ input {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     transform: scale(0.95);
     transition: transform 0.3s ease, opacity 0.3s ease;
+    position: relative;
 }
+
+/* 2. Modificar: Encabezado del modal */
+.modal-header {
+    display: flex;
+    /* CRUCIAL: Alinea el título y la X en la misma línea */
+    justify-content: space-between; 
+    /* CRUCIAL: Centra verticalmente el título y la X */
+    align-items: center; 
+    border-bottom: 1px solid var(--color-borde);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    padding-top: 0; /* Aseguramos que el padding interno no mueva el contenido */
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: var(--color-texto);
+    font-size: 24px;
+    /* Ajuste para que el título no sea demasiado grande y respete la X */
+    max-width: 85%;
+}
+
+.cerrar-btn {
+    position: absolute;
+    top: 8px;
+    right: calc(0px - 10px);
+    transform: translateX(60px);
+    border: none;
+    background-color: transparent !important; /* ← asegura transparencia total */
+    box-shadow: none !important;              /* ← elimina sombras heredadas */
+    outline: none !important;                 /* ← quita contornos */
+    cursor: pointer;
+    font-size: 28px;
+    line-height: 1;
+    color: #666 !important;                   /* ← color de la X */
+    opacity: 0.85;
+    padding: 6px;
+    transition: all 0.2s ease;
+}
+
+.cerrar-btn:hover {
+    background-color: transparent !important; /* ← sin fondo al pasar el mouse */
+    color: #e74c3c !important;                /* ← solo cambia el color del ícono */
+    opacity: 1;
+    border-radius: 0;                         /* ← evita bordes redondeados que sobresalgan */
+}
+
+
 
 /* Animación para mostrar el modal */
 .modal.show {
@@ -187,34 +236,8 @@ input {
     transform: scale(1);
 }
 
-/* Encabezado del modal */
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--color-borde);
-    padding-bottom: 15px;
-    margin-bottom: 20px;
-}
 
-.modal-header h2 {
-    margin: 0;
-    color: var(--color-texto);
-    font-size: 24px;
-}
 
-.cerrar-btn {
-    font-size: 30px;
-    color: var(--color-texto);
-    border: none;
-    background: none;
-    cursor: pointer;
-    transition: color 0.3s;
-}
-
-.cerrar-btn:hover {
-    color: var(--color-principal);
-}
 
 /* Estilos para el formulario dentro del modal */
 .modal-body .form-group {
@@ -350,57 +373,60 @@ input {
 }
 
 /* =================================================================
-   ADMIN.CSS - SOLUCIÓN DE LAYOUT VERTICAL PARA GESTIÓN
+   ADMIN.CSS - LAYOUT CORREGIDO (3 Col. Horizontal + 2 Tablas Vertical)
    ================================================================= */
 
-/* 1. MODIFICAR: Eliminar la disposición de columnas (flex) 
-   para que los bloques Gestionar Materias y Profesores por Curso se apilen. */
+/* Regla base de la que dependen las 3 columnas (Asignación) */
 .column-layout-container {
-    /* Eliminamos display: flex para que los contenedores se apilen verticalmente. */
-    display: block; 
-    max-width: 1700px; 
+    display: flex; 
+    align-items: flex-start;
+    gap: 30px;
+    max-width: 1700px;
     margin: 20px auto;
 }
 
-/* 2. MODIFICAR: Forzar a cada contenedor a usar el 100% del ancho. */
+/* 1. Mantener los 3 Formularios de Asignación Horizontales (Funciona por flex: 1) */
 .column-layout-container .form-container {
-    /* Aquí forzamos el ancho y agregamos margen para separación vertical */
-    width: 100%; 
-    min-width: 100%;
-    margin-bottom: 40px; /* Separación entre Gestión de Materias y Profesores por Curso */
+    flex: 1;
+    min-width: 30%;
+    margin: 0;
+}
+
+/* =================================================================
+   SOLUCIÓN FINAL: LAYOUT VERTICAL PARA GESTIÓN DE TABLAS
+   ================================================================= */
+
+/* 1. La regla .column-layout-container (para las 3 asignaciones) se mantiene FLEX */
+
+/* 2. Regla para forzar ancho completo y apilamiento VERTICAL en el bloque de Gestión */
+#tablas-gestion-vertical {
+    display: block; /* Desactiva FLEX para que los hijos se apilen */
     padding: 0;
 }
 
-/* --- Contenedores de Tablas de Scroll (Mantener para altura y borde) --- */
-.form-container > div[style*="max-height: 400px"] {
-    max-height: 400px !important; 
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-    margin-top: 5px; 
+/* 3. Ajustar los contenedores de las tablas para que ocupen el 100% de su sección. */
+#tablas-gestion-vertical .form-container {
+    width: 100%; 
+    min-width: 100%;
+    margin-bottom: 30px; /* Separación vertical entre Gestionar Materias y Profesores */
+    flex: none; /* Anular cualquier herencia flex: 1 */
+    padding: 0;
 }
 
-/* Asegura que los selects de filtro de materias ocupen el 100% */
+/* Asegura que los selects de filtro de materias (Gestión) ocupen todo el ancho */
 #filtroEspecialidadMateria {
-    width: 100%;
+    width: 20%;
     max-width: none;
 }
 
-/* Asegura que la tabla ocupe el 100% del ancho dentro del contenedor de scroll */
-#profesoresFiltradosTable, 
-#materiasTable {
-    min-width: 100%;
-    margin-top: 0;
+#filtroAnioProf, #filtroDivisionProf {
+    width: 20%;
+    max-width: none;    
 }
 
-/* Ajuste para los selects de filtro de profesores para que ocupen todo el ancho apilados */
-/* Este ajuste aplica a los selects de Año y División dentro de Profesores por Curso */
-.form-container > div[style*="display: flex"] {
-    display: block !important;
-    gap: 0 !important;
-}
-
-.form-container > div[style*="display: block"] select {
-     margin-bottom: 15px; /* Separación vertical entre Año y División */
-     width: 100%;
+/* Ajuste para el texto del subtítulo "Filtrar por Año y División" */
+#tablas-gestion-vertical p {
+    font-weight: bold;
+    font-size: 18px; /* Ajuste de tamaño para el subtítulo */
+    margin: 10px 0;
 }

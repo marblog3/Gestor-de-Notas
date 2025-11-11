@@ -44,3 +44,13 @@ async function handleResetPassword() {
         console.error(e);
     }
 }
+
+// --- VALIDACIÓN DE INPUTS (FORZAR MINÚSCULAS) ---
+document.addEventListener('DOMContentLoaded', () => {
+    const resetEmailInput = document.getElementById('reset-email');
+    if (resetEmailInput) {
+        resetEmailInput.addEventListener('input', function (e) {
+            e.target.value = e.target.value.toLowerCase();
+        });
+    }
+});

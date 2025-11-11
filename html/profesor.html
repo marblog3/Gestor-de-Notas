@@ -40,19 +40,19 @@
                                         <td class="td-1">
                                                 <p>CICLO LECTIVO:</p>
                                                 <select id="ciclo-lectivo-select" class="select-1" required>
-                                                        <option value="">Seleccionar ciclo</option>
-                                                        <option>2025</option>
-                                                        <option>2024</option>
-                                                        <option>2023</option>
-                                                        <option>2022</option>
-                                                        <option>2021</option>
-                                                        <option>2020</option>
-                                                        <option>2019</option>
+                                                        <option value="" class="select-1">Seleccionar ciclo</option>
+                                                        <option class="select-1">2025</option>
+                                                        <option class="select-2">2024</option>
+                                                        <option class="select-2">2023</option>
+                                                        <option class="select-2">2022</option>
+                                                        <option class="select-2">2021</option>
+                                                        <option class="select-2">2020</option>
+                                                        <option class="select-2">2019</option>
                                                 </select>
                                         </td>
                                         <td class="td-1">
                                                 <p>MATERIA:</p>
-                                                <select id="materia-seleccionada" class="select-1">
+                                                <select id="materia-seleccionada" class="select-2">
                                                         <option value="">Seleccionar materia</option>
                                                 </select>
                                         </td>
@@ -63,7 +63,7 @@
                                         </td>
                                         <td class="td-1">
                                                 <p>D.N.I:
-                                                <p><input type="text" id="dni" class="input-1" disabled>
+                                                <p><input type="text" id="dni" class="input-1" disabled >
                                         </td>
                                 </tr>
                                 <tr>
@@ -71,39 +71,35 @@
                                                 <p>AÑO:</p>
                                                 <select id="anio-select" required class="select-1">
                                                         <option value="">Seleccionar año</option>
-                                                        <option value="1ro">1ro</option>
-                                                        <option value="2do">2do</option>
-                                                        <option value="3ro">3ro</option>
-                                                        <option value="4to">4to</option>
-                                                        <option value="5to">5to</option>
-                                                        <option value="6to">6to</option>
-                                                        <option value="7mo">7mo</option>
+                                                        <option value="1ro" class="select-2">1ro</option>
+                                                        <option value="2do" class="select-2">2do</option>
+                                                        <option value="3ro" class="select-2">3ro</option>
+                                                        <option value="4to" class="select-2">4to</option>
+                                                        <option value="5to" class="select-2">5to</option>
+                                                        <option value="6to" class="select-2">6to</option>
+                                                        <option value="7mo" class="select-1">7mo</option>
                                                 </select>
                                         </td>
                                         <td class="td-1">
                                                 <P>DIVISIÓN:</P>
                                                 <select id="division-select" required class="select-1">
                                                         <option value="">Seleccionar división</option>
-                                                        <option value="1ra">1ra</option>
-                                                        <option value="2da">2da</option>
-                                                        <option value="3ra">3ra</option>
-                                                        <option value="4ta">4ta</option>
-                                                        <option value="5ta">5ta</option>
-                                                        <option value="6ta">6ta</option>
-                                                        <option value="7ma">7ma</option>
+                                                        <option value="1ra" class="select-2">1ra</option>
+                                                        <option value="2da" class="select-2">2da</option>
+                                                        <option value="3ra" class="select-2">3ra</option>
+                                                        <option value="4ta" class="select-1">4ta</option>
+                                                        <option value="5ta" class="select-2">5ta</option>
+                                                        <option value="6ta" class="select-2">6ta</option>
+                                                        <option value="7ma" class="select-2">7ma</option>
                                                 </select>
                                         </td>
                                         <td class="td-1">
                                                 <P>TURNO:</P>
-                                                <select id="register-role" required class="select-1">
-                                                        <option value="">Seleccionar turno</option>
-                                                        <option>Mañana</option>
-                                                        <option>Tarde</option>
-                                                        <option>Vespertino</option>
-                                                </select>
+                                                <input type="text" id="turno-profesor" class="input-1" readonly disabled>
                                         </td>
                                         <td class="td-1">
-                                                <p>PRECEPTOR/A:</p><input type="text" class="input-1">
+                                                <p>PRECEPTOR/A:</p>
+                                                <input type="text" id="preceptor-profesor" class="input-1" readonly disabled>
                                         </td>
                                 </tr>
                         </table>
@@ -111,26 +107,38 @@
 
                 <div class="tabla-scroll">
                         <table class="tabla-3">
-                                <h3>MATERIAS PENDIENTES DE APROBACIÓN Y ACREDITACIÓN - INTENSIFICACIÓN</h3>
+                                <h3>PLANILLA DE CALIFICACIONES</h3>
                                 <thead>
                                         <tr>
-                                                <th rowspan="2">N° DE ORDEN</th>
-                                                <th rowspan="2">APELLIDOS Y NOMBRES DEL ESTUDIANTE</th>
-                                                <th colspan="4">1° CUATRIMESTRE</th>
-                                                <th colspan="5">2° CUATRIMESTRE</th>
-                                                <th colspan="2">INTENSIFICACIÓN</th>
-                                                <th rowspan="2">CALIFICACIÓN FINAL</th>
+                                                <th rowspan="3">N° DE ORDEN</th>
+                                                <th rowspan="3">APELLIDOS Y NOMBRES DEL ESTUDIANTE</th>
+                                                <th colspan="8">1° CUATRIMESTRE</th>
+                                                <th colspan="8">2° CUATRIMESTRE</th>
+                                                <th colspan="3" rowspan="2">PERÍODOS DE INTENSIFICACIÓN</th>
+                                                <th rowspan="3" class="calificacion-final">CALIFICACIÓN FINAL</th>
                                         </tr>
                                         <tr>
-                                                <th>CALIFICACIONES/VALORACIONES PARCIALES</th>
-                                                <th>1º VALORACIÓN PRELIMINAR</th>
-                                                <th>CALIFICACIÓN 1º CUATRIMESTRE</th>
-                                                <th>INASISTENCIAS DEL 1º CUATRIMESTRE</th>
-                                                <th>CALIFICACIONES/VALORACIONES PARCIALES</th>
-                                                <th>2º VALORACIÓN PRELIMINAR</th>
-                                                <th>CALIFICACIÓN 2º CUATRIMESTRE</th>
-                                                <th>INTENSIFICACIÓN 1º CUATRIMESTRE</th>
-                                                <th>INASISTENCIAS DEL 2º CUATRIMESTRE</th>
+                                                <th colspan="5">CALIFICACIONES/VALORACIONES PARCIALES</th>
+                                                <th rowspan="2">1º VALORACIÓN PRELIMINAR</th>
+                                                <th rowspan="2">CALIFICACIÓN 1º CUATRIMESTRE</th>
+                                                <th rowspan="2">INASISTENCIAS DEL 1º CUATRIMESTRE</th>
+                                                <th colspan="5">CALIFICACIONES/VALORACIONES PARCIALES</th>
+                                                <th rowspan="2">2º VALORACIÓN PRELIMINAR</th>
+                                                <th rowspan="2">CALIFICACIÓN 2º CUATRIMESTRE</th>
+                                                <th rowspan="2">INASISTENCIAS DEL 2º CUATRIMESTRE</th>
+                                        </tr>
+                                        <tr>
+                                                <th class="th-5">1</th>
+                                                <th>2</th>
+                                                <th>3</th>
+                                                <th>4</th>
+                                                <th>5</th>
+                                                <th>1</th>
+                                                <th>2</th>
+                                                <th>3</th>
+                                                <th>4</th>
+                                                <th>5</th>
+                                                <th>INTENSIFICACIÓN 1º CUAT.</th>
                                                 <th>DICIEMBRE</th>
                                                 <th>FEBRERO</th>
                                         </tr>
@@ -139,9 +147,8 @@
                                 </tbody>
                         </table>
                 </div>
-
                 <div id="botones" class="contenedor-botones">
-                        <button id="agregarFilaBtn"><b>AGREGAR ESTUDIANTE</b></button>
+                        
                         <button id="calcularPromedioBtn"><b>CALCULAR PROMEDIOS</b></button>
                         <button id="guardarBtn"><b>GUARDAR</b></button>
                         <button id="notificarBtn" style="display:none;"><b>NOTIFICAR</b></button>
@@ -173,11 +180,11 @@
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
                 <div id="alertModalProfesor" class="modal-profesor">
-  <div class="modal-contenido-profesor">
-    <p id="alertMessageProfesor"></p>
-    <button onclick="closeAlertModalProfesor()">Aceptar</button>
-  </div>
-</div>
+                        <div class="modal-contenido-profesor">
+                                <p id="alertMessageProfesor"></p>
+                                <button onclick="closeAlertModalProfesor()">Aceptar</button>
+                        </div>
+                </div>
 
 
 </body>

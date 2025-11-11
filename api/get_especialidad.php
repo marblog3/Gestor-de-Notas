@@ -1,5 +1,4 @@
 <?php
-// api/get_especialidad.php
 header('Content-Type: application/json');
 require 'db_config.php';
 

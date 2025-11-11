@@ -68,7 +68,7 @@
     <div class="column-layout-container" style="max-width: 1700px; margin: 20px auto;">
       
       <div class="form-container">
-        <h2>Asignar alumno a curso</h2>
+        <h2>Asignar Alumno a Curso</h2>
         <form id="asignarAlumnoForm">
           <div class="form-group">
             <label for="alumnoSelect">Alumno:</label>
@@ -116,17 +116,11 @@
       </div>
       
       <div class="form-container">
-        <h2>Asignar profesor a materia</h2>
+        <h2>Asignar Profesor a Materia</h2>
         <form id="asignarProfesorForm">
           <div class="form-group">
             <label for="profesorSelect">Profesor:</label>
             <select id="profesorSelect" name="profesorSelect" required></select>
-          </div>
-          <div class="form-group">
-            <label for="materiaSelectAdmin">Materia:</label>
-            <select id="materiaSelectAdmin" name="materiaSelectAdmin" required>
-              <option value="">Cargando materias...</option>
-            </select>
           </div>
           <div class="form-group">
             <label for="anioSelectProfesor">Año:</label>
@@ -144,6 +138,26 @@
               <option value="7ma">7ma</option><option value="8va">8va</option><option value="9na">9na</option>
             </select>
           </div>
+          
+          <div class="form-group">
+            <label for="especialidadSelectProfesor">Especialidad:</label>
+            <select id="especialidadSelectProfesor">
+              <option value="">Seleccionar especialidad</option>
+              <option value="Informática">Informática</option>
+              <option value="Maestro Mayor de Obra">Maestro Mayor de Obra</option>
+              <option value="Electromecánica">Electromecánica</option>
+              <option value="Química">Química</option>
+              <option value="Ciclo Básico">Ciclo Básico</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="materiaSelectAdmin">Materia:</label>
+            <select id="materiaSelectAdmin" name="materiaSelectAdmin" required>
+              <option value="">Seleccione Año, División y Especialidad</option>
+            </select>
+          </div>
+
            <div class="form-group">
             <label for="turnoSelectProfesor">Turno:</label>
             <select id="turnoSelectProfesor">
@@ -196,11 +210,11 @@
       </div>
     </div>
     
-    <div class="column-layout-container" style="max-width: 1700px; margin: 20px auto;">
+<div id="tablas-gestion-vertical" style="max-width: 1700px; margin: 20px auto;"> 
 
-        <div class="form-container">
+        <div class="form-container" style="margin-bottom: 30px;">
             <h2>Gestionar Materias</h2>
-             <div class="form-group" style="margin-top: 10px;">
+            <div class="form-group" style="margin-top: 10px;">
                 <label for="filtroEspecialidadMateria">Filtrar por Especialidad:</label>
                 <select id="filtroEspecialidadMateria">
                     <option value="">Todas las Materias</option>
@@ -234,27 +248,22 @@
         </div>
 
         <div class="form-container">
-            <h2>Profesores por Curso (Filtro)</h2>
+            <h2>Profesores por Curso</h2>
+            <p style="text-align: left; margin-top: 0; margin-bottom: 10px;">Filtrar por Año y División</p>
              <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <select id="filtroAnioProf" style="flex: 1;">
+                <select id="filtroAnioProf">
                     <option value="">Filtrar Año</option>
-                    <option value="1ro">1ro</option><option value="2do">2do</option><option value="3ro">3ro</option>
-                    <option value="4to">4to</option><option value="5to">5to</option><option value="6to">6to</option>
-                    <option value="7mo">7mo</option>
-                </select>
-                <select id="filtroDivisionProf" style="flex: 1;">
+                    </select>
+                <select id="filtroDivisionProf">
                     <option value="">Filtrar División</option>
-                    <option value="1ra">1ra</option><option value="2da">2da</option><option value="3ra">3ra</option>
-                    <option value="4ta">4ta</option><option value="5ta">5ta</option><option value="6ta">6ta</option>
-                    <option value="7ma">7ma</option><option value="8va">8va</option><option value="9na">9na</option>
-                </select>
+                    </select>
             </div>
             <div style="max-height: 400px; overflow-y: auto; margin-bottom: 20px; border: 1px solid #ccc;">
                 <table class="boletin" id="profesoresFiltradosTable">
                     <thead>
                         <tr>
                             <th>Profesor</th>
-                            <th>Materia (Pareja Pedagógica)</th>
+                            <th>Materia</th>
                         </tr>
                     </thead>
                     <tbody>
