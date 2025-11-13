@@ -2,224 +2,243 @@
 <html lang="es">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PANEL DE PRECEPTORÍA</title>
-  <link rel="website icon" type="png" href="../img/logo.png">
-  <link rel="stylesheet" href="../css/base.css">
-  <link rel="stylesheet" href="../css/preceptor.css">
-  <link rel="stylesheet" href="../css/responsive.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PANEL DE PRECEPTORÍA</title>
+    <link rel="website icon" type="png" href="../img/logo.png">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/preceptor.css">
+    <link rel="stylesheet" href="../css/responsive.css">
 </head>
 
 <header class="main-header">
-  <div class="header-left">
-    <img src="../img/logo.png" alt="Logo" class="header-logo">
-    <h1 class="header-title">E.E.S.T.N°5</h1>
-  </div>
-
-  <button class="logout-icon" onclick="logout()">
-    <div class="sign">
-      <svg viewBox="0 0 512 512">
-        <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9
-     406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7
-      15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32
-       32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z">
-        </path>
-      </svg>
+    <div class="header-left">
+        <img src="../img/logo.png" alt="Logo" class="header-logo">
+        <h1 class="header-title">E.E.S.T.N°5</h1>
     </div>
-    <div class="text">Cerrar sesión</div>
-  </button>
+
+    <div class="user-popup-template">
+        <div tabindex="0" class="user-popup button" style="padding: 0 0.5rem 0; border-radius: 1.2rem">
+            <div class="popup-header">
+                <p style="
+              letter-spacing: 1px;
+              font-weight: 600;
+              padding: 0.625rem 0.5rem;
+            " id="user-email-display">
+                    cargando...
+                </p>
+                <svg class="icon" style="width: 32px; height: 32px; fill: #FFCE8B" viewBox="0 0 20 20">
+                    <path d="M10 2a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm0 10c-4.411 0-8 1.79-8 4v2h16v-2c0-2.21-3.589-4-8-4z">
+                    </path>
+                </svg>
+            </div>
+
+            <div class="popup-main">
+                <ul class="list-box">
+                    <li class="button item" onclick="showPersonalInfo()">
+                        Información Personal
+                    </li>
+                    <hr />
+                    <li class="button item quit" onclick="logout()">Cerrar Sesión</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </header>
 
 <body>
 
-  <div class="boletin-container">
-    <h1>PANEL DE PRECEPTORÍA</h1>
+    <div class="boletin-container">
+        <h1>PANEL DE PRECEPTORÍA</h1>
 
-<div class="column-layout-container" style="max-width: 1700px; margin: 20px auto; gap: 30px;">
-        
-        <section class="form-container">
-            <h2>Asignar Profesor a Materia</h2>
+        <div class="column-layout-container" style="max-width: 1700px; margin: 20px auto; gap: 30px;">
 
-            <label for="profesorSelect" class="profe"><b>Profesor:</b></label><br>
-            <select id="profesorSelect"></select><br>
+            <section class="form-container">
+                <h2>Asignar Profesor a Materia</h2>
+                <form id="asignarProfesorForm">
+                    <div class="form-group">
+                        <label for="profesorSelect">Profesor:</label>
+                        <select id="profesorSelect" name="profesorSelect" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="anioSelectProfesor">Año:</label>
+                        <select id="anioSelectProfesor">
+                            <option value="">Seleccionar año</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="divisionSelectProfesor">División:</label>
+                        <select id="divisionSelectProfesor">
+                            <option value="">Seleccionar división</option>
+                        </select>
+                    </div>
 
-            <br>
+                    <div class="form-group">
+                        <label for="especialidadSelectProfesor">Especialidad:</label>
+                        <select id="especialidadSelectProfesor">
+                            <option value="">Seleccionar especialidad</option>
+                            <option value="Informática">Informática</option>
+                            <option value="Maestro Mayor de Obra">Maestro Mayor de Obra</option>
+                            <option value="Electromecánica">Electromecánica</option>
+                            <option value="Química">Química</option>
+                            <option value="Ciclo Básico">Ciclo Básico</option>
+                        </select>
+                    </div>
 
-            <label for="materiaInputPreceptor"><b>Materia:</b></label><br>
-            <select id="materiaInputPreceptor" required>
-                <option value="">Cargando materias...</option>
-            </select><br>
+                    <div class="form-group">
+                        <label for="materiaSelectAdmin">Materia:</label>
+                        <select id="materiaSelectAdmin" name="materiaSelectAdmin" required>
+                            <option value="">Seleccione Año, División y Especialidad</option>
+                        </select>
+                    </div>
 
-            <br>
+                    <div class="form-group">
+                        <label for="turnoSelectProfesor">Turno:</label>
+                        <select id="turnoSelectProfesor">
+                            <option value="">Seleccionar turno</option>
+                            <option value="Mañana">Mañana</option>
+                            <option value="Tarde">Tarde</option>
+                            <option value="Vespertino">Vespertino</option>
+                        </select>
+                    </div>
+                    <button type="submit">Asignar Materia</button>
+                </form>
+                <ul id="materiasList"></ul>
+            </section>
 
-            <label for="anioInputProf"><b>Año:</b></label><br>
-            <select id="anioInputProf">
-                <option value="">Seleccionar año</option>
-                <option value="1ro">1ro</option><option value="2do">2do</option><option value="3ro">3ro</option>
-                <option value="4to">4to</option><option value="5to">5to</option><option value="6to">6to</option>
-                <option value="7mo">7mo</option>
-            </select><br>
+            <section class="form-container">
+                <h2>Asignar Alumno a Curso</h2>
 
-            <br>
+                <form id="asignarAlumnoForm">
+                    <label for="alumnoSelect"><b>Alumno:</b></label><br>
+                    <select id="alumnoSelect"></select><br>
 
-            <label for="divisionInputProf"><b>División:</b></label><br>
-            <select id="divisionInputProf">
-                <option value="">Seleccionar división</option>
-                <option value="1ra">1ra</option><option value="2da">2da</option><option value="3ra">3ra</option>
-                <option value="4ta">4ta</option><option value="5ta">5ta</option><option value="6ta">6ta</option>
-                <option value="7ma">7ma</option><option value="8va">8va</option><option value="9na">9na</option>
-            </select><br>
+                    <br>
 
-            <br>
-            
-            <label for="turnoInputProfesor"><b>Turno:</b></label><br>
-            <select id="turnoInputProfesor">
-                <option value="">Seleccionar turno</option>
-                <option value="Mañana">Mañana</option>
-                <option value="Tarde">Tarde</option>
-                <option value="Vespertino">Vespertino</option>
-            </select><br>
+                    <label for="anioInput"><b>Año:</b></label><br>
+                    <select id="anioInput">
+                        <option value="">Seleccionar año</option>
+                    </select><br>
 
-            <div class="contenedor-botones">
-                <button onclick="asignarMateria()">Asignar</button>
-            </div>
+                    <br>
 
-            <ul id="materiasList"></ul>
-        </section>
+                    <label for="divisionInput"><b>División:</b></label><br>
+                    <select id="divisionInput">
+                        <option value="">Seleccionar división</option>
+                    </select><br>
 
-        <section class="form-container">
-            <h2>Asignar Alumno a Curso</h2>
+                    <br>
 
-            <label for="alumnoSelect"><b>Alumno:</b></label><br>
-            <select id="alumnoSelect"></select><br>
+                    <label for="especialidadInput"><b>Especialidad:</b></label><br>
+                    <select id="especialidadInput">
+                        <option value="Informática">Informática</option>
+                        <option value="Maestro Mayor de Obra">Maestro Mayor de Obra</option>
+                        <option value="Electromecánica">Electromecánica</option>
+                        <option value="Química">Química</option>
+                        <option value="Ciclo Básico">Ciclo Básico</option>
+                    </select><br>
 
-            <br>
+                    <br>
 
-            <label for="anioInput"><b>Año:</b></label><br>
-            <select id="anioInput">
-                <option value="">Seleccionar año</option>
-                <option value="1ro">1ro</option><option value="2do">2do</option><option value="3ro">3ro</option>
-                <option value="4to">4to</option><option value="5to">5to</option><option value="6to">6to</option>
-                <option value="7mo">7mo</option>
-            </select><br>
-
-            <br>
-
-            <label for="divisionInput"><b>División:</b></label><br>
-            <select id="divisionInput">
-                <option value="">Seleccionar división</option>
-                <option value="1ra">1ra</option><option value="2da">2da</option><option value="3ra">3ra</option>
-                <option value="4ta">4ta</option><option value="5ta">5ta</option><option value="6ta">6ta</option>
-                <option value="7ma">7ma</option><option value="8va">8va</option><option value="9na">9na</option>
-            </select><br>
-
-            <br>
-
-            <label for="especialidadInput"><b>Especialidad:</b></label><br>
-            <select id="especialidadInput">
-                <option value="Informática">Informática</option>
-                <option value="Maestro Mayor de Obra">Maestro Mayor de Obra</option>
-                <option value="Electromecánica">Electromecánica</option>
-                <option value="Química">Química</option>
-                <option value="Ciclo Básico">Ciclo Básico</option>
-            </select><br>
-
-            <br>
-            
-            <label for="turnoInputAlumno"><b>Turno:</b></label><br>
-            <select id="turnoInputAlumno">
-                <option value="">Seleccionar turno</option>
-                <option value="Mañana">Mañana</option>
-                <option value="Tarde">Tarde</option>
-                <option value="Vespertino">Vespertino</option>
-            </select><br>
+                    <label for="turnoInputAlumno"><b>Turno:</b></label><br>
+                    <select id="turnoInputAlumno">
+                        <option value="">Seleccionar turno</option>
+                        <option value="Mañana">Mañana</option>
+                        <option value="Tarde">Tarde</option>
+                        <option value="Vespertino">Vespertino</option>
+                    </select><br>
 
 
-            <div class="contenedor-botones">
-                <button onclick="asignarAlumno()">Asignar</button>
-            </div>
+                    <div class="contenedor-botones">
+                        <button type="submit">Asignar</button>
+                    </div>
+                </form>
 
-            <ul id="alumnosList"></ul>
-        </section>
-        
-    </div> <hr>
-    
-    <section>
-        <h2>Control de Cursos y Revisión de Boletines</h2>
+                <ul id="alumnosList"></ul>
+            </section>
 
-        <div style="display: flex; gap: 20px; align-items: flex-end; margin-bottom: 20px;">
-          
-          <div class="form-group">
-            <label for="filtroAnio"><b>Filtrar por Año:</b></label>
-            <select id="filtroAnio">
-                <option value="">Todos los Años</option>
-                <option value="1ro">1ro</option>
-                <option value="2do">2do</option>
-                <option value="3ro">3ro</option>
-                <option value="4to">4to</option>
-                <option value="5to">5to</option>
-                <option value="6to">6to</option>
-                <option value="7mo">7mo</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="filtroDivision"><b>Filtrar por División:</b></label>
-            <select id="filtroDivision">
-                <option value="">Todas las Divisiones</option>
-                <option value="1ra">1ra</option>
-                <option value="2da">2da</option>
-                <option value="3ra">3ra</option>
-                <option value="4ta">4ta</option>
-                <option value="5ta">5ta</option>
-                <option value="6ta">6ta</option>
-                <option value="7ma">7ma</option>
-                <option value="8va">8va</option>
-                <option value="9na">9na</option>
-            </select>
-          </div>
-
-         
         </div>
-        
-        <h3>Alumnos del Curso Seleccionado</h3>
-        <table class="boletin" id="alumnosPreceptorTable">
-            <thead>
-                <tr>
-                    <th>Nombre Completo</th>
-                    <th>DNI</th>
-                    <th>Curso</th>
-                    <th>Especialidad</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td colspan="5">Seleccione un año y división para cargar los alumnos.</td></tr>
-            </tbody>
-        </table>
-        
-        <br>
-        
-        <h3>Profesores del Curso</h3>
-        <table class="boletin" id="profesoresCursoTable">
-            <thead>
-                <tr>
-                    <th>Profesor</th>
-                    <th>Email</th>
-                    <th>Materias que dicta</th>
-                </tr>
-            </thead>
-            <tbody>
-                 <tr><td colspan="3">La lista de profesores se cargará al seleccionar un curso.</td></tr>
-            </tbody>
-        </table>
+        <hr>
 
-    </section>
-    
-  </div>
+        <section>
+            <h2>Control de Cursos y Revisión de Boletines</h2>
 
-  <script src="../js/preceptor.js"></script>
+            <div style="display: flex; gap: 20px; align-items: flex-end; margin-bottom: 20px;">
+
+                <div class="form-group">
+                    <label for="filtroAnio"><b>Filtrar por Año:</b></label>
+                    <select id="filtroAnio">
+                        <option value="">Todos los Años</option>
+                        <option value="1ro">1ro</option>
+                        <option value="2do">2do</option>
+                        <option value="3ro">3ro</option>
+                        <option value="4to">4to</option>
+                        <option value="5to">5to</option>
+                        <option value="6to">6to</option>
+                        <option value="7mo">7mo</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="filtroDivision"><b>Filtrar por División:</b></label>
+                    <select id="filtroDivision">
+                        <option value="">Todas las Divisiones</option>
+                        <option value="1ra">1ra</option>
+                        <option value="2da">2da</option>
+                        <option value="3ra">3ra</option>
+                        <option value="4ta">4ta</option>
+                        <option value="5ta">5ta</option>
+                        <option value="6ta">6ta</option>
+                        <option value="7ma">7ma</option>
+                        <option value="8va">8va</option>
+                        <option value="9na">9na</option>
+                    </select>
+                </div>
+
+
+            </div>
+
+            <h3>Alumnos del Curso Seleccionado</h3>
+            <table class="boletin" id="alumnosPreceptorTable">
+                <thead>
+                    <tr>
+                        <th>Nombre Completo</th>
+                        <th>DNI</th>
+                        <th>Curso</th>
+                        <th>Especialidad</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="5">Seleccione un año y división para cargar los alumnos.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <br>
+
+            <h3>Profesores del Curso</h3>
+            <table class="boletin" id="profesoresCursoTable">
+                <thead>
+                    <tr>
+                        <th>Profesor</th>
+                        <th>Email</th>
+                        <th>Materias que dicta</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="3">La lista de profesores se cargará al seleccionar un curso.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </section>
+
+    </div>
+
+    <script src="../js/preceptor.js"></script>
 </body>
 
 </html>

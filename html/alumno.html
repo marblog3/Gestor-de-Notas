@@ -19,17 +19,32 @@
     <h1 class="header-title">E.E.S.T.N°5</h1>
   </div>
 
-  <button class="logout-icon" onclick="logout()">
+  <div class="user-popup-template">
+    <div tabindex="0" class="user-popup button" style="padding: 0 0.5rem 0; border-radius: 1.2rem">
+      <div class="popup-header">
+        <p style="
+              letter-spacing: 1px;
+              font-weight: 600;
+              padding: 0.625rem 0.5rem;
+            " id="user-email-display">
+          cargando...
+        </p>
+        <svg class="icon" style="width: 32px; height: 32px; fill: #FFCE8B" viewBox="0 0 20 20">
+          <path d="M10 2a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm0 10c-4.411 0-8 1.79-8 4v2h16v-2c0-2.21-3.589-4-8-4z"></path>
+        </svg>
+      </div>
 
-    <div class="sign"><svg viewBox="0 0 512 512">
-        <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9
-     406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7
-      15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32
-       32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path>
-      </svg></div>
-
-    <div class="text">Cerrar sesión</div>
-  </button>
+      <div class="popup-main">
+        <ul class="list-box">
+          <li class="button item" onclick="showPersonalInfo()">
+            Información Personal
+          </li>
+          <hr />
+          <li class="button item quit" onclick="logout()">Cerrar Sesión</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
 </header>
 
@@ -60,15 +75,17 @@
     <div>
       <table id="tabla-datos-generales">
         <tr>
-          <td><b>CICLO LECTIVO:</b><input type="text" name="nombre" maxlength="35" class="input-1" disabled readonly> </td>
+          <td><b>CICLO LECTIVO:</b><input type="text" name="nombre" maxlength="35" class="input-1" disabled readonly>
+          </td>
           <td><b>ESTUDIANTE:</b><input type="text" name="nombre" maxlength="35" class="input-1" disabled readonly></td>
           <td><b>DNI:</b><input type="text" name="dni" maxlength="8" class="input-1" disabled readonly></td>
-          <td><b>ESPECIALIDAD:</b><input type="text" name="nombre" maxlength="35" class="input-1" disabled readonly></td>
+          <td><b>ESPECIALIDAD:</b><input type="text" name="nombre" maxlength="35" class="input-1" disabled readonly>
+          </td>
         </tr>
         <tr>
           <td><b>AÑO:</b><input type="text" name="nombre" maxlength="20" class="input-1" disabled readonly></td>
           <td><b>DIVISIÓN:</b><input type="text" name="nombre" maxlength="35" class="input-1" disabled readonly></td>
-          
+
           <td><b>TURNO:</b><input type="text" name="nombre" maxlength="35" class="input-1" disabled readonly></td>
           <td><b>PRECEPTOR/A:</b><input type="text" name="nombre" maxlength="35" class="input-1" disabled readonly></td>
         </tr>
@@ -95,10 +112,11 @@
             </tr>
           </thead>
           <tbody>
-            </tbody>
+          </tbody>
         </table>
-      </div> </div>
-    
+      </div>
+    </div>
+
 
     <div>
       <h3>MATERIAS PENDIENTES DE APROBACIÓN Y ACREDITACIÓN - INTENSIFICACIÓN</h3>
@@ -124,29 +142,33 @@
             </tr>
           </thead>
           <tbody>
-            </tbody>
+          </tbody>
         </table>
-      </div> </div><br>
+      </div>
+    </div><br>
 
-      <div style="margin-top: 30px;">
-        <h3>INASISTENCIAS TOTALES</h3>
-        <div id="inasistencias-totales-container" style="width: 50%; min-width: 400px; margin: 0 auto;">
-            </div>
+   <div style="margin-top: 30px;">
+      <h3>INASISTENCIAS TOTALES</h3><br>
+      <div id="inasistencias-totales-container">
+      </div>
     </div>
-    
+
     <br>
 
     <h3>OBSERVACIONES</h3>
     <div id="observaciones-container">
-      <table>
-        <td><input type="text" class="obs-3" value="Sin observaciones." readonly></td>
-      </table>
     </div>
 
     <div id="botones" class="contenedor-botones">
+      <button id="modificarBtn" style="display: none; background-color: #f39c12;"><b>MODIFICAR</b></button>
+      <button id="guardarBtn" style="display: none; background-color: #27ae60;"><b>GUARDAR</b></button>
+      <button id="agregarFilaPendienteBtn" style="display: none; background-color: #2980b9;"><b>AGREGAR PENDIENTE</b></button>
+
       <button id="exportarBtn" class="btn-exportar"><b>EXPORTAR A EXCEL</b></button>
       <button><b>CONSULTAR</b></button>
     </div>
+
+    
 
     <script src="../js/alumno.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
@@ -154,4 +176,5 @@
 
   </div>
 </body>
+
 </html>

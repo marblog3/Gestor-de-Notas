@@ -1114,3 +1114,40 @@ function formatearDNI(e) {
     }
     e.target.value = formattedVal;
 }
+
+// --- LÓGICA PARA EL DROPDOWN DE USUARIO ---
+
+// Esta función se activa al hacer clic en "Información Personal"
+function showPersonalInfo() {
+    // Reutiliza los datos del usuario activo que ya están en 'activeUser'
+    if (activeUser) {
+        alert(
+            'Información Personal:\n\n' +
+            'Email: ' + (activeUser.email || 'No disponible') + '\n' +
+            'Nombre: ' + (activeUser.fullname || 'No disponible') + '\n' +
+            'DNI: ' + (activeUser.dni || 'No disponible') + '\n' +
+            'Rol: ' + (activeUser.role || 'No disponible')
+        );
+    } else {
+        alert('No se pudieron cargar los datos del usuario.');
+    }
+}
+
+// Esta lógica se ejecuta cuando la página carga para poner el email en el header
+document.addEventListener('DOMContentLoaded', () => {
+    const emailDisplay = document.getElementById('user-email-display');
+    if (emailDisplay && activeUser && activeUser.email) {
+        // Acortamos el email si es muy largo para que quepa en el header
+        let emailName = activeUser.email.split('@')[0];
+        if (emailName.length > 20) {
+            emailName = emailName.substring(0, 17) + '...';
+        }
+        emailDisplay.textContent = emailName;
+    }
+    // NOTA: El resto del 'DOMContentLoaded' original de cada archivo se mantiene.
+    // Este código se añade al 'DOMContentLoaded' que ya existe en admin.js y preceptor.js
+    // y es el único 'DOMContentLoaded' en alumno.js y profesor.js (adaptado).
+    // (En la respuesta final, esto ya está fusionado correctamente en los archivos js/profesor.js y js/alumno.js)
+});
+
+// La función logout() ya existe en todos los archivos, por lo que el botón "Cerrar Sesión" funcionará.

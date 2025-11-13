@@ -18,14 +18,32 @@
       <img src="../img/logo.png" alt="Logo" class="header-logo">
       <h1 class="header-title">E.E.S.T.N°5</h1>
     </div>
-    <button class="logout-icon" onclick="logout()">
-      <div class="sign"><svg viewBox="0 0 512 512">
-          <path
-            d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z">
-          </path>
-        </svg></div>
-      <div class="text">Cerrar sesion</div>
-    </button>
+    <div class="user-popup-template">
+      <div tabindex="0" class="user-popup button" style="padding: 0 0.5rem 0; border-radius: 1.2rem">
+        <div class="popup-header">
+          <p style="
+              letter-spacing: 1px;
+              font-weight: 600;
+              padding: 0.625rem 0.5rem;
+            " id="user-email-display">
+            cargando...
+          </p>
+          <svg class="icon" style="width: 32px; height: 32px; fill: #FFCE8B" viewBox="0 0 20 20">
+            <path d="M10 2a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm0 10c-4.411 0-8 1.79-8 4v2h16v-2c0-2.21-3.589-4-8-4z"></path>
+          </svg>
+        </div>
+
+        <div class="popup-main">
+          <ul class="list-box">
+            <li class="button item" onclick="showPersonalInfo()">
+              Información Personal
+            </li>
+            <hr />
+            <li class="button item quit" onclick="logout()">Cerrar Sesión</li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </header>
 
   <div class="boletin-container">
@@ -38,18 +56,18 @@
     </div>
 
     <div style="max-height: 400px; overflow-y: auto; margin-bottom: 20px; border: 1px solid #ccc;">
-        <table class="boletin" id="usersTable">
-            <thead>
-                <tr>
-                    <th>Nombre Completo</th>
-                    <th>DNI</th>
-                    <th>Correo</th>
-                    <th>Rol</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+      <table class="boletin" id="usersTable">
+        <thead>
+          <tr>
+            <th>Nombre Completo</th>
+            <th>DNI</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
 
     <div class="contenedor-botones">
@@ -66,7 +84,7 @@
     </div>
 
     <div class="column-layout-container" style="max-width: 1700px; margin: 20px auto;">
-      
+
       <div class="form-container">
         <h2>Asignar Alumno a Curso</h2>
         <form id="asignarAlumnoForm">
@@ -78,8 +96,12 @@
             <label for="anioInput">Año:</label>
             <select id="anioInput">
               <option value="">Seleccionar año</option>
-              <option value="1ro">1ro</option><option value="2do">2do</option><option value="3ro">3ro</option>
-              <option value="4to">4to</option><option value="5to">5to</option><option value="6to">6to</option>
+              <option value="1ro">1ro</option>
+              <option value="2do">2do</option>
+              <option value="3ro">3ro</option>
+              <option value="4to">4to</option>
+              <option value="5to">5to</option>
+              <option value="6to">6to</option>
               <option value="7mo">7mo</option>
             </select>
           </div>
@@ -87,9 +109,15 @@
             <label for="divisionInput">División:</label>
             <select id="divisionInput">
               <option value="">Seleccionar división</option>
-              <option value="1ra">1ra</option><option value="2da">2da</option><option value="3ra">3ra</option>
-              <option value="4ta">4ta</option><option value="5ta">5ta</option><option value="6ta">6ta</option>
-              <option value="7ma">7ma</option><option value="8va">8va</option><option value="9na">9na</option>
+              <option value="1ra">1ra</option>
+              <option value="2da">2da</option>
+              <option value="3ra">3ra</option>
+              <option value="4ta">4ta</option>
+              <option value="5ta">5ta</option>
+              <option value="6ta">6ta</option>
+              <option value="7ma">7ma</option>
+              <option value="8va">8va</option>
+              <option value="9na">9na</option>
             </select>
           </div>
           <div class="form-group">
@@ -105,16 +133,16 @@
           <div class="form-group">
             <label for="turnoInputAlumno">Turno:</label>
             <select id="turnoInputAlumno">
-                <option value="">Seleccionar turno</option>
-                <option value="Mañana">Mañana</option>
-                <option value="Tarde">Tarde</option>
-                <option value="Vespertino">Vespertino</option>
+              <option value="">Seleccionar turno</option>
+              <option value="Mañana">Mañana</option>
+              <option value="Tarde">Tarde</option>
+              <option value="Vespertino">Vespertino</option>
             </select>
           </div>
           <button type="submit">Asignar Alumno</button>
         </form>
       </div>
-      
+
       <div class="form-container">
         <h2>Asignar Profesor a Materia</h2>
         <form id="asignarProfesorForm">
@@ -124,21 +152,33 @@
           </div>
           <div class="form-group">
             <label for="anioSelectProfesor">Año:</label>
-            <select id="anioSelectProfesor"> <option value="">Seleccionar año</option>
-              <option value="1ro">1ro</option><option value="2do">2do</option><option value="3ro">3ro</option>
-              <option value="4to">4to</option><option value="5to">5to</option><option value="6to">6to</option>
+            <select id="anioSelectProfesor">
+              <option value="">Seleccionar año</option>
+              <option value="1ro">1ro</option>
+              <option value="2do">2do</option>
+              <option value="3ro">3ro</option>
+              <option value="4to">4to</option>
+              <option value="5to">5to</option>
+              <option value="6to">6to</option>
               <option value="7mo">7mo</option>
             </select>
           </div>
           <div class="form-group">
             <label for="divisionSelectProfesor">División:</label>
-            <select id="divisionSelectProfesor"> <option value="">Seleccionar división</option>
-              <option value="1ra">1ra</option><option value="2da">2da</option><option value="3ra">3ra</option>
-              <option value="4ta">4ta</option><option value="5ta">5ta</option><option value="6ta">6ta</option>
-              <option value="7ma">7ma</option><option value="8va">8va</option><option value="9na">9na</option>
+            <select id="divisionSelectProfesor">
+              <option value="">Seleccionar división</option>
+              <option value="1ra">1ra</option>
+              <option value="2da">2da</option>
+              <option value="3ra">3ra</option>
+              <option value="4ta">4ta</option>
+              <option value="5ta">5ta</option>
+              <option value="6ta">6ta</option>
+              <option value="7ma">7ma</option>
+              <option value="8va">8va</option>
+              <option value="9na">9na</option>
             </select>
           </div>
-          
+
           <div class="form-group">
             <label for="especialidadSelectProfesor">Especialidad:</label>
             <select id="especialidadSelectProfesor">
@@ -150,7 +190,7 @@
               <option value="Ciclo Básico">Ciclo Básico</option>
             </select>
           </div>
-          
+
           <div class="form-group">
             <label for="materiaSelectAdmin">Materia:</label>
             <select id="materiaSelectAdmin" name="materiaSelectAdmin" required>
@@ -158,15 +198,15 @@
             </select>
           </div>
 
-           <div class="form-group">
+          <div class="form-group">
             <label for="turnoSelectProfesor">Turno:</label>
             <select id="turnoSelectProfesor">
-                <option value="">Seleccionar turno</option>
-                <option value="Mañana">Mañana</option>
-                <option value="Tarde">Tarde</option>
-                <option value="Vespertino">Vespertino</option>
+              <option value="">Seleccionar turno</option>
+              <option value="Mañana">Mañana</option>
+              <option value="Tarde">Tarde</option>
+              <option value="Vespertino">Vespertino</option>
             </select>
-           </div>
+          </div>
           <button type="submit">Asignar Materia</button>
         </form>
       </div>
@@ -174,244 +214,258 @@
       <div class="form-container">
         <h2>Asignar Preceptor a Curso</h2>
         <form id="asignarPreceptorForm">
-            <div class="form-group">
-                <label for="preceptorSelectAdmin">Preceptor:</label>
-                <select id="preceptorSelectAdmin" name="preceptorSelectAdmin" required></select>
-            </div>
-            <div class="form-group">
-                <label for="anioInputPreceptorAdmin">Año:</label>
-                <select id="anioInputPreceptorAdmin">
-                    <option value="">Seleccionar año</option>
-                    <option value="1ro">1ro</option><option value="2do">2do</option><option value="3ro">3ro</option>
-                    <option value="4to">4to</option><option value="5to">5to</option><option value="6to">6to</option>
-                    <option value="7mo">7mo</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="divisionInputPreceptorAdmin">División:</label>
-                <select id="divisionInputPreceptorAdmin">
-                    <option value="">Seleccionar división</option>
-                    <option value="1ra">1ra</option><option value="2da">2da</option><option value="3ra">3ra</option>
-                    <option value="4ta">4ta</option><option value="5ta">5ta</option><option value="6ta">6ta</option>
-                    <option value="7ma">7ma</option><option value="8va">8va</option><option value="9na">9na</option>
-                </select>
-            </div>
-             <div class="form-group">
-                <label for="turnoInputPreceptorAdmin">Turno:</label>
-                <select id="turnoInputPreceptorAdmin">
-                    <option value="">Seleccionar turno</option>
-                    <option value="Mañana">Mañana</option>
-                    <option value="Tarde">Tarde</option>
-                    <option value="Vespertino">Vespertino</option>
-                </select>
-            </div>
-            <button type="submit">Asignar Preceptor</button>
+          <div class="form-group">
+            <label for="preceptorSelectAdmin">Preceptor:</label>
+            <select id="preceptorSelectAdmin" name="preceptorSelectAdmin" required></select>
+          </div>
+          <div class="form-group">
+            <label for="anioInputPreceptorAdmin">Año:</label>
+            <select id="anioInputPreceptorAdmin">
+              <option value="">Seleccionar año</option>
+              <option value="1ro">1ro</option>
+              <option value="2do">2do</option>
+              <option value="3ro">3ro</option>
+              <option value="4to">4to</option>
+              <option value="5to">5to</option>
+              <option value="6to">6to</option>
+              <option value="7mo">7mo</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="divisionInputPreceptorAdmin">División:</label>
+            <select id="divisionInputPreceptorAdmin">
+              <option value="">Seleccionar división</option>
+              <option value="1ra">1ra</option>
+              <option value="2da">2da</option>
+              <option value="3ra">3ra</option>
+              <option value="4ta">4ta</option>
+              <option value="5ta">5ta</option>
+              <option value="6ta">6ta</option>
+              <option value="7ma">7ma</option>
+              <option value="8va">8va</option>
+              <option value="9na">9na</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="turnoInputPreceptorAdmin">Turno:</label>
+            <select id="turnoInputPreceptorAdmin">
+              <option value="">Seleccionar turno</option>
+              <option value="Mañana">Mañana</option>
+              <option value="Tarde">Tarde</option>
+              <option value="Vespertino">Vespertino</option>
+            </select>
+          </div>
+          <button type="submit">Asignar Preceptor</button>
         </form>
       </div>
     </div>
-    
-<div id="tablas-gestion-vertical" style="max-width: 1700px; margin: 20px auto;"> 
 
-        <div class="form-container" style="margin-bottom: 30px;">
-            <h2>Gestionar Materias</h2>
-            <div class="form-group" style="margin-top: 10px;">
-                <label for="filtroEspecialidadMateria">Filtrar por Especialidad:</label>
-                <select id="filtroEspecialidadMateria">
-                    <option value="">Todas las Materias</option>
-                    <option value="Informática">Informática</option>
-                    <option value="Maestro Mayor de Obra">Maestro Mayor de Obra</option>
-                    <option value="Electromecánica">Electromecánica</option>
-                    <option value="Química">Química</option>
-                    <option value="Ciclo Básico">Ciclo Básico</option>
-                    <option value="Tronco Común">Tronco Común (Áulicas)</option>
-                </select>
-            </div>
-            
-            <div style="max-height: 400px; overflow-y: auto; margin-bottom: 20px; border: 1px solid #ccc;">
-                <table class="boletin" id="materiasTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre de la Materia</th>
-                            <th>Especialidad</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td colspan="4">Cargando materias...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="contenedor-botones">
-                <button onclick="openCreateMateriaModal()"><b>➕ Crear Materia</b></button>
-            </div>
+    <div id="tablas-gestion-vertical" style="max-width: 1700px; margin: 20px auto;">
+
+      <div class="form-container" style="margin-bottom: 30px;">
+        <h2>Gestionar Materias</h2>
+        <div class="form-group" style="margin-top: 10px;">
+          <label for="filtroEspecialidadMateria">Filtrar por Especialidad:</label>
+          <select id="filtroEspecialidadMateria">
+            <option value="">Todas las Materias</option>
+            <option value="Informática">Informática</option>
+            <option value="Maestro Mayor de Obra">Maestro Mayor de Obra</option>
+            <option value="Electromecánica">Electromecánica</option>
+            <option value="Química">Química</option>
+            <option value="Ciclo Básico">Ciclo Básico</option>
+            <option value="Tronco Común">Tronco Común (Áulicas)</option>
+          </select>
         </div>
 
-        <div class="form-container">
-            <h2>Profesores por Curso</h2>
-            <p style="text-align: left; margin-top: 0; margin-bottom: 10px;">Filtrar por Año y División</p>
-             <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <select id="filtroAnioProf">
-                    <option value="">Filtrar Año</option>
-                    </select>
-                <select id="filtroDivisionProf">
-                    <option value="">Filtrar División</option>
-                    </select>
-            </div>
-            <div style="max-height: 400px; overflow-y: auto; margin-bottom: 20px; border: 1px solid #ccc;">
-                <table class="boletin" id="profesoresFiltradosTable">
-                    <thead>
-                        <tr>
-                            <th>Profesor</th>
-                            <th>Materia</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                         <tr><td colspan="2">Seleccione un curso.</td></tr>
-                    </tbody>
-                </table>
-            </div>
+        <div style="max-height: 400px; overflow-y: auto; margin-bottom: 20px; border: 1px solid #ccc;">
+          <table class="boletin" id="materiasTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre de la Materia</th>
+                <th>Especialidad</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="4">Cargando materias...</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-    </div>
-    
-    <div id="userModal" class="modal">
-    <div class="modal-contenido">
-      <div class="modal-header">
-        <h2 id="modalTitle"></h2>
-        <button class="cerrar-btn" onclick="closeModal('userModal')">&times;</button>
+        <div class="contenedor-botones">
+          <button onclick="openCreateMateriaModal()"><b>➕ Crear Materia</b></button>
+        </div>
       </div>
-      <form id="userForm" onsubmit="handleCreateUser(event)">
+
+      <div class="form-container">
+        <h2>Profesores por Curso</h2>
+        <p style="text-align: left; margin-top: 0; margin-bottom: 10px;">Filtrar por Año y División</p>
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+          <select id="filtroAnioProf">
+            <option value="">Filtrar Año</option>
+          </select>
+          <select id="filtroDivisionProf">
+            <option value="">Filtrar División</option>
+          </select>
+        </div>
+        <div style="max-height: 400px; overflow-y: auto; margin-bottom: 20px; border: 1px solid #ccc;">
+          <table class="boletin" id="profesoresFiltradosTable">
+            <thead>
+              <tr>
+                <th>Profesor</th>
+                <th>Materia</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="2">Seleccione un curso.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="userModal" class="modal">
+      <div class="modal-contenido">
+        <div class="modal-header">
+          <h2 id="modalTitle"></h2>
+          <button class="cerrar-btn" onclick="closeModal('userModal')">&times;</button>
+        </div>
+        <form id="userForm" onsubmit="handleCreateUser(event)">
+          <div class="modal-body">
+            <input type="hidden" id="originalEmail">
+            <div class="form-group">
+              <label for="userFullname">Nombre Completo</label>
+              <input type="text" id="userFullname" placeholder="Nombre y Apellido" required>
+            </div>
+            <div class="form-group">
+              <label for="userDni">DNI</label>
+              <input type="text" id="userDni" placeholder="Documento Nacional de Identidad" required>
+            </div>
+            <div class="form-group">
+              <label for="userEmail">Correo Electrónico</label>
+              <input type="email" id="userEmail" placeholder="usuario@eest5.com" required>
+              <span id="emailError" class="error-message">Este correo ya está registrado.</span>
+            </div>
+            <div class="form-group">
+              <label for="userPassword">Contraseña</label>
+              <input type="password" id="userPassword" placeholder="Dejar en blanco para no cambiar">
+            </div>
+            <div class="form-group">
+              <label for="userRole">Rol</label>
+              <select id="userRole" required>
+                <option value="Alumno">Alumno</option>
+                <option value="Profesor">Profesor</option>
+                <option value="Preceptor">Preceptor</option>
+                <option value="Administrador">Administrador</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-cancel" onclick="closeModal('userModal')">Cancelar</button>
+            <button type="submit" class="btn btn-submit">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="materiaModal" class="modal">
+      <div class="modal-contenido">
+        <div class="modal-header">
+          <h2>Crear Nueva Materia</h2>
+          <button class="cerrar-btn" onclick="closeModal('materiaModal')">&times;</button>
+        </div>
+        <form id="materiaForm" onsubmit="handleCreateMateria(event)">
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="materiaNombre">Nombre de la Materia</label>
+              <input type="text" id="materiaNombre" placeholder="Ej: Programación" required>
+            </div>
+
+            <div class="form-group">
+              <label for="materiaEspecialidad">Especialidad (Opcional)</label>
+              <select id="materiaEspecialidad">
+                <option value="">Ninguna / Tronco Común</option>
+                <option value="Informática">Informática</option>
+                <option value="Maestro Mayor de Obra">Maestro Mayor de Obra</option>
+                <option value="Electromecánica">Electromecánica</option>
+                <option value="Química">Química</option>
+                <option value="Ciclo Básico">Ciclo Básico</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-cancel" onclick="closeModal('materiaModal')">Cancelar</button>
+            <button type="submit" class="btn btn-submit">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="deleteModal" class="modal">
+      <div class="modal-contenido">
+        <div class="modal-header">
+          <h2>Confirmar Eliminación</h2>
+          <button class="cerrar-btn" onclick="closeModal('deleteModal')">&times;</button>
+        </div>
+        <div class="modal-body delete-modal-body">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p id="deleteMessage"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-cancel" onclick="closeModal('deleteModal')">Cancelar</button>
+          <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Eliminar</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="approvalModal" class="modal">
+      <div class="modal-contenido">
+        <div class="modal-header">
+          <h2>Aprobar Solicitud</h2>
+          <button class="cerrar-btn" onclick="closeModal('approvalModal')">&times;</button>
+        </div>
         <div class="modal-body">
-          <input type="hidden" id="originalEmail">
+          <p><strong>Correo:</strong> <span id="approveEmail"></span></p>
+          <p><strong>Nombre:</strong> <span id="approveName"></span></p>
+          <p><strong>DNI:</strong> <span id="approveDni"></span></p>
+          <p><strong>Rol:</strong> <span id="approveRole"></span></p>
+          <hr>
           <div class="form-group">
-            <label for="userFullname">Nombre Completo</label>
-            <input type="text" id="userFullname" placeholder="Nombre y Apellido" required>
-          </div>
-          <div class="form-group">
-            <label for="userDni">DNI</label>
-            <input type="text" id="userDni" placeholder="Documento Nacional de Identidad" required>
-          </div>
-          <div class="form-group">
-            <label for="userEmail">Correo Electrónico</label>
-            <input type="email" id="userEmail" placeholder="usuario@eest5.com" required>
-            <span id="emailError" class="error-message">Este correo ya está registrado.</span>
-          </div>
-          <div class="form-group">
-            <label for="userPassword">Contraseña</label>
-            <input type="password" id="userPassword" placeholder="Dejar en blanco para no cambiar">
-          </div>
-          <div class="form-group">
-            <label for="userRole">Rol</label>
-            <select id="userRole" required>
-              <option value="Alumno">Alumno</option>
+            <label for="approveRoleSelect">Asignar Rol</label>
+            <select id="approveRoleSelect" required>
+              <option value="">Seleccionar rol</option>
               <option value="Profesor">Profesor</option>
+              <option value="Alumno">Alumno</option>
               <option value="Preceptor">Preceptor</option>
-              <option value="Administrador">Administrador</option>
             </select>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-cancel" onclick="closeModal('userModal')">Cancelar</button>
-          <button type="submit" class="btn btn-submit">Guardar</button>
+          <button type="button" class="btn btn-cancel" onclick="closeModal('approvalModal')">Cancelar</button>
+          <button type="button" id="confirmApproveBtn" class="btn btn-submit">Aprobar Usuario</button>
         </div>
-      </form>
+      </div>
     </div>
-  </div>
-  
-  <div id="materiaModal" class="modal">
-    <div class="modal-contenido">
-        <div class="modal-header">
-            <h2>Crear Nueva Materia</h2>
-            <button class="cerrar-btn" onclick="closeModal('materiaModal')">&times;</button>
-        </div>
-        <form id="materiaForm" onsubmit="handleCreateMateria(event)">
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="materiaNombre">Nombre de la Materia</label>
-                    <input type="text" id="materiaNombre" placeholder="Ej: Programación" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="materiaEspecialidad">Especialidad (Opcional)</label>
-                    <select id="materiaEspecialidad">
-                        <option value="">Ninguna / Tronco Común</option>
-                        <option value="Informática">Informática</option>
-                        <option value="Maestro Mayor de Obra">Maestro Mayor de Obra</option>
-                        <option value="Electromecánica">Electromecánica</option>
-                        <option value="Química">Química</option>
-                        <option value="Ciclo Básico">Ciclo Básico</option>
-                    </select>
-                </div>
-                </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-cancel" onclick="closeModal('materiaModal')">Cancelar</button>
-                <button type="submit" class="btn btn-submit">Guardar</button>
-            </div>
-        </form>
-    </div>
-  </div>
+    <script src="../js/admin.js"></script>
 
-  <div id="deleteModal" class="modal">
-    <div class="modal-contenido">
-      <div class="modal-header">
-        <h2>Confirmar Eliminación</h2>
-        <button class="cerrar-btn" onclick="closeModal('deleteModal')">&times;</button>
-      </div>
-      <div class="modal-body delete-modal-body">
-        <i class="fas fa-exclamation-triangle"></i>
-        <p id="deleteMessage"></p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-cancel" onclick="closeModal('deleteModal')">Cancelar</button>
-        <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Eliminar</button>
-      </div>
-    </div>
-  </div>
-
-<div id="approvalModal" class="modal">
-    <div class="modal-contenido">
+    <div id="alertModal" class="modal">
+      <div class="modal-contenido">
         <div class="modal-header">
-            <h2>Aprobar Solicitud</h2>
-            <button class="cerrar-btn" onclick="closeModal('approvalModal')">&times;</button>
+          <h2>Notificación</h2>
+          <button class="cerrar-btn" onclick="closeModal('alertModal')">&times;</button>
         </div>
-        <div class="modal-body">
-            <p><strong>Correo:</strong> <span id="approveEmail"></span></p>
-            <p><strong>Nombre:</strong> <span id="approveName"></span></p>
-            <p><strong>DNI:</strong> <span id="approveDni"></span></p>
-            <p><strong>Rol:</strong> <span id="approveRole"></span></p>
-            <hr>
-            <div class="form-group">
-                <label for="approveRoleSelect">Asignar Rol</label>
-                <select id="approveRoleSelect" required>
-                    <option value="">Seleccionar rol</option>
-                    <option value="Profesor">Profesor</option>
-                    <option value="Alumno">Alumno</option>
-                    <option value="Preceptor">Preceptor</option>
-                </select>
-            </div>
-            </div>
+        <div class="modal-body" style="text-align: center; font-size: 18px;">
+          <p id="alertMessage"></p>
+        </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-cancel" onclick="closeModal('approvalModal')">Cancelar</button>
-            <button type="button" id="confirmApproveBtn" class="btn btn-submit">Aprobar Usuario</button>
+          <button type="button" class="btn btn-submit" onclick="closeModal('alertModal')">Aceptar</button>
         </div>
-    </div>
-</div>
-  <script src="../js/admin.js"></script>
-
-  <div id="alertModal" class="modal">
-    <div class="modal-contenido">
-      <div class="modal-header">
-        <h2>Notificación</h2>
-        <button class="cerrar-btn" onclick="closeModal('alertModal')">&times;</button>
-      </div>
-      <div class="modal-body" style="text-align: center; font-size: 18px;">
-        <p id="alertMessage"></p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-submit" onclick="closeModal('alertModal')">Aceptar</button>
       </div>
     </div>
-  </div>
 </body>
 
 </html>

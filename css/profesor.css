@@ -377,3 +377,25 @@ p {
 .tabla-3 td.final-container .remove-row:hover {
   color: darkred;
 }
+
+/* --- CORRECCIÓN VISTA PREVIA (PROFESOR) --- */
+
+.vista-previa .tabla-3 input {
+    /* Forzar que los inputs se vean como texto plano */
+    border: none !important;
+    background-color: transparent !important;
+    pointer-events: none; /* Deshabilitar clics */
+    color: #000; /* Asegurar que el texto sea negro */
+    box-shadow: none;
+    text-align: center; /* Mantener centrado */
+}
+
+.vista-previa .tabla-3 td:nth-child(2) input {
+    /* Asegurar que el nombre del alumno siga a la izquierda */
+    text-align: left;
+}
+
+.vista-previa .remove-row {
+    /* Ocultar la 'X' de eliminar fila en vista previa */
+    display: none;
+}

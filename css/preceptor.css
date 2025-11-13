@@ -43,6 +43,37 @@ h2, h3 {
 .text-left-align {
     text-align: left !important;
 }
+
+/* =================================================================
+   NUEVOS ESTILOS PARA ALINEAR FORMULARIOS DE ASIGNACIÓN
+   ================================================================= */
+
+/* Esto asegura que cada "form-group" (el div que contiene
+  la etiqueta y el select) ocupe todo el ancho disponible. 
+*/
+.form-container .form-group {
+    width: 100%;
+    margin-bottom: 15px; /* Añade espacio entre cada campo */
+}
+
+/* Hace que la etiqueta (label) sea un bloque,
+  lo que la pone en su propia línea, arriba del select.
+*/
+.form-container .form-group label {
+    display: block; /* La etiqueta se pone arriba */
+    margin-bottom: 5px; /* Espacio entre la etiqueta y el select */
+    font-weight: bold;
+    text-align: left; /* Alinea la etiqueta a la izquierda */
+}
+
+/* Hace que el select ocupe todo el ancho del contenedor 
+  (como en la imagen del panel de Admin).
+*/
+.form-container .form-group select {
+    width: 100%; /* Ocupa todo el ancho */
+    box-sizing: border-box; /* Asegura que el padding no rompa el ancho */
+    margin: 0; /* Quita el margen por defecto de base.css */
+}
  
 
 
