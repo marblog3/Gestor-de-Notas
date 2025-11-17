@@ -34,7 +34,7 @@ async function handleResetPassword() {
         const data = await response.json();
 
         if (data.success) {
-            alert('Contraseña restablecida con éxito. Ya puedes iniciar sesión con tu nueva contraseña.');
+            showCustomAlert('Contraseña restablecida con éxito. Ya puedes iniciar sesión con tu nueva contraseña.');
             window.location.href = 'principal.html';
         } else {
             errorMsg.innerHTML = data.message || 'Error al restablecer la contraseña.';

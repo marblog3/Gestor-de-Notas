@@ -6,10 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login y Registro</title>
   <link rel="website icon" type="png" href="..\img\logo.png">
+
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/principal.css">
   <link rel="stylesheet" href="../css/responsive.css">
+
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 
 <header class="mi-header">
@@ -21,59 +24,92 @@
 
 <body>
 
-  <div class="container" id="login-container">
-    <h2>Sistema De Gestión De Notas</h2>
-    <h2>Iniciar Sesión</h2><br>
-    <div id="error-msg" class="error"></div>
-    <input type="email" id="login-username" placeholder="Correo institucional" required>
-    <input type="password" id="login-password" placeholder="Contraseña" required>
-    <button onclick="login()"><b>Iniciar Sesión</b></button>
-    <div class="switch">
-      <a href="olvidaste_contrasena.html" style="font-size: 14px; color: #3b394f;">
-        <b>¿Olvidaste tu Contraseña?</b>
-      </a>
+  <div class="main-container">
+
+    <div class="image-column">
+      <img src="..\img\d12245cc-1680-458d-89dd-4f0d7fb22724.png" alt="Imagen de bienvenida">
     </div>
-    <div class="switch">
-      <b>¿No tienes cuenta?</b> <a href="javascript:void(0)" onclick="showRegister()"><b>Registrate</b></a>
-    </div>
-          <div class="google-login-container">
-      <div id="g_id_onload"
-           data-client_id="1016546675395-j3p58ugrpdhnb1pfa25m2jichtt4a4pt.apps.googleusercontent.com"
-           data-context="signin"
-           data-ux_mode="popup"
-           data-callback="handleGoogleCredentialResponse"
-           data-auto_prompt="false">
+
+    <div class="form-column">
+
+      <div class="form-wrapper" id="login-container">
+        <h2>Iniciar Sesión</h2>
+        <p class="form-subtitle">Bienvenido al Sistema de Gestión de Notas.</p>
+        <div id="error-msg" class="error"></div>
+
+        <div class="input-group">
+          <input type="email" id="login-username" placeholder=" " required>
+          <label for="login-username">Correo institucional</label>
+        </div>
+
+        <div class="input-group">
+          <input type="password" id="login-password" placeholder=" " required>
+          <label for="login-password">Contraseña</label>
+        </div>
+
+        <button class="btn-primary" onclick="login()"><b>Iniciar Sesión</b></button>
+
+        <div class="switch">
+          <a href="olvidaste_contrasena.html" class="form-link">
+            <b>¿Olvidaste tu Contraseña?</b>
+          </a>
+        </div>
+
+        <div class="google-login-container">
+          <div id="g_id_onload"
+            data-client_id="1016546675395-j3p58ugrpdhnb1pfa25m2jichtt4a4pt.apps.googleusercontent.com"
+            data-context="signin" data-ux_mode="popup" data-callback="handleGoogleCredentialResponse"
+            data-auto_prompt="false">
+          </div>
+          <div class="g_id_signin" data-type="standard"></div>
+        </div>
+
+        <div class="switch">
+          <b>¿No tienes cuenta?</b> <a href="javascript:void(0)" onclick="showRegister()"
+            class="form-link"><b>Registrate</b></a>
+        </div>
       </div>
 
-      <div class="g_id_signin" data-type="standard"></div>
+      <div class="form-wrapper" id="register-container" style="display: none;">
+        <h2>Registrar Usuario</h2>
+        <p class="form-subtitle">Completa tus datos para crear una cuenta.</p>
+        <div id="register-error-msg" class="error"></div>
+
+        <div class="input-group">
+          <input type="text" id="register-fullname" placeholder=" " required>
+          <label for="register-fullname">Nombre y Apellido</label>
+        </div>
+
+        <div class="input-group">
+          <input type="text" id="register-dni" placeholder=" " required>
+          <label for="register-dni">DNI</label>
+        </div>
+
+        <div class="input-group">
+          <input type="email" id="register-username" placeholder=" " required>
+          <label for="register-username">Correo institucional (@eest5.com)</label>
+        </div>
+
+        <button class="btn-primary" onclick="register()"><b>Registrar</b></button>
+
+        <div class="switch">
+          <b>¿Ya tienes cuenta?</b> <a href="javascript:void(0)" onclick="showLogin()" class="form-link"><b>Iniciar
+              Sesión</b></a>
+        </div>
+      </div>
+
     </div>
   </div>
-
-  <div class="container" id="register-container" style="display: none;">
-    <h2>Registrar Usuario</h2><br>
-    <div id="register-error-msg" class="error"></div>
-
-    <input type="text" id="register-fullname" placeholder="Nombre y Apellido" required>
-    <input type="text" id="register-dni" placeholder="DNI" required>
-
-    <input type="email" id="register-username" placeholder="Correo institucional (@eest5.com)" required>
-    
-    <button onclick="register()"><b>Registrar</b></button>
-    <div class="switch">
-      <b>¿Ya tienes cuenta?</b> <a href="javascript:void(0)" onclick="showLogin()"><b>Iniciar Sesión</b></a>
-    </div>
-  </div>
-
-  <script src="../js/principal.js"></script>
 
   <div id="custom-alert-overlay" class="modal-overlay">
-  <div class="modal-box">
-    <p id="custom-alert-message"></p>
-    <button onclick="closeCustomAlert()">Aceptar</button>
+    <div class="modal-box">
+      <p id="custom-alert-message"></p>
+      <button onclick="closeCustomAlert()">Aceptar</button>
+    </div>
   </div>
-</div>
 
-</body>
+  <script src="../js/global.js"></script>
+  <script src="../js/principal.js"></script>
+
 
 </html>
-

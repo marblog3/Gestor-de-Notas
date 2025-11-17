@@ -7,7 +7,7 @@ async function asignarPreceptorAdmin(event) {
     const division = document.getElementById("divisionInputPreceptorAdmin").value;
 
     if (!preceptor || !anio || !division) {
-        return alert("Complete todos los campos para asignar el preceptor.");
+        return showCustomAlert("Complete todos los campos para asignar el preceptor.");
     }
 
     // Usaremos el mismo endpoint que creó el Preceptor
@@ -22,12 +22,12 @@ async function asignarPreceptorAdmin(event) {
         const data = await response.json();
 
         if (data.success) {
-            alert(data.message);
+            showCustomAlert(data.message);
         } else {
-            alert(data.message || "Error al asignar preceptor.");
+            showCustomAlert(data.message || "Error al asignar preceptor.");
         }
     } catch (e) {
-        alert("Error de conexión con el servidor al asignar preceptor.");
+        showCustomAlert("Error de conexión con el servidor al asignar preceptor.");
         console.error(e);
     }
 }

@@ -67,7 +67,7 @@ function redirectByRole(role) {
             window.location.href = "admin.html";
             break;
         default:
-            alert("Rol desconocido o no asignado.");
+            showCustomAlert("Rol desconocido o no asignado.");
     }
 }
 
@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (activeUser) {
         const user = JSON.parse(activeUser);
         if (!window.location.pathname.endsWith("principal.html")) return;
-        alert("Ya tienes una sesión activa.");
+        showCustomAlert("Ya tienes una sesión activa.");
         redirectByRole(user.role);
     }
 

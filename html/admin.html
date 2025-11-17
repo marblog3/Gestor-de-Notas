@@ -450,6 +450,7 @@
         </div>
       </div>
     </div>
+    <script src="../js/global.js"></script>
     <script src="../js/admin.js"></script>
 
     <div id="alertModal" class="modal">
@@ -464,6 +465,27 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-submit" onclick="closeModal('alertModal')">Aceptar</button>
         </div>
+      </div>
+    </div>
+
+    <div id="custom-alert-overlay" class="modal-overlay">
+      <div class="modal-box">
+        <p id="custom-alert-message"></p>
+        <button onclick="closeCustomAlert()">Aceptar</button>
+      </div>
+    </div>
+
+    <div id="info-panel-overlay" class="info-panel-overlay" onclick="closeInfoPanel()"></div>
+    <div id="info-panel" class="info-panel">
+      <div class="info-panel-header">
+        <h2>Información Personal</h2>
+        <a href="javascript:void(0)" class="close-btn" onclick="closeInfoPanel()">&times;</a>
+      </div>
+      <div class="info-panel-content">
+        <p><strong>Nombre:</strong> <span id="panel-user-name"></span></p>
+        <p><strong>DNI:</strong> <span id="panel-user-dni"></span></p>
+        <p><strong>Email:</strong> <span id="panel-user-email"></span></p>
+        <p><strong>Rol:</strong> <span id="panel-user-role"></span></p>
       </div>
     </div>
 </body>

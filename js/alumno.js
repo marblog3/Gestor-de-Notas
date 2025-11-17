@@ -1350,18 +1350,3 @@ document.addEventListener("DOMContentLoaded", async () => {
     cargarNotasDelAlumno();
 });
 
-// --- Función de Info Personal (Lógica de tu Meta 3) ---
-function showPersonalInfo() {
-    let userToShow = activeUser;
-    if (!isEditable) {
-        userToShow = activeUser; 
-    }
-    
-    alert(
-        'Información Personal:\n\n' +
-        'Email: ' + (userToShow.email || 'No disponible') + '\n' +
-        'Nombre: ' + (userToShow.fullname || 'No disponible') + '\n' +
-        'DNI: ' + (userToShow.dni || 'No disponible') + '\n' +
-        'Rol: ' + (userToShow.role || 'No disponible')
-    );
-}

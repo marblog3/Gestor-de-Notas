@@ -284,7 +284,7 @@ document.getElementById('asignarProfesorForm').addEventListener('submit', async 
     const turno = document.getElementById("turnoSelectProfesor").value;
 
     if (!profesor || !materia || !anio || !division || !turno) {
-        alert("Complete Profesor, Materia, Año, División y Turno.");
+        showCustomAlert("Complete Profesor, Materia, Año, División y Turno.");
         return;
     }
 
@@ -299,13 +299,13 @@ document.getElementById('asignarProfesorForm').addEventListener('submit', async 
         const data = await response.json();
 
         if (data.success) {
-            alert(data.message);
+            showCustomAlert(data.message);
             cargarAsignacionesProfesor(profesor); // Recarga la lista de materias del profe
         } else {
-            alert(data.message || "Error al asignar materia.");
+            showCustomAlert(data.message || "Error al asignar materia.");
         }
     } catch (e) {
-        alert("Error de conexión con el servidor al asignar materia.");
+        showCustomAlert("Error de conexión con el servidor al asignar materia.");
         console.error(e);
     }
 });
@@ -320,7 +320,7 @@ document.getElementById('asignarAlumnoForm').addEventListener('submit', async fu
     const turno = document.getElementById("turnoInputAlumno").value;
 
     if (!alumno || !anio || !division || !especialidad || !turno) {
-        alert("Complete todos los campos del alumno, incluyendo el Turno.");
+        showCustomAlert("Complete todos los campos del alumno, incluyendo el Turno.");
         return;
     }
 
@@ -335,7 +335,7 @@ document.getElementById('asignarAlumnoForm').addEventListener('submit', async fu
         const data = await response.json();
 
         if (data.success) {
-            alert(data.message);
+            showCustomAlert(data.message);
             document.getElementById('asignarAlumnoForm').reset();
             // Actualizar lista de asignaciones (si es necesario, aunque aquí no hay lista)
             const li = document.createElement("li");
@@ -343,10 +343,10 @@ document.getElementById('asignarAlumnoForm').addEventListener('submit', async fu
             document.getElementById("alumnosList").appendChild(li);
 
         } else {
-            alert(data.message || "Error al asignar curso.");
+            showCustomAlert(data.message || "Error al asignar curso.");
         }
     } catch (e) {
-        alert("Error de conexión con el servidor al asignar alumno.");
+        showCustomAlert("Error de conexión con el servidor al asignar alumno.");
         console.error(e);
     }
 });
@@ -497,17 +497,3 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarAlumnosFiltrados();
 });
 
-// Función de Info Personal (Lógica de tu Meta 3)
-function showPersonalInfo() {
-    if (activeUser) {
-        alert(
-            'Información Personal:\n\n' +
-            'Email: ' + (activeUser.email || 'No disponible') + '\n' +
-            'Nombre: ' + (activeUser.fullname || 'No disponible') + '\n' +
-            'DNI: ' + (activeUser.dni || 'No disponible') + '\n' +
-            'Rol: ' + (activeUser.role || 'No disponible')
-        );
-    } else {
-        alert('No se pudieron cargar los datos del usuario.');
-    }
-}

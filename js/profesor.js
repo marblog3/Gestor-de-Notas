@@ -28,7 +28,7 @@ async function checkActiveUserData() {
             }
         } catch (e) {
             console.error(e);
-            alert("Error crítico: No se pudieron verificar los datos de tu sesión. Serás redirigido al login.");
+            showCustomAlert("Error crítico: No se pudieron verificar los datos de tu sesión. Serás redirigido al login.");
             logout(); // Redirige si falla
         }
     }
@@ -1102,7 +1102,7 @@ function gisLoaded() {
             callback: async (resp) => {
                 if (resp.error) {
                     console.error("Error en la autorización:", resp);
-                    alert("Hubo un error en la autorización con Google.");
+                    showCustomAlert("Hubo un error en la autorización con Google.");
                     throw (resp);
                 }
                 await enviarEmailDeAviso();
@@ -1115,7 +1115,7 @@ function gisLoaded() {
 
 function handleAuthClick() {
     if (!tokenClient) {
-        alert("La autenticación de Google no se ha cargado todavía. Por favor, espere un momento y vuelva a intentarlo.");
+        showCustomAlert("La autenticación de Google no se ha cargado todavía. Por favor, espere un momento y vuelva a intentarlo.");
         return;
     }
     if (gapi.client.getToken() === null) {
@@ -1149,10 +1149,10 @@ async function enviarEmailDeAviso() {
     try {
         const response = await gapi.client.gmail.users.messages.send({ 'userId': 'me', 'resource': { 'raw': base64EncodedEmail } });
         console.log("Correo de notificación enviado exitosamente:", response);
-        alert("¡Notificación enviada con éxito!");
+        showCustomAlert("¡Notificación enviada con éxito!");
     } catch (error) {
         console.error("Error al enviar el correo:", error);
-        alert("Hubo un error al enviar la notificación. Revisa la consola para más detalles.");
+        showCustomAlert("Hubo un error al enviar la notificación. Revisa la consola para más detalles.");
     }
 }
 
@@ -1181,23 +1181,7 @@ function logout() {
     window.location.replace("principal.html");
 }
 
-// --- LÓGICA PARA EL DROPDOWN DE USUARIO ---
 
-// Esta función se activa al hacer clic en "Información Personal"
-function showPersonalInfo() {
-    // Reutiliza los datos del usuario activo que ya están en 'activeUser'
-    if (activeUser) {
-        alert(
-            'Información Personal:\n\n' +
-            'Email: ' + (activeUser.email || 'No disponible') + '\n' +
-            'Nombre: ' + (activeUser.fullname || 'No disponible') + '\n' +
-            'DNI: ' + (activeUser.dni || 'No disponible') + '\n' +
-            'Rol: ' + (activeUser.role || 'No disponible')
-        );
-    } else {
-        alert('No se pudieron cargar los datos del usuario.');
-    }
-}
 
 // Esta lógica se ejecuta cuando la página carga para poner el email en el header
 document.addEventListener('DOMContentLoaded', () => {

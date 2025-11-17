@@ -454,3 +454,172 @@ th {
     border-radius: var(--br);
     padding: calc(var(--gap) * 2.5) calc(var(--gap) * 4);
 }
+
+/* --- Estilos para la Ventana Modal (Tu original, sin cambios) --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-box {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+}
+
+.modal-box p {
+  font-size: 18px;
+  margin: 0 0 20px 0;
+  color: #333;
+}
+
+.modal-box button {
+  padding: 10px 25px;
+  /* Actualizado al nuevo color de botón */
+  background-color: #3FB1EE; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* --- Estilos para el Panel Lateral de Información --- */
+
+.info-panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1999; /* Debajo del panel, encima del resto */
+    display: none; /* Oculto por defecto */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.info-panel {
+    position: fixed;
+    top: 0;
+    right: -400px; /* Oculto fuera de la pantalla */
+    width: 100%;
+    max-width: 400px;
+    height: 100vh;
+    background: #ffffff;
+    box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+    z-index: 2000;
+    transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Estado activo (visible) */
+.info-panel.active {
+    right: 0;
+}
+.info-panel-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+.info-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    background-color: #f7f7f7;
+}
+
+.info-panel-header h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #333;
+}
+
+.info-panel-header .close-btn {
+    font-size: 30px;
+    color: #888;
+    text-decoration: none;
+    font-weight: 300;
+}
+
+.info-panel-content {
+    padding: 25px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.info-panel-content p {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.info-panel-content p strong {
+    color: #000;
+    display: block;
+    font-weight: 600;
+    margin-bottom: 2px;
+    text-align: left;
+}
+
+
+/* --- Estilos para la Ventana Modal (Alertas) --- */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.5); display: none;
+  justify-content: center; align-items: center; z-index: 3000;
+}
+.modal-box {
+  background: white; padding: 25px; border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); text-align: center;
+  width: 90%; max-width: 400px;
+}
+.modal-box p { font-size: 18px; margin-bottom: 20px; color: #333; }
+.modal-box button {
+  padding: 10px 25px; background-color: #3FB1EE; color: white;
+  border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold;
+}
+
+/* --- Estilos para el Panel Lateral Deslizable --- */
+.info-panel-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5); z-index: 1999;
+    display: none; opacity: 0; transition: opacity 0.3s ease;
+}
+.info-panel {
+    position: fixed; top: 0; right: -400px; /* Oculto a la derecha */
+    width: 100%; max-width: 350px; height: 100vh;
+    background: #ffffff; box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    z-index: 2000; transition: right 0.3s ease-out;
+    display: flex; flex-direction: column;
+}
+.info-panel.active { right: 0; }
+.info-panel-overlay.active { display: block; opacity: 1; }
+
+.info-panel-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px; background-color: #383c45; border-bottom: 1px solid #ddd;
+}
+.info-panel-header h2 { margin: 0; font-size: 18px; color: #eeecf3; }
+.info-panel-header .close-btn { font-size: 28px; color: #ffffff; text-decoration: none; }
+
+.info-panel-content { padding: 20px; }
+.info-panel-content p { font-size: 16px; color: #444; margin-bottom: 12px; text-align: left; }
+.info-panel-content strong { color: #000; }

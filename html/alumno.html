@@ -147,7 +147,7 @@
       </div>
     </div><br>
 
-   <div style="margin-top: 30px;">
+    <div style="margin-top: 30px;">
       <h3>INASISTENCIAS TOTALES</h3><br>
       <div id="inasistencias-totales-container">
       </div>
@@ -162,18 +162,40 @@
     <div id="botones" class="contenedor-botones">
       <button id="modificarBtn" style="display: none; background-color: #f39c12;"><b>MODIFICAR</b></button>
       <button id="guardarBtn" style="display: none; background-color: #27ae60;"><b>GUARDAR</b></button>
-      <button id="agregarFilaPendienteBtn" style="display: none; background-color: #2980b9;"><b>AGREGAR PENDIENTE</b></button>
+      <button id="agregarFilaPendienteBtn" style="display: none; background-color: #2980b9;"><b>AGREGAR
+          PENDIENTE</b></button>
 
       <button id="exportarBtn" class="btn-exportar"><b>EXPORTAR A EXCEL</b></button>
       <button><b>CONSULTAR</b></button>
     </div>
 
-    
 
+    <script src="../js/global.js"></script>
     <script src="../js/alumno.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
+  </div>
+
+  <div id="custom-alert-overlay" class="modal-overlay">
+    <div class="modal-box">
+      <p id="custom-alert-message"></p>
+      <button onclick="closeCustomAlert()">Aceptar</button>
+    </div>
+  </div>
+
+  <div id="info-panel-overlay" class="info-panel-overlay" onclick="closeInfoPanel()"></div>
+  <div id="info-panel" class="info-panel">
+    <div class="info-panel-header">
+      <h2>Información Personal</h2>
+      <a href="javascript:void(0)" class="close-btn" onclick="closeInfoPanel()">&times;</a>
+    </div>
+    <div class="info-panel-content">
+      <p><strong>Nombre:</strong> <span id="panel-user-name"></span></p>
+      <p><strong>DNI:</strong> <span id="panel-user-dni"></span></p>
+      <p><strong>Email:</strong> <span id="panel-user-email"></span></p>
+      <p><strong>Rol:</strong> <span id="panel-user-role"></span></p>
+    </div>
   </div>
 </body>
 

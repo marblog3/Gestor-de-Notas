@@ -72,7 +72,7 @@ function openEditModal(email) {
                 document.getElementById('userDni').value = user.dni || '';
                 document.getElementById('userRole').value = user.role;
             } else {
-                alert("Error al cargar datos del usuario para edición.");
+                showCustomAlert("Error al cargar datos del usuario para edición.");
                 closeModal('userModal');
             }
         });
@@ -126,7 +126,7 @@ async function handleCreateUser(event) {
             emailError.style.display = 'block';
         }
     } catch (e) {
-        alert("Error de conexión con el servidor.");
+        showCustomAlert("Error de conexión con el servidor.");
     }
 }
 
@@ -150,10 +150,10 @@ async function handleEditUser(event) {
             closeModal('userModal');
             cargarUsuarios();
         } else {
-            alert(data.message);
+            showCustomAlert(data.message);
         }
     } catch (e) {
-        alert("Error de conexión con el servidor.");
+        showCustomAlert("Error de conexión con el servidor.");
     }
 }
 
@@ -170,10 +170,10 @@ async function handleDeleteUser(email) {
             closeModal('deleteModal');
             cargarUsuarios();
         } else {
-            alert(data.message);
+            showCustomAlert(data.message);
         }
     } catch (e) {
-        alert("Error de conexión con el servidor.");
+        showCustomAlert("Error de conexión con el servidor.");
     }
 }
 
@@ -899,7 +899,7 @@ document.getElementById('asignarProfesorForm').addEventListener('submit', async 
     const turno = document.getElementById("turnoSelectProfesor").value; // Captura turno
 
     if (!profesor || !materia || !anio || !division || !turno) {
-        alert("Complete Profesor, Materia, Año, División y Turno.");
+        showCustomAlert("Complete Profesor, Materia, Año, División y Turno.");
         return;
     }
 
@@ -915,13 +915,13 @@ document.getElementById('asignarProfesorForm').addEventListener('submit', async 
         const data = await response.json();
 
         if (data.success) {
-            alert(data.message);
+            showCustomAlert(data.message);
             cargarProfesoresFiltrados(); // Actualiza la tabla de profesores por curso
         } else {
-            alert(data.message || "Error al asignar materia.");
+            showCustomAlert(data.message || "Error al asignar materia.");
         }
     } catch (e) {
-        alert("Error de conexión con el servidor al asignar materia.");
+        showCustomAlert("Error de conexión con el servidor al asignar materia.");
         console.error(e);
     }
 });
@@ -936,7 +936,7 @@ document.getElementById('asignarAlumnoForm').addEventListener('submit', async fu
     const turno = document.getElementById("turnoInputAlumno").value; // Captura del turno
 
     if (!alumno || !anio || !division || !especialidad || !turno) {
-        alert("Complete todos los campos del alumno, incluyendo el Turno.");
+        showCustomAlert("Complete todos los campos del alumno, incluyendo el Turno.");
         return;
     }
 
@@ -951,15 +951,15 @@ document.getElementById('asignarAlumnoForm').addEventListener('submit', async fu
         const data = await response.json();
 
         if (data.success) {
-            alert(data.message);
+            showCustomAlert(data.message);
             // Opcional: Limpiar formulario o actualizar alguna vista si es necesario
             document.getElementById('asignarAlumnoForm').reset();
             // loadAlumnosForCourse(); // Recargar select de alumnos podría ser útil
         } else {
-            alert(data.message || "Error al asignar curso.");
+            showCustomAlert(data.message || "Error al asignar curso.");
         }
     } catch (e) {
-        alert("Error de conexión con el servidor al asignar alumno.");
+        showCustomAlert("Error de conexión con el servidor al asignar alumno.");
         console.error(e);
     }
 });
@@ -973,7 +973,7 @@ async function asignarPreceptorAdmin(event) {
     const turno = document.getElementById("turnoInputPreceptorAdmin").value; // Captura del turno
 
     if (!preceptor || !anio || !division || !turno) {
-        return alert("Complete todos los campos para asignar el preceptor, incluyendo el Turno.");
+        return showCustomAlert("Complete todos los campos para asignar el preceptor, incluyendo el Turno.");
     }
 
     // Incluye el turno, aunque el backend actual no lo use directamente para actualizar al alumno
@@ -988,14 +988,14 @@ async function asignarPreceptorAdmin(event) {
         const data = await response.json();
 
         if (data.success) {
-            alert(data.message + ` (${data.alumnos_actualizados} alumnos actualizados)`);
+            showCustomAlert(data.message + ` (${data.alumnos_actualizados} alumnos actualizados)`);
             // Opcional: Limpiar formulario
             document.getElementById('asignarPreceptorForm').reset();
         } else {
-            alert(data.message || "Error al asignar preceptor.");
+            showCustomAlert(data.message || "Error al asignar preceptor.");
         }
     } catch (e) {
-        alert("Error de conexión con el servidor al asignar preceptor.");
+        showCustomAlert("Error de conexión con el servidor al asignar preceptor.");
         console.error(e);
     }
 }
@@ -1115,23 +1115,6 @@ function formatearDNI(e) {
     e.target.value = formattedVal;
 }
 
-// --- LÓGICA PARA EL DROPDOWN DE USUARIO ---
-
-// Esta función se activa al hacer clic en "Información Personal"
-function showPersonalInfo() {
-    // Reutiliza los datos del usuario activo que ya están en 'activeUser'
-    if (activeUser) {
-        alert(
-            'Información Personal:\n\n' +
-            'Email: ' + (activeUser.email || 'No disponible') + '\n' +
-            'Nombre: ' + (activeUser.fullname || 'No disponible') + '\n' +
-            'DNI: ' + (activeUser.dni || 'No disponible') + '\n' +
-            'Rol: ' + (activeUser.role || 'No disponible')
-        );
-    } else {
-        alert('No se pudieron cargar los datos del usuario.');
-    }
-}
 
 // Esta lógica se ejecuta cuando la página carga para poner el email en el header
 document.addEventListener('DOMContentLoaded', () => {

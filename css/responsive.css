@@ -1,126 +1,200 @@
 /* =================================================================
-   RESPONSIVE.CSS (VERSIÓN MEJORADA)
-   Ajustes para tablets y dispositivos móviles.
+   RESPONSIVE.CSS (VERSIÓN 3 - "MENOS ZOOM")
+   Ajustes para Admin, Profesor, Alumno, Preceptor
    ================================================================= */
 
 /* --- Para Tablets y Laptops Pequeñas (hasta 1024px) --- */
 @media (max-width: 1024px) {
-    /* Ajustamos el contenedor principal para que no sea tan ancho y tenga menos relleno */
+    /* Hacemos que los contenedores internos ocupen un ancho más natural */
     .boletin-container, .container {
-        width: 90%;
-        padding: 30px;
-        margin-top: 120px; /* Ajuste para el header fijo */
+        width: 95%; /* Ocupa casi todo el ancho */
+        padding: 20px;
+        margin-top: 110px; /* 90px header + 20px espacio */
+        box-sizing: border-box; /* Importante para que el padding no rompa el ancho */
     }
 
-    /* Reducimos ligeramente el tamaño de los títulos principales */
+    /* Reducimos un poco los títulos en tablets */
     h1, .header-title, .title-2 {
-        font-size: 28px;
-    }
-
-    .header-title1 {
-        font-size: 22px;
-    }
-
-    /* Hacemos que la disposición de columnas en el panel de admin se mantenga, pero con menos espacio */
-    .column-layout-container {
-        gap: 20px;
+        font-size: 26px;
     }
 }
 
-/* --- Para Tablets en modo vertical (hasta 768px) --- */
+/* --- Para Tablets en vertical y Móviles (768px o menos) --- */
 @media (max-width: 768px) {
     body {
-        /* Nos aseguramos que no haya zoom y que el texto no sea agrandado por el navegador en iOS */
-        zoom: 1;
+        /* Previene que iOS agrande la fuente automáticamente */
         -webkit-text-size-adjust: 100%;
+        font-size: 16px; /* Establecemos una base de fuente legible */
+    }
+
+    /* Header simplificado (para admin, profesor, etc.) */
+    .main-header {
+        padding: 10px 15px;
+        height: auto; /* Altura automática */
+        min-height: 70px; /* Altura mínima para que no se rompa */
+        flex-wrap: wrap; /* Permite que los elementos salten abajo si no caben */
+        gap: 10px;
+    }
+    .header-logo {
+        width: 50px; /* Logo más pequeño */
+    }
+    .header-title {
+        font-size: 20px; /* Título más pequeño */
+    }
+    /* Ocultamos el nombre y rol en el header, dejamos solo el botón de salir */
+    .user-info .user-name, .user-info .user-role {
+        display: none;
+    }
+    .user-info {
+        margin-left: auto; /* Mueve el botón de salir a la derecha */
     }
 
     .boletin-container, .container {
-        padding: 20px;
-        width: 95%; /* Ocupa casi todo el ancho */
-    }
-
-    /* El layout de dos columnas del admin ahora se apila verticalmente */
-    .column-layout-container {
-      flex-direction: column;
-      align-items: center; /* Centramos los formularios apilados */
+        margin-top: 90px; /* Espacio para el header */
+        padding: 15px;
     }
     
-    .column-layout-container .form-container {
-      width: 100%; /* Cada formulario ocupa todo el ancho del contenedor */
-    }
-    
-    #asignarProfesorForm, #asignarAlumnoForm {
-        text-align: center; /* Centramos los botones en móvil */
-    }
-
-    /* El header se ajusta para no ocupar tanto espacio horizontal */
-    .main-header {
-        padding: 10px 15px;
-    }
-
-    .header-title {
-        font-size: 20px;
-    }
-
-    /* Forzamos a que las tablas que no quepan tengan scroll horizontal */
+    /* * Tablas (¡Clave!)
+     * Mantenemos el scroll horizontal. Es la mejor práctica
+     * para no comprimir el contenido. Se ve como en un celular real.
+     */
     .tabla-scroll, .boletin, #tabla-materias, #tabla-pendientes, .tabla-3 {
         display: block;
         width: 100%;
-        overflow-x: auto; /* ¡La clave para tablas en móvil! */
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+    }
+
+    /* Formularios de Admin (columnas) se apilan */
+    .column-layout-container {
+        flex-direction: column;
+        align-items: stretch; /* Hacemos que ocupen 100% de ancho */
+        gap: 20px;
+    }
+    .column-layout-container .form-container {
+        width: 100%; /* Cada formulario ocupa todo el ancho */
     }
 }
 
-/* --- Para Móviles (hasta 600px) --- */
+/* --- Para Móviles Pequeños (600px o menos) --- */
 @media (max-width: 600px) {
-    /* El header principal se apila para dar más espacio */
-    .main-header {
-        flex-direction: column;
-        height: auto; /* Altura automática */
-        padding: 10px;
-    }
-
-    .main-header .header-left {
-        margin-bottom: 10px;
-    }
-
-    /* Aumentamos el margen superior para que el contenido no quede debajo del header más alto */
-    .boletin-container, .container {
-        margin-top: 150px;
-    }
-
-    h1, .title-2 {
-        font-size: 24px;
-    }
-    h2, h3 {
-        font-size: 20px;
-    }
-
-    /* Los inputs y selects de los formularios ocupan casi todo el ancho */
-    input, select, textarea {
-        width: 95%;
-    }
-
-    #login-container input, #register-container input, #register-container select {
-        width: 90%;
-    }
     
-    /* Los contenedores de botones se apilan verticalmente para ser más fáciles de tocar */
+    /* * ESTA ES LA CORRECCIÓN CLAVE *
+     * Ya NO forzamos a que TODOS los inputs y selects
+     * ocupen el 100% del ancho.
+     * Solo lo harán los que estén dentro de .form-container
+     * o .contenedor-botones
+     */
+
+    /* Ajustamos títulos para que no sean tan grandes ("menos zoom") */
+    h1, .title-2 { font-size: 22px; }
+    h2, h3 { font-size: 18px; }
+
+    /* * SÍ queremos que los inputs/selects dentro de un formulario 
+     * principal (como "Crear Usuario") ocupen el 100%
+     */
+    .form-container input,
+    .form-container select,
+    .form-container textarea {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* * Contenedores de botones (como en el panel de profesor)
+     * se apilan y sus botones ocupan el 100%
+     */
     .contenedor-botones {
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: stretch;
         gap: 10px;
-    }
-
-    .contenedor-botones button, .accion-boton {
-        width: 80%;
-        margin: 5px 0; /* Quitamos márgenes horizontales */
-        max-width: 300px;
-    }
-    
-    /* Quitamos márgenes extra que puedan causar problemas a */
-    .contenedor-botones {
+        width: 100%;
         margin-right: 0;
     }
+
+    .contenedor-botones button, 
+    .form-container button,
+    .accion-boton {
+        width: 100%;
+        margin: 0;
+        padding: 12px; /* Un buen tamaño para tocar */
+    }
+    
+    /* * Los 'select' que estén fuera de un .form-container 
+     * (como los filtros de tablas) NO se verán afectados 
+     * y mantendrán su ancho automático (pequeño/miniatura).
+     */
 }
+
+
+/* =================================================================
+   SECCIÓN RESPONSIVE PARA LOGIN/REGISTER/RESET
+   (Esta es la parte que ya funcionaba bien, la dejamos al final)
+   ================================================================= */
+
+/* --- Para Tablets y Móviles (1024px o menos) --- */
+@media (max-width: 1024px) {
+    
+    /* Oculta la columna de la imagen */
+    .image-column {
+        display: none;
+    }
+
+    /* El formulario ocupa todo el ancho */
+    .form-column {
+        flex-basis: 100%;
+        overflow-y: visible;
+    }
+    
+    /* El body vuelve a tener scroll en móvil */
+    html, body {
+        overflow: auto;
+        height: auto;
+    }
+
+    /* El contenedor principal se adapta al contenido */
+    .main-container {
+        height: auto;
+        min-height: calc(100vh - 90px);
+    }
+
+    /* Centramos el formulario */
+    .form-wrapper {
+        max-width: 420px;
+        margin: 0 auto;
+        padding: 20px 0;
+    }
+}
+
+/* --- Para Móviles Pequeños (480px o menos) --- */
+@media (max-width: 50%) {
+    /* * Reducimos el "zoom" del login en pantallas muy pequeñas
+     * para que todo quepa cómodamente.
+     */
+    .form-wrapper h2 {
+        font-size: 28px;
+    }
+
+    .form-subtitle {
+        font-size: 16px;
+    }
+
+    .input-group input,
+    .input-group label {
+        font-size: 16px; /* Volvemos al tamaño base */
+    }
+    
+    .btn-primary {
+        font-size: 16px;
+        padding: 12px 20px;
+    }
+
+    .switch, .form-link {
+        font-size: 14px;
+    }
+
+    .form-column {
+        padding: 20px 15px;
+    }
+}
+
