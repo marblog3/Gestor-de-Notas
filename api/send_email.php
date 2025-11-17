@@ -55,4 +55,45 @@ function sendWelcomeEmail($toEmail, $toName, $password) {
         return false;
     }
 }
+
+/**
+ * Envía un aviso de carga de notas al preceptor/admin.
+ */
+function sendGradeNotificationEmail($profesorName, $materia) {
+    $mail = new PHPMailer(true);
+
+    // Correo de destino (según tu js original era este)
+    $toEmail = 'mvbenitezramirez@eest5.com'; 
+    $toName = 'Administración / Preceptoría';
+
+    try {
+        // Configuración SMTP (Misma que sendWelcomeEmail)
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'mvbenitezramirez@eest5.com'; 
+        $mail->Password   = 'sqhu djes ywee jhfm'; // Tu contraseña de aplicación
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
+
+        // Remitente
+        $mail->setFrom('mvbenitezramirez@eest5.com', 'Sistema de Gestión E.E.S.T.N°5');
+        $mail->addAddress($toEmail, $toName);
+
+        // Contenido
+        $mail->isHTML(false);
+        $mail->CharSet = 'UTF-8';
+        $mail->Subject = "Notificación de carga de notas: $materia";
+        $mail->Body    = "Hola,\n\n"
+                       . "Este es un aviso para informarle que el profesor/a $profesorName ha cargado/actualizado las notas para la materia: $materia.\n\n"
+                       . "Saludos cordiales,\n"
+                       . "Sistema de Gestión E.E.S.T.N°5";
+
+        $mail->send();
+        return true;
+    } catch (Exception $e) {
+        error_log("Error al enviar notificación de notas. Mailer Error: {$mail->ErrorInfo}");
+        return false;
+    }
+}
 ?>

@@ -40,7 +40,7 @@ function logout() {
 }
 
 function openAlertModal(message) {
-    alert(message);
+    showCustomAlert(message);
 }
 
 function closeAlertModal() {
@@ -80,25 +80,25 @@ function aplicarVistaPrevia() {
         p.textContent = textarea.value;
         p.className = 'obs-text-preview';
         textarea.style.display = 'none';
-         if (!textarea.nextElementSibling || !textarea.nextElementSibling.classList.contains('obs-text-preview')) {
+        if (!textarea.nextElementSibling || !textarea.nextElementSibling.classList.contains('obs-text-preview')) {
             textarea.parentNode.insertBefore(p, textarea.nextSibling);
-         }
+        }
     });
     document.querySelectorAll('select.materia-pendiente-select').forEach(select => {
         const span = document.createElement('span');
         const selectedText = select.options[select.selectedIndex].text;
         span.textContent = selectedText;
         span.className = 'preview-text';
-        
+
         if (select.closest('td')) {
-             span.style.textAlign = 'left';
-             select.closest('td').style.textAlign = 'left';
+            span.style.textAlign = 'left';
+            select.closest('td').style.textAlign = 'left';
         }
 
         select.style.display = 'none';
-         if (!select.nextElementSibling || !select.nextElementSibling.classList.contains('preview-text')) {
+        if (!select.nextElementSibling || !select.nextElementSibling.classList.contains('preview-text')) {
             select.parentNode.insertBefore(span, select.nextSibling);
-         }
+        }
     });
 
     // 2. Añadir clase de vista previa al contenedor
@@ -116,7 +116,7 @@ function quitarVistaPrevia() {
 
     // 2. Remover los spans/p de vista previa
     document.querySelectorAll('.preview-text, .obs-text-preview').forEach(el => el.remove());
-    
+
     // 3. Volver a mostrar los inputs
     document.querySelectorAll('.nota-editable, .nota-editable-final, textarea.obs-input, select.materia-pendiente-select').forEach(el => {
         el.style.display = ''; // Reestablece el display
@@ -137,8 +137,17 @@ function habilitarEdicion() {
     document.querySelectorAll('.nota-editable, .nota-editable-final, .obs-input, .materia-pendiente-select').forEach(el => {
         el.readOnly = false;
         el.disabled = false;
+
+
+        // --- NUEVO: DETECTAR CAMBIOS ---
+        el.addEventListener('input', function () {
+            const fila = this.closest('tr');
+            if (fila) fila.classList.add('fila-modificada');
+        });
+
     });
-    
+
+
     // Habilitar botón Guardar y ocultar Modificar
     const guardarBtn = document.getElementById('guardarBtn');
     if (guardarBtn) {
@@ -146,7 +155,7 @@ function habilitarEdicion() {
         guardarBtn.style.backgroundColor = '#27ae60';
         guardarBtn.style.display = 'inline-block';
     }
-    
+
     const modificarBtn = document.getElementById('modificarBtn');
     if (modificarBtn) {
         modificarBtn.style.display = 'none';
@@ -156,7 +165,7 @@ function habilitarEdicion() {
     if (agregarFilaBtn) {
         agregarFilaBtn.style.display = 'inline-block';
     }
-    
+
     openAlertModal("Modo de edición activado. Ahora puedes modificar las notas y observaciones.");
 
     // *** Lógica de promedio automático ***
@@ -170,7 +179,7 @@ function habilitarEdicion() {
         const recalcularPromedio = () => {
             const nota1 = parseFloat(fila.querySelector("[data-field='calificacion_1c']")?.value) || 0;
             const nota2 = parseFloat(fila.querySelector("[data-field='calificacion_2c']")?.value) || 0;
-            
+
             if (nota1 >= NOTA_APROBACION && nota2 >= NOTA_APROBACION) {
                 const promedio = (nota1 + nota2) / 2;
                 finalInput.value = promedio.toFixed(2);
@@ -186,10 +195,10 @@ function habilitarEdicion() {
                     const nextCell = currentCell.nextElementSibling;
                     if (nextCell) {
                         const nextInput = nextCell.querySelector('input');
-                         if(nextInput && !nextInput.readOnly) {
-                             nextInput.focus();
-                             nextInput.select();
-                         }
+                        if (nextInput && !nextInput.readOnly) {
+                            nextInput.focus();
+                            nextInput.select();
+                        }
                     }
                 }
             });
@@ -208,7 +217,7 @@ function agregarFilaPendiente(hidden = false) {
     if (!isEditable) return;
 
     const tablaPendientesBody = document.querySelector("#tabla-pendientes tbody");
-    
+
     const noPendientesRow = tablaPendientesBody.querySelector('.no-pendientes');
     if (noPendientesRow) {
         noPendientesRow.remove();
@@ -225,9 +234,9 @@ function agregarFilaPendiente(hidden = false) {
     const editableClass = 'nota-editable';
     const finalEditableClass = 'nota-editable-final';
     const obsEditableClass = 'obs-input';
-    
+
     const filaPendiente = document.createElement('tr');
-    filaPendiente.className = 'fila-nueva-pendiente'; 
+    filaPendiente.className = 'fila-nueva-pendiente';
     if (hidden) {
         filaPendiente.style.display = 'none'; // Ocultar filas pre-cargadas
     }
@@ -248,7 +257,7 @@ function agregarFilaPendiente(hidden = false) {
         <td><input type="text" class="${editableClass}" value="" placeholder="Modelo" data-field="modelo"></td> 
         <td><textarea class="${obsEditableClass}" data-field="observaciones" placeholder="Obs. pendiente..."></textarea></td> 
     `;
-    
+
     if (!hidden) {
         filaPendiente.querySelectorAll('.nota-editable, .nota-editable-final, .obs-input, .materia-pendiente-select').forEach(el => {
             el.readOnly = false;
@@ -291,11 +300,11 @@ function mostrarYActivarFilaPendiente() {
  * Guarda todos los datos del boletín (notas y observaciones) en la base de datos.
  */
 async function guardarDatosEnServidor() {
-    if (!isEditable) return; 
+    if (!isEditable) return;
 
     const alumnoEmail = targetUserEmail;
-    let grades = []; 
-    let materiasProcesadas = new Set(); 
+    let grades = [];
+    let materiasProcesadas = new Set();
 
     const tablaDatos = document.querySelector("#tabla-datos-generales");
     const anioVal = tablaDatos.rows[1].cells[0].querySelector('input').value;
@@ -304,8 +313,9 @@ async function guardarDatosEnServidor() {
 
     // 1. Recorrer la TABLA DE MATERIAS PRINCIPAL
     document.querySelectorAll("#tabla-materias tbody tr").forEach(fila => {
+        if (!fila.classList.contains('fila-modificada')) return;
         const materia = fila.dataset.materia;
-        if (!materia) return; 
+        if (!materia) return;
 
         const originalNota = JSON.parse(JSON.stringify(gradesMap[materia] || {}));
 
@@ -313,10 +323,10 @@ async function guardarDatosEnServidor() {
         originalNota.materia = materia;
         originalNota.profesor_email = activeUser.email;
         originalNota.curso_anio = originalNota.curso_anio || cursoAnioStr;
-        
+
         originalNota.inasistencias_1c = originalNota.inasistencias_1c || 0;
         originalNota.inasistencias_2c = originalNota.inasistencias_2c || 0;
-        
+
         originalNota.calificacion_1c = fila.querySelector("[data-field='calificacion_1c']")?.value || null;
         originalNota.calificacion_2c = fila.querySelector("[data-field='calificacion_2c']")?.value || null;
         originalNota.intensificacion_1c_agosto = fila.querySelector("[data-field='intensificacion_1c_agosto']")?.value || null;
@@ -327,11 +337,13 @@ async function guardarDatosEnServidor() {
         grades.push(originalNota);
         materiasProcesadas.add(materia);
     });
-    
+
     // 2. Procesar FILAS NUEVAS y EXISTENTES de la tabla de pendientes
     document.querySelectorAll("#tabla-pendientes tbody tr").forEach(fila => {
         let materia;
         let esFilaNueva = false;
+
+        if (!fila.classList.contains('fila-nueva-pendiente') && !fila.classList.contains('fila-modificada')) return;
 
         if (fila.classList.contains('fila-nueva-pendiente')) {
             const materiaSelect = fila.querySelector("[data-field='materia']");
@@ -344,9 +356,9 @@ async function guardarDatosEnServidor() {
         if (!materia || materia === "" || materiasProcesadas.has(materia)) {
             return;
         }
-        
+
         let notaObj = JSON.parse(JSON.stringify(gradesMap[materia] || {}));
-        
+
         notaObj.alumno_email = alumnoEmail;
         notaObj.materia = materia;
         notaObj.profesor_email = activeUser.email;
@@ -368,13 +380,13 @@ async function guardarDatosEnServidor() {
         notaObj.final = fila.querySelector("[data-field='final']")?.value || null;
         notaObj.modelo = fila.querySelector("[data-field='modelo']")?.value || null;
         notaObj.observaciones = fila.querySelector("[data-field='observaciones']")?.value || null;
-        
+
         if (esFilaNueva) {
-            grades.push(notaObj); 
+            grades.push(notaObj);
         } else {
             let index = grades.findIndex(g => g.materia === materia);
             if (index !== -1) {
-                grades[index] = notaObj; 
+                grades[index] = notaObj;
             } else {
                 grades.push(notaObj);
             }
@@ -406,7 +418,7 @@ async function guardarDatosEnServidor() {
                 obsNota.observaciones = texto;
                 obsNota.inasistencias_1c = obsNota.inasistencias_1c || 0;
                 obsNota.inasistencias_2c = obsNota.inasistencias_2c || 0;
-                
+
                 if (!materiasProcesadas.has(materiaKey)) {
                     grades.push(obsNota);
                 }
@@ -423,7 +435,7 @@ async function guardarDatosEnServidor() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 grades: grades,
-                materia: "Boletín General (Editado por Preceptor)", 
+                materia: "Boletín General (Editado por Preceptor)",
                 profesor_email: activeUser.email,
                 profesor_nombre: activeUser.fullname,
                 activeUserRole: activeUser.role,
@@ -444,13 +456,13 @@ async function guardarDatosEnServidor() {
     } catch (e) {
         openAlertModal("Error de conexión con el servidor al guardar notas.");
         console.error(e);
-        return; 
+        return;
     }
-    
+
     if (data && data.success) {
         try {
             openAlertModal("Notas guardadas correctamente.");
-            
+
             // === INICIO DE CORRECCIÓN (VISTA PREVIA) ===
             aplicarVistaPrevia(); // Llamar a la función helper
             // === FIN DE CORRECCIÓN (VISTA PREVIA) ===
@@ -460,12 +472,12 @@ async function guardarDatosEnServidor() {
                 el.readOnly = true;
                 el.disabled = true;
             });
-            
+
             // (Manejo de botones)
             const guardarBtn = document.getElementById('guardarBtn');
             const modificarBtn = document.getElementById('modificarBtn');
             const agregarFilaBtn = document.getElementById('agregarFilaPendienteBtn');
-            
+
             if (guardarBtn) {
                 guardarBtn.style.display = 'none';
                 guardarBtn.disabled = true;
@@ -477,15 +489,15 @@ async function guardarDatosEnServidor() {
             if (agregarFilaBtn) {
                 agregarFilaBtn.style.display = 'none';
             }
-            
+
             // *** IMPORTANTE: NO RECARGAR LA PÁGINA AQUÍ ***
             // await cargarNotasDelAlumno(); // <-- SE ELIMINA PARA MANTENER LA VISTA PREVIA
-            
+
             // Actualizar el gradesMap en memoria para que la próxima edición tenga los datos guardados
             grades.forEach(nota => {
                 gradesMap[nota.materia] = nota;
             });
-        
+
         } catch (e) {
             console.error("Error al procesar la vista previa:", e);
             openAlertModal("Notas guardadas, pero ocurrió un error al actualizar la vista. Recargando...");
@@ -503,7 +515,7 @@ const exportarBtn = document.getElementById("exportarBtn");
 
 function getTextOrValue(element) {
     if (!element) return "";
-    
+
     // --- LÓGICA DE VISTA PREVIA PARA EXPORTAR ---
     const boletin = document.querySelector('.boletin-container');
     if (boletin && boletin.classList.contains('vista-previa')) {
@@ -517,7 +529,7 @@ function getTextOrValue(element) {
             return element.innerHTML.replace(/<br\s*\/?>/gi, '\n');
         }
     }
-    
+
     // Lógica original si no estamos en vista previa
     if (element.value !== undefined) {
         if (element.tagName === 'SELECT') {
@@ -567,7 +579,7 @@ async function exportarAExcel() {
     // --- Datos Generales ---
     const headerGen = ['CICLO LECTIVO', 'ESTUDIANTE', 'DNI', 'ESPECIALIDAD', 'AÑO', 'DIVISIÓN', 'TURNO', 'PRECEPTOR/A'];
     const dataGen = [cicloLectivo, estudiante, dni, especialidad, anio, division, turno, preceptor];
-    
+
     worksheet.addRow(headerGen.slice(0, 4));
     worksheet.addRow(dataGen.slice(0, 4));
     worksheet.addRow(headerGen.slice(4));
@@ -579,7 +591,7 @@ async function exportarAExcel() {
     [worksheet.getRow(4), worksheet.getRow(6)].forEach(row => {
         row.eachCell(cell => { cell.alignment = centerAlignment; cell.border = border; });
     });
-    
+
     worksheet.addRow([]);
 
     // --- Tabla de Materias Cursadas (8 COLUMNAS) ---
@@ -590,18 +602,18 @@ async function exportarAExcel() {
     headersRow1.push(thsMaterias[3].textContent.trim());
     headersRow1.push('', '');
     headersRow1.push(thsMaterias[4].textContent.trim());
-    
-    const headersRow2 = ['',''];
+
+    const headersRow2 = ['', ''];
     headersRow2.push(thsMaterias[5].textContent.trim());
     headersRow2.push(thsMaterias[6].textContent.trim());
     headersRow2.push(thsMaterias[7].textContent.trim());
     headersRow2.push(thsMaterias[8].textContent.trim());
     headersRow2.push(thsMaterias[9].textContent.trim());
     headersRow2.push('');
-    
+
     worksheet.addRow(headersRow1);
     worksheet.addRow(headersRow2);
-    
+
     worksheet.mergeCells('A8:A9');
     worksheet.mergeCells('B8:B9');
     worksheet.mergeCells('C8:D8');
@@ -619,11 +631,11 @@ async function exportarAExcel() {
         const celdas = Array.from(fila.querySelectorAll('input, textarea')).map(input => getTextOrValue(input));
         const row = worksheet.addRow(celdas);
         row.eachCell((cell, colNumber) => {
-            if (colNumber === 1) cell.alignment = leftAlignment; 
-            else cell.alignment = centerAlignment; 
-            
+            if (colNumber === 1) cell.alignment = leftAlignment;
+            else cell.alignment = centerAlignment;
+
             cell.border = border;
-            if (colNumber > 2) { 
+            if (colNumber > 2) {
                 const numValue = parseFloat(cell.value);
                 if (!isNaN(numValue)) {
                     cell.value = numValue;
@@ -641,20 +653,20 @@ async function exportarAExcel() {
     worksheet.addRow(['MATERIAS PENDIENTES DE APROBACIÓN Y ACREDITACIÓN - INTENSIFICACIÓN']).eachCell(cell => {
         cell.font = { bold: true, size: 14 }; cell.alignment = { horizontal: 'center' };
     });
-    worksheet.mergeCells(worksheet.lastRow.number, 1, worksheet.lastRow.number, 12); 
+    worksheet.mergeCells(worksheet.lastRow.number, 1, worksheet.lastRow.number, 12);
 
     const thsPendientes = Array.from(tablaPendientes.querySelectorAll('thead tr th'));
     const headersPendientes1 = thsPendientes.slice(0, 3).map(th => th.textContent.trim());
     headersPendientes1.push(thsPendientes[3].textContent.trim());
-    headersPendientes1.push('','','','','');
+    headersPendientes1.push('', '', '', '', '');
     headersPendientes1.push(thsPendientes[4].textContent.trim());
     headersPendientes1.push(thsPendientes[5].textContent.trim());
     headersPendientes1.push(thsPendientes[6].textContent.trim());
-    
-    const headersPendientes2 = ['','',''];
+
+    const headersPendientes2 = ['', '', ''];
     headersPendientes2.push(...thsPendientes.slice(7).map(th => th.textContent.trim()));
-    headersPendientes2.push('','','');
-    
+    headersPendientes2.push('', '', '');
+
     worksheet.addRow(headersPendientes1);
     worksheet.addRow(headersPendientes2);
 
@@ -674,7 +686,7 @@ async function exportarAExcel() {
     const filasPendientes = tablaPendientes.querySelectorAll('tbody tr');
     let hayPendientesReales = false;
     filasPendientes.forEach(fila => {
-        
+
         let celdas = [];
         const materiaCell = fila.cells[0];
         if (materiaCell.querySelector('select')) {
@@ -686,17 +698,17 @@ async function exportarAExcel() {
         Array.from(fila.querySelectorAll('input, textarea')).forEach((input) => {
             celdas.push(getTextOrValue(input));
         });
-        
+
         if (celdas[0] && celdas[0] !== "" && celdas[0] !== "Seleccionar materia...") {
             hayPendientesReales = true;
             const row = worksheet.addRow(celdas);
             row.eachCell((cell, colNumber) => {
-                 if ([1, 12].includes(colNumber)) {
+                if ([1, 12].includes(colNumber)) {
                     cell.alignment = leftAlignment;
-                    cell.value = cell.value.toString(); 
-                 }
-                 else cell.alignment = centerAlignment;
-                 
+                    cell.value = cell.value.toString();
+                }
+                else cell.alignment = centerAlignment;
+
                 cell.border = border;
                 if (colNumber >= 4 && colNumber <= 10) {
                     const numValue = parseFloat(cell.value);
@@ -720,30 +732,30 @@ async function exportarAExcel() {
     // --- Observaciones ---
     const obsContainer = document.getElementById("observaciones-container");
     const obsRows = Array.from(obsContainer.querySelectorAll('p.obs-text, textarea.obs-input, p.obs-text-preview'));
-    
+
     if (obsRows.length > 0) {
         worksheet.addRow(['OBSERVACIONES']).eachCell(cell => { cell.font = { bold: true, size: 14 }; cell.alignment = centerAlignment; });
         worksheet.mergeCells(worksheet.lastRow.number, 1, worksheet.lastRow.number, 12);
 
         let hasRealObs = false;
-        
+
         obsRows.forEach((element) => {
             const obsText = getTextOrValue(element);
             if (obsText && obsText.trim() !== "" && obsText.trim() !== "Sin observaciones.") {
                 hasRealObs = true;
                 const row = worksheet.addRow([obsText]);
-                worksheet.mergeCells(row.number, 1, row.number, 12); 
+                worksheet.mergeCells(row.number, 1, row.number, 12);
                 row.getCell(1).border = border;
                 row.getCell(1).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
             }
         });
-        
+
         if (!hasRealObs) {
-             const row = worksheet.addRow(["Sin observaciones."]);
-             worksheet.mergeCells(row.number, 1, row.number, 12); 
-             row.getCell(1).border = border;
-             row.getCell(1).font = { italic: true };
-             row.getCell(1).alignment = { horizontal: 'center' };
+            const row = worksheet.addRow(["Sin observaciones."]);
+            worksheet.mergeCells(row.number, 1, row.number, 12);
+            row.getCell(1).border = border;
+            row.getCell(1).font = { italic: true };
+            row.getCell(1).alignment = { horizontal: 'center' };
         }
     }
 
@@ -753,7 +765,7 @@ async function exportarAExcel() {
         column.eachCell({ includeEmpty: true }, cell => {
             let columnLength = cell.value ? cell.value.toString().length : 10;
             if (cell.value && cell.value.toString().includes('\n')) {
-                 columnLength = cell.value.toString().split('\n').reduce((max, line) => Math.max(max, line.length), 0);
+                columnLength = cell.value.toString().split('\n').reduce((max, line) => Math.max(max, line.length), 0);
             }
             if (columnLength > maxLength) maxLength = columnLength;
         });
@@ -767,15 +779,12 @@ async function exportarAExcel() {
     saveAs(new Blob([buffer], { type: "application/octet-stream" }), `Boletin_${estudiante.replace(/\s+/g, '_')}.xlsx`);
 }
 
-// --- Lógica de Notificaciones (Oculta para preceptor) ---
 async function setupNotifications() {
     const notiIcon = document.getElementById("notification-icon");
-
     if (isEditable) {
         if (notiIcon) notiIcon.style.display = 'none';
         return;
     }
-
     if (!notiIcon || !targetUserEmail) return;
 
     const notiWrapper = notiIcon.querySelector(".icon-wrapper");
@@ -793,20 +802,29 @@ async function setupNotifications() {
         if (data.success && data.notificaciones.length > 0) {
             notiList.innerHTML = '';
             let unreadCount = 0;
+
             data.notificaciones.forEach(notif => {
+                // Contamos manualmente las no leídas para el punto rojo
                 if (notif.leida == 0) unreadCount++;
+
                 const li = document.createElement("li");
                 li.textContent = notif.mensaje;
+                // Estilo opcional para diferenciar leídas de no leídas
+                if (notif.leida == 0) {
+                    li.style.fontWeight = "bold";
+                    li.style.backgroundColor = "#f0f8ff";
+                }
                 notiList.appendChild(li);
             });
+
             if (unreadCount > 0) {
                 notiDot.classList.add("show");
                 hasNewNotifications = true;
             } else {
-                 notiDot.classList.remove("show");
+                notiDot.classList.remove("show");
             }
         } else {
-            notiList.innerHTML = '<li class="empty">No hay notificaciones nuevas.</li>';
+            notiList.innerHTML = '<li class="empty">No hay notificaciones.</li>';
             notiDot.classList.remove("show");
         }
     } catch (e) {
@@ -814,6 +832,7 @@ async function setupNotifications() {
         notiList.innerHTML = '<li class="empty">Error al cargar notificaciones.</li>';
     }
 
+    // ... (El resto del código de eventos click se mantiene igual) ...
     notiWrapper.addEventListener("click", async (event) => {
         event.stopPropagation();
         notiPanel.classList.toggle("show");
@@ -828,8 +847,13 @@ async function setupNotifications() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: targetUserEmail })
                 });
+                // Opcional: Quitar negrita visualmente al abrir
+                Array.from(notiList.children).forEach(li => {
+                    li.style.fontWeight = "normal";
+                    li.style.backgroundColor = "transparent";
+                });
             } catch (e) {
-                console.error("Error al marcar notificaciones como leídas:", e);
+                console.error("Error al marcar como leídas:", e);
             }
         }
     });
@@ -849,20 +873,20 @@ async function cargarNotasDelAlumno() {
     const tablaPendientesBody = document.querySelector("#tabla-pendientes tbody");
     const obsContainer = document.getElementById("observaciones-container");
     const inasistenciasContainer = document.getElementById("inasistencias-totales-container");
-    
+
     let totalInasistencias1C = 0;
     let totalInasistencias2C = 0;
 
     gradesMap = {};
     allCourseSubjects = [];
-    
+
     tablaMateriasBody.innerHTML = '<tr><td colspan="8">Cargando calificaciones...</td></tr>';
     tablaPendientesBody.innerHTML = '<tr><td colspan="12">Cargando materias pendientes...</td></tr>';
     if (obsContainer) obsContainer.innerHTML = '';
-    if (inasistenciasContainer) inasistenciasContainer.innerHTML = ''; 
+    if (inasistenciasContainer) inasistenciasContainer.innerHTML = '';
 
     const NOTA_APROBACION = 7;
-    
+
     try {
         // --- 1. Obtener datos del alumno y su curso actual ---
         const userResponse = await fetch(`../api/get_user_by_email.php?email=${targetUserEmail}`);
@@ -871,21 +895,21 @@ async function cargarNotasDelAlumno() {
         let anio = null;
         let division = null;
         let anioDisplay = 'N/A';
-        let is7mo = false; 
+        let is7mo = false;
 
         if (userData.success && userData.user && userData.user.curso_info) {
-             try {
-                 const cursoInfoParsed = JSON.parse(userData.user.curso_info);
-                 if (cursoInfoParsed && cursoInfoParsed.curso) {
-                     anio = cursoInfoParsed.curso.anio;
-                     division = cursoInfoParsed.curso.division;
-                     anioDisplay = anio; 
-                     is7mo = anio === '7mo'; 
-                 }
-             } catch (e) { 
-                 console.error("Error parseando curso_info:", e); 
-                 throw new Error("Datos de curso incompletos o inválidos.");
-             }
+            try {
+                const cursoInfoParsed = JSON.parse(userData.user.curso_info);
+                if (cursoInfoParsed && cursoInfoParsed.curso) {
+                    anio = cursoInfoParsed.curso.anio;
+                    division = cursoInfoParsed.curso.division;
+                    anioDisplay = anio;
+                    is7mo = anio === '7mo';
+                }
+            } catch (e) {
+                console.error("Error parseando curso_info:", e);
+                throw new Error("Datos de curso incompletos o inválidos.");
+            }
         } else {
             throw new Error("No se encontró información de curso para el alumno.");
         }
@@ -893,9 +917,9 @@ async function cargarNotasDelAlumno() {
         // --- 2. Obtener la lista de materias del curso actual ---
         const subjectsResponse = await fetch(`../api/get_subjects_by_course.php?anio=${anio}&division=${division}`);
         const subjectsData = await subjectsResponse.json();
-        
+
         if (!subjectsData.success || !Array.isArray(subjectsData.materias)) {
-             throw new Error('Error al cargar la lista de materias del curso.');
+            throw new Error('Error al cargar la lista de materias del curso.');
         }
         allCourseSubjects = subjectsData.materias;
 
@@ -905,11 +929,11 @@ async function cargarNotasDelAlumno() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ alumno_email: alumnoEmail })
         });
-        
+
         if (!gradesResponse.ok) throw new Error('Error al cargar notas.');
-        
-        const notasDelAlumno = await gradesResponse.json(); 
-        
+
+        const notasDelAlumno = await gradesResponse.json();
+
         let generalObs = [];
         gradesMap = {}; // Limpiar mapa
 
@@ -918,23 +942,23 @@ async function cargarNotasDelAlumno() {
                 if (nota.materia.startsWith('Observacion_')) {
                     generalObs.push(nota);
                 } else {
-                    gradesMap[nota.materia] = nota; 
+                    gradesMap[nota.materia] = nota;
 
                     if (nota.materia && !nota.materia.startsWith('Observacion_')) {
                         // Sumar inasistencias solo si la materia es del curso actual
                         if (allCourseSubjects.includes(nota.materia)) {
-                           totalInasistencias1C += parseInt(nota.inasistencias_1c) || 0;
-                           totalInasistencias2C += parseInt(nota.inasistencias_2c) || 0;
+                            totalInasistencias1C += parseInt(nota.inasistencias_1c) || 0;
+                            totalInasistencias2C += parseInt(nota.inasistencias_2c) || 0;
                         }
                     }
                 }
             });
         }
-        
+
         tablaMateriasBody.innerHTML = '';
         tablaPendientesBody.innerHTML = '';
         if (obsContainer) obsContainer.innerHTML = '';
-        
+
         // --- 4. Renderizar OBSERVACIONES ---
         if (obsContainer) {
             const obsTable = document.createElement('table');
@@ -942,70 +966,70 @@ async function cargarNotasDelAlumno() {
             let obsBody = '<tbody>';
             const totalObsRows = 8;
             let obsCount = 0;
-            
+
             let existingObs = [];
             // Solo mostrar observaciones de materias DEL AÑO ACTUAL en este cuadro
             allCourseSubjects.forEach(materiaNombre => {
-                 const nota = gradesMap[materiaNombre] || {};
-                 const obs = nota.observaciones || '';
-                 if (obs && obs.trim() !== '' && allCourseSubjects.includes(materiaNombre)) {
-                     existingObs.push({ key: materiaNombre, texto: `(${materiaNombre}) ${obs}` });
-                 }
+                const nota = gradesMap[materiaNombre] || {};
+                const obs = nota.observaciones || '';
+                if (obs && obs.trim() !== '' && allCourseSubjects.includes(materiaNombre)) {
+                    existingObs.push({ key: materiaNombre, texto: `(${materiaNombre}) ${obs}` });
+                }
             });
             generalObs.forEach(nota => {
-                 const obs = nota.observaciones || '';
-                 if (obs && obs.trim() !== '') {
-                     existingObs.push({ key: nota.materia, texto: obs });
-                 }
+                const obs = nota.observaciones || '';
+                if (obs && obs.trim() !== '') {
+                    existingObs.push({ key: nota.materia, texto: obs });
+                }
             });
 
             existingObs.forEach(obsData => {
-                 if (obsCount < totalObsRows) {
-                     let cellContent = '';
-                     // Siempre deshabilitado al cargar
-                     cellContent = `<textarea class="obs-input" data-materia="${obsData.key}" disabled>${obsData.texto}</textarea>`;
-                     obsBody += `<tr><td>${cellContent}</td></tr>`;
-                     obsCount++;
-                 }
+                if (obsCount < totalObsRows) {
+                    let cellContent = '';
+                    // Siempre deshabilitado al cargar
+                    cellContent = `<textarea class="obs-input" data-materia="${obsData.key}" disabled>${obsData.texto}</textarea>`;
+                    obsBody += `<tr><td>${cellContent}</td></tr>`;
+                    obsCount++;
+                }
             });
 
             if (isEditable) {
-                 for (let i = obsCount; i < totalObsRows; i++) {
-                     const genericKey = `Observacion_${i + 1}`;
-                     obsBody += `<tr><td><textarea class="obs-input" data-materia="${genericKey}" placeholder="Nueva observación..." disabled></textarea></td></tr>`;
-                 }
+                for (let i = obsCount; i < totalObsRows; i++) {
+                    const genericKey = `Observacion_${i + 1}`;
+                    obsBody += `<tr><td><textarea class="obs-input" data-materia="${genericKey}" placeholder="Nueva observación..." disabled></textarea></td></tr>`;
+                }
             }
-            
+
             if (obsCount === 0 && !isEditable) {
-                 obsBody += `<tr><td><p class="obs-text" style="font-style: italic; color: grey;">Sin observaciones.</p></td></tr>`;
+                obsBody += `<tr><td><p class="obs-text" style="font-style: italic; color: grey;">Sin observaciones.</p></td></tr>`;
             }
-            
+
             obsBody += '</tbody>';
             obsTable.innerHTML = obsBody;
             obsContainer.appendChild(obsTable);
         }
-        
+
         // --- 5. RENDERIZAR TABLA PRINCIPAL (SÓLO MATERIAS DEL AÑO) ---
         allCourseSubjects.sort();
-        
+
         if (allCourseSubjects.length === 0) {
-             tablaMateriasBody.innerHTML = `<tr><td colspan="8">No se encontraron materias para el curso ${anio} ${division}.</td></tr>`;
+            tablaMateriasBody.innerHTML = `<tr><td colspan="8">No se encontraron materias para el curso ${anio} ${division}.</td></tr>`;
         }
-        
+
         allCourseSubjects.forEach(materiaNombre => {
-            const nota = gradesMap[materiaNombre] || {}; 
-            
+            const nota = gradesMap[materiaNombre] || {};
+
             const nota1 = parseFloat(nota.calificacion_1c) || 0;
             const nota2 = parseFloat(nota.calificacion_2c) || 0;
             let notaAgosto = parseFloat(nota.intensificacion_1c_agosto) || 0;
             const notaDic = parseFloat(nota.diciembre) || 0;
             const notaFeb = parseFloat(nota.febrero) || 0;
-            
+
             const notaMarzo = parseFloat(nota.marzo) || 0;
             const notaJunio = parseFloat(nota.junio) || 0;
             const notaJulio = parseFloat(nota.julio) || 0;
 
-            let notaFinalMateria = parseFloat(nota.final) || 0; 
+            let notaFinalMateria = parseFloat(nota.final) || 0;
             let estadoMateria = 'pendiente';
             let finalDisplay = '';
             let agostoDisplayPrincipal = notaAgosto > 0 ? notaAgosto.toFixed(2) : '';
@@ -1013,9 +1037,9 @@ async function cargarNotasDelAlumno() {
             if (nota1 >= NOTA_APROBACION && nota2 >= NOTA_APROBACION) {
                 notaFinalMateria = (nota1 + nota2) / 2;
                 finalDisplay = notaFinalMateria.toFixed(2);
-                estadoMateria = 'aprobado'; 
+                estadoMateria = 'aprobado';
             } else {
-                estadoMateria = 'desaprobado'; 
+                estadoMateria = 'desaprobado';
                 if (notaMarzo >= NOTA_APROBACION) {
                     finalDisplay = notaMarzo.toFixed(2);
                     estadoMateria = 'aprobado';
@@ -1026,7 +1050,7 @@ async function cargarNotasDelAlumno() {
                     finalDisplay = notaJulio.toFixed(2);
                     estadoMateria = 'aprobado';
                 } else if (notaAgosto >= NOTA_APROBACION && !is7mo) {
-                    if(nota1 < NOTA_APROBACION && nota2 >= NOTA_APROBACION) {
+                    if (nota1 < NOTA_APROBACION && nota2 >= NOTA_APROBACION) {
                         finalDisplay = ((notaAgosto + nota2) / 2).toFixed(2);
                     } else {
                         finalDisplay = notaAgosto.toFixed(2);
@@ -1034,18 +1058,18 @@ async function cargarNotasDelAlumno() {
                     estadoMateria = 'aprobado';
                 } else if (notaDic >= NOTA_APROBACION) {
                     finalDisplay = notaDic.toFixed(2);
-                    estadoMateria = 'aprobado'; 
+                    estadoMateria = 'aprobado';
                 } else if (notaFeb >= NOTA_APROBACION) {
                     finalDisplay = notaFeb.toFixed(2);
-                    estadoMateria = 'aprobado'; 
+                    estadoMateria = 'aprobado';
                 }
-                
+
                 if (estadoMateria === 'desaprobado' && notaFinalMateria > 0) {
                     finalDisplay = notaFinalMateria.toFixed(2);
                 }
                 if (is7mo) agostoDisplayPrincipal = '';
-            } 
-            
+            }
+
             const finalClass = (estadoMateria === 'desaprobado' && finalDisplay !== '') ? 'desaprobado-pendiente' : '';
             const editableClass = isEditable ? 'nota-editable' : 'mate1';
             const finalEditableClass = isEditable ? 'nota-editable-final' : 'mate1';
@@ -1054,7 +1078,7 @@ async function cargarNotasDelAlumno() {
 
             const filaPrincipal = document.createElement('tr');
             filaPrincipal.dataset.materia = materiaNombre;
-            
+
             filaPrincipal.innerHTML = `
                 <td><textarea class="mate1" readonly style="resize: none; overflow: hidden; height: auto;">${materiaNombre}</textarea></td>
                 <td><input type="text" class="mate1" value="${anioDisplay}" readonly></td>
@@ -1066,18 +1090,18 @@ async function cargarNotasDelAlumno() {
                 <td><input type="number" step="0.01" class="${finalEditableClass} ${finalClass}" value="${finalDisplay}" ${readonlyAttr} ${disabledAttr} data-field="final"></td>
             `;
             tablaMateriasBody.appendChild(filaPrincipal);
-        }); 
-        
+        });
+
         // --- 6. RENDERIZAR TABLA PENDIENTES (DE ESTE AÑO Y ANTERIORES) ---
         let hayPendientes = false;
-        
+
         Object.keys(gradesMap).sort().forEach(materiaNombre => {
             if (materiaNombre.startsWith('Observacion_') || materiaNombre === "Boletín General (Editado por Preceptor)") {
                 return;
             }
 
             const nota = gradesMap[materiaNombre];
-            
+
             const nota1 = parseFloat(nota.calificacion_1c) || 0;
             const nota2 = parseFloat(nota.calificacion_2c) || 0;
             let notaAgosto = parseFloat(nota.intensificacion_1c_agosto) || 0;
@@ -1087,15 +1111,15 @@ async function cargarNotasDelAlumno() {
             const notaJunio = parseFloat(nota.junio) || 0;
             const notaJulio = parseFloat(nota.julio) || 0;
             const modelo = nota.modelo || '';
-            let notaFinalMateria = parseFloat(nota.final) || 0; 
-            
+            let notaFinalMateria = parseFloat(nota.final) || 0;
+
             let estadoMateria = 'pendiente';
             let finalDisplay = '';
 
             if (nota1 >= NOTA_APROBACION && nota2 >= NOTA_APROBACION) {
-                estadoMateria = 'aprobado'; 
+                estadoMateria = 'aprobado';
             } else {
-                estadoMateria = 'desaprobado'; 
+                estadoMateria = 'desaprobado';
                 if (notaMarzo >= NOTA_APROBACION) {
                     finalDisplay = notaMarzo.toFixed(2);
                     estadoMateria = 'aprobado';
@@ -1106,7 +1130,7 @@ async function cargarNotasDelAlumno() {
                     finalDisplay = notaJulio.toFixed(2);
                     estadoMateria = 'aprobado';
                 } else if (notaAgosto >= NOTA_APROBACION && !(nota.curso_anio && nota.curso_anio.startsWith('7mo'))) {
-                    if(nota1 < NOTA_APROBACION && nota2 >= NOTA_APROBACION) {
+                    if (nota1 < NOTA_APROBACION && nota2 >= NOTA_APROBACION) {
                         finalDisplay = ((notaAgosto + nota2) / 2).toFixed(2);
                     } else {
                         finalDisplay = notaAgosto.toFixed(2);
@@ -1114,28 +1138,28 @@ async function cargarNotasDelAlumno() {
                     estadoMateria = 'aprobado';
                 } else if (notaDic >= NOTA_APROBACION) {
                     finalDisplay = notaDic.toFixed(2);
-                    estadoMateria = 'aprobado'; 
+                    estadoMateria = 'aprobado';
                 } else if (notaFeb >= NOTA_APROBACION) {
                     finalDisplay = notaFeb.toFixed(2);
-                    estadoMateria = 'aprobado'; 
+                    estadoMateria = 'aprobado';
                 }
-                
+
                 if (estadoMateria === 'desaprobado' && notaFinalMateria > 0) {
                     finalDisplay = notaFinalMateria.toFixed(2);
                 }
             }
-            
+
             const esMateriaDelCurso = allCourseSubjects.includes(materiaNombre);
-            
-            if ( (esMateriaDelCurso && estadoMateria === 'desaprobado') || (!esMateriaDelCurso && estadoMateria !== 'aprobado') ) {
+
+            if ((esMateriaDelCurso && estadoMateria === 'desaprobado') || (!esMateriaDelCurso && estadoMateria !== 'aprobado')) {
                 hayPendientes = true;
                 const filaPendiente = document.createElement('tr');
                 filaPendiente.dataset.materia = materiaNombre;
-                
+
                 const anioPendiente = (nota.curso_anio) ? nota.curso_anio.split(' ')[0] : (esMateriaDelCurso ? anioDisplay : 'N/A');
                 const fechaCarga = nota.fecha_carga ? new Date(nota.fecha_carga).getFullYear() : 'N/A';
                 const obsPendiente = nota.observaciones || '';
-                
+
                 const finalClass = (estadoMateria === 'desaprobado' && finalDisplay !== '') ? 'desaprobado-pendiente' : '';
                 const editableClass = isEditable ? 'nota-editable' : 'mate1';
                 const finalEditableClass = isEditable ? 'nota-editable-final' : 'mate1';
@@ -1162,16 +1186,16 @@ async function cargarNotasDelAlumno() {
                 `;
                 tablaPendientesBody.appendChild(filaPendiente);
             }
-        }); 
+        });
         // --- FIN RENDERIZADO ---
 
-        if (!hayPendientes && !isEditable) { 
+        if (!hayPendientes && !isEditable) {
             tablaPendientesBody.innerHTML = '<tr class="no-pendientes"><td colspan="12">No hay materias pendientes de aprobación.</td></tr>';
         } else if (isEditable) {
-             for (let i = 0; i < 5; i++) {
-                 agregarFilaPendiente(true); // Cargar 5 filas ocultas
-             }
-             document.querySelectorAll('.fila-nueva-pendiente .nota-editable, .fila-nueva-pendiente .nota-editable-final, .fila-nueva-pendiente .obs-input, .fila-nueva-pendiente .materia-pendiente-select').forEach(el => {
+            for (let i = 0; i < 5; i++) {
+                agregarFilaPendiente(true); // Cargar 5 filas ocultas
+            }
+            document.querySelectorAll('.fila-nueva-pendiente .nota-editable, .fila-nueva-pendiente .nota-editable-final, .fila-nueva-pendiente .obs-input, .fila-nueva-pendiente .materia-pendiente-select').forEach(el => {
                 el.readOnly = true;
                 el.disabled = true;
             });
@@ -1205,13 +1229,13 @@ async function cargarNotasDelAlumno() {
             aplicarVistaPrevia();
         }
         // === FIN DE CORRECCIÓN ===
-        
+
     } catch (e) {
         console.error("Error al cargar notas del alumno:", e);
         tablaMateriasBody.innerHTML = `<tr><td colspan="8">Error al cargar calificaciones: ${e.message}</td></tr>`;
         tablaPendientesBody.innerHTML = `<tr><td colspan="12">Error al cargar materias pendientes: ${e.message}</td></tr>`;
-         if (obsContainer) obsContainer.innerHTML = '<p class="obs-text" style="color: red;">Error al cargar observaciones.</p>';
-         if (inasistenciasContainer) inasistenciasContainer.innerHTML = '<p style="text-align: center; color: red;">Error al cargar inasistencias.</p>';
+        if (obsContainer) obsContainer.innerHTML = '<p class="obs-text" style="color: red;">Error al cargar observaciones.</p>';
+        if (inasistenciasContainer) inasistenciasContainer.innerHTML = '<p style="text-align: center; color: red;">Error al cargar inasistencias.</p>';
     }
 }
 
@@ -1275,11 +1299,11 @@ async function cargarDatosPersonales() {
                     if (inputPreceptor) inputPreceptor.value = 'N/A';
                 }
             } else {
-                 if (inputAnio) inputAnio.value = 'N/A';
-                 if (inputDivision) inputDivision.value = 'N/A';
-                 if (inputEspecialidad) inputEspecialidad.value = 'N/A';
-                 if (inputTurno) inputTurno.value = 'N/A';
-                 if (inputPreceptor) inputPreceptor.value = 'N/A';
+                if (inputAnio) inputAnio.value = 'N/A';
+                if (inputDivision) inputDivision.value = 'N/A';
+                if (inputEspecialidad) inputEspecialidad.value = 'N/A';
+                if (inputTurno) inputTurno.value = 'N/A';
+                if (inputPreceptor) inputPreceptor.value = 'N/A';
             }
         } else {
             console.error("No se pudieron cargar los datos del alumno:", data.message);
@@ -1288,19 +1312,19 @@ async function cargarDatosPersonales() {
         }
     } catch (e) {
         console.error("Error de red al cargar datos personales:", e);
-         if (inputNombre) inputNombre.value = "Error de conexión";
+        if (inputNombre) inputNombre.value = "Error de conexión";
     }
 }
 
 
 // --- DOMContentLoaded (MODIFICADO) ---
-document.addEventListener("DOMContentLoaded", async () => { 
+document.addEventListener("DOMContentLoaded", async () => {
 
     if (isEditable) {
         const guardarBtn = document.getElementById('guardarBtn');
         const modificarBtn = document.getElementById('modificarBtn');
         const agregarFilaBtn = document.getElementById('agregarFilaPendienteBtn');
-        
+
         // --- INICIO DE CORRECCIÓN (VISTA PREVIA POR DEFECTO) ---
         // 1. Poner el contenedor en modo Vista Previa
         const boletin = document.querySelector('.boletin-container');
@@ -1308,9 +1332,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // 2. Configurar botones para el estado inicial
         if (guardarBtn) {
-            guardarBtn.style.display = 'none'; 
+            guardarBtn.style.display = 'none';
             guardarBtn.disabled = true;
-            guardarBtn.style.backgroundColor = '#999'; 
+            guardarBtn.style.backgroundColor = '#999';
             guardarBtn.addEventListener('click', guardarDatosEnServidor);
         }
         if (modificarBtn) {
@@ -1318,25 +1342,25 @@ document.addEventListener("DOMContentLoaded", async () => {
             modificarBtn.addEventListener('click', habilitarEdicion);
         }
         if (agregarFilaBtn) {
-             agregarFilaBtn.style.display = 'none'; // Ocultar
-             agregarFilaBtn.addEventListener('click', mostrarYActivarFilaPendiente);
+            agregarFilaBtn.style.display = 'none'; // Ocultar
+            agregarFilaBtn.addEventListener('click', mostrarYActivarFilaPendiente);
         }
         // --- FIN DE CORRECCIÓN ---
     }
-    
+
     // --- AÑADIDO: Listener para el botón de exportar ---
     const exportarBtn = document.getElementById("exportarBtn");
     if (exportarBtn) {
         exportarBtn.addEventListener("click", exportarAExcel);
     }
-    
+
     const emailDisplay = document.getElementById('user-email-display');
     if (emailDisplay && activeUser && activeUser.email) {
         let emailName = activeUser.email.split('@')[0];
         if (isEditable) {
             emailName = activeUser.email.split('@')[0];
         } else {
-             emailName = targetUserEmail.split('@')[0];
+            emailName = targetUserEmail.split('@')[0];
         }
         if (emailName.length > 20) {
             emailName = emailName.substring(0, 17) + '...';
@@ -1345,7 +1369,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     await cargarTodasLasMaterias();
-    setupNotifications(); 
+    setupNotifications();
     cargarDatosPersonales();
     cargarNotasDelAlumno();
 });

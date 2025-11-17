@@ -10,26 +10,24 @@ try {
     $data = json_decode(file_get_contents('php://input'), true);
 
     if (!isset($data['grades'], $data['materia'], $data['profesor_email'], $data['profesor_nombre'], $data['activeUserRole'], $data['anioCurso'], $data['divisionCurso'])) {
-        echo json_encode(['success' => false, 'message' => 'Datos incompletos desde el frontend (faltan notas, materia, profesor, nombre_profesor, rol o curso).']);
+        echo json_encode(['success' => false, 'message' => 'Datos incompletos desde el frontend.']);
         exit;
     }
 
     $grades = $data['grades'];
-    $materia = $data['materia'];
     $profesor_email = $data['profesor_email'];
     $profesor_nombre = $data['profesor_nombre']; 
     $activeUserRole = $data['activeUserRole'];
     $anioCurso = $data['anioCurso'];
     $divisionCurso = $data['divisionCurso'];
 
+    // Variables para notificación única de Preceptor
+    $esPreceptor = ($activeUserRole === 'Preceptor');
+    $alumnoEmailParaNotificar = null;
+
     $pdo->beginTransaction();
 
-    // === INICIO DE LA MODIFICACIÓN (SQL CON IFNULL) ===
-    // Se ha modificado la sección ON DUPLICATE KEY UPDATE.
-    // Ahora usa IFNULL(VALUES(columna), columna)
-    // Esto significa: "Intenta actualizar al nuevo valor. Si el nuevo valor es NULL,
-    // ignóralo y mantén el valor antiguo que ya estaba en la base de datos."
-    // ESTO EVITA QUE EL PROFESOR BORRE LAS NOTAS DEL PRECEPTOR Y VICEVERSA.
+    // Preparar SQL de Guardado (Igual que antes)
     $sql_save = "
         INSERT INTO notas (
             alumno_email, materia, profesor_email, fecha_carga, curso_anio,
@@ -54,7 +52,6 @@ try {
             profesor_email = VALUES(profesor_email), 
             fecha_carga = NOW(), 
             curso_anio = IFNULL(VALUES(curso_anio), curso_anio),
-            
             parcial1_1c = IFNULL(VALUES(parcial1_1c), parcial1_1c), 
             parcial2_1c = IFNULL(VALUES(parcial2_1c), parcial2_1c), 
             parcial3_1c = IFNULL(VALUES(parcial3_1c), parcial3_1c), 
@@ -64,7 +61,6 @@ try {
             nota_valoracion_prel_1c = IFNULL(VALUES(nota_valoracion_prel_1c), nota_valoracion_prel_1c), 
             calificacion_1c = IFNULL(VALUES(calificacion_1c), calificacion_1c), 
             inasistencias_1c = IFNULL(VALUES(inasistencias_1c), inasistencias_1c),
-            
             parcial1_2c = IFNULL(VALUES(parcial1_2c), parcial1_2c), 
             parcial2_2c = IFNULL(VALUES(parcial2_2c), parcial2_2c), 
             parcial3_2c = IFNULL(VALUES(parcial3_2c), parcial3_2c), 
@@ -74,7 +70,6 @@ try {
             nota_valoracion_prel_2c = IFNULL(VALUES(nota_valoracion_prel_2c), nota_valoracion_prel_2c), 
             calificacion_2c = IFNULL(VALUES(calificacion_2c), calificacion_2c), 
             inasistencias_2c = IFNULL(VALUES(inasistencias_2c), inasistencias_2c),
-            
             intensificacion_1c_agosto = IFNULL(VALUES(intensificacion_1c_agosto), intensificacion_1c_agosto), 
             diciembre = IFNULL(VALUES(diciembre), diciembre), 
             febrero = IFNULL(VALUES(febrero), febrero),
@@ -82,12 +77,9 @@ try {
             junio = IFNULL(VALUES(junio), junio), 
             julio = IFNULL(VALUES(julio), julio), 
             modelo = IFNULL(VALUES(modelo), modelo),
-            
             final = IFNULL(VALUES(final), final), 
-            observaciones = VALUES(observaciones) 
-            /* Observaciones SÍ debe poder borrarse, por eso no usa IFNULL */
+            observaciones = VALUES(observaciones)
     ";
-    // === FIN DE MODIFICACIÓN (SQL) ===
     
     $stmt_save = $pdo->prepare($sql_save);
 
@@ -102,16 +94,15 @@ try {
     $stmt_notify = $pdo->prepare($sql_notify);
     
     foreach ($grades as $grade) {
-        if (empty($grade['alumno_email'])) {
-            continue;
-        }
+        if (empty($grade['alumno_email'])) continue;
+
+        // Guardar email para notificación única de preceptor
+        $alumnoEmailParaNotificar = $grade['alumno_email'];
 
         $vp1 = ($grade['valoracion_prel_1c'] === '' || $grade['valoracion_prel_1c'] === 'Selecc.') ? null : $grade['valoracion_prel_1c'];
         $vp2 = ($grade['valoracion_prel_2c'] === '' || $grade['valoracion_prel_2c'] === 'Selecc.') ? null : $grade['valoracion_prel_2c'];
 
-        $materia_para_guardar = $grade['materia'] ?? $materia;
-        
-        // Determinar el 'curso_anio' a guardar
+        $materia_para_guardar = $grade['materia'] ?? $data['materia'];
         $curso_anio_para_guardar = $grade['curso_anio'] ?? ($anioCurso . ' ' . $divisionCurso);
         
         $params_save = [
@@ -127,7 +118,7 @@ try {
              ':vp1' => $vp1, 
              ':nvp1' => $grade['nota_valoracion_prel_1c'] ?? null, 
              ':c1' => $grade['calificacion_1c'] ?? null, 
-             ':i1' => $grade['inasistencias_1c'] ?? null, // Profesor envía NULL, Preceptor 0. Aceptar NULL
+             ':i1' => $grade['inasistencias_1c'] ?? null, 
              ':p1_2c' => $grade['parcial1_2c'] ?? null, 
              ':p2_2c' => $grade['parcial2_2c'] ?? null, 
              ':p3_2c' => $grade['parcial3_2c'] ?? null, 
@@ -136,7 +127,7 @@ try {
              ':vp2' => $vp2, 
              ':nvp2' => $grade['nota_valoracion_prel_2c'] ?? null, 
              ':c2' => $grade['calificacion_2c'] ?? null, 
-             ':i2' => $grade['inasistencias_2c'] ?? null, // Profesor envía NULL, Preceptor 0. Aceptar NULL
+             ':i2' => $grade['inasistencias_2c'] ?? null, 
              ':int_ago' => $grade['intensificacion_1c_agosto'] ?? null, 
              ':dic' => $grade['diciembre'] ?? null, 
              ':feb' => $grade['febrero'] ?? null,
@@ -145,22 +136,30 @@ try {
              ':julio' => $grade['julio'] ?? null,
              ':modelo' => $grade['modelo'] ?? null,
              ':fin' => $grade['final'] ?? null, 
-             // Si las observaciones se envían como "", se guardará "" (borrando la obs).
-             // Si la clave 'observaciones' no se envía, se guardará NULL, y el IFNULL la protegerá.
              ':obs' => $grade['observaciones'] ?? null
         ];
         
         $stmt_save->execute($params_save);
 
-        $materia_notificacion = $materia_para_guardar;
+       // --- LÓGICA DE NOTIFICACIÓN ---
         
+        $materia_notificacion = $materia_para_guardar;
         if (strpos($materia_notificacion, 'Observacion_') === 0) {
-            $materia_notificacion = "una observación";
+            $materia_notificacion = "una observación general";
         }
 
-        if (strpos($materia_para_guardar, 'Observacion_') !== 0) {
-            $mensaje_notificacion = "¡${profesor_nombre} (${materia_notificacion}) cargó/actualizó tus calificaciones!";
-            
+        // Si es Preceptor
+        if ($esPreceptor) {
+             // Mensaje específico
+             $mensaje_notificacion = "¡Preceptoría cargó/actualizó tus notas en: ${materia_notificacion}!";
+        } else {
+             // Mensaje de Profesor (el de siempre)
+             $mensaje_notificacion = "¡${profesor_nombre} (${materia_notificacion}) cargó/actualizó tus calificaciones!";
+        }
+
+        // Enviamos la notificación POR MATERIA
+        // (Como el JS ahora filtra, solo llegarán las materias que realmente se editaron)
+        if (strpos($materia_para_guardar, 'Observacion_') !== 0 || $esPreceptor) { // Permitimos obs para preceptor
             $params_notify = [
                 ':alumno_email' => $grade['alumno_email'],
                 ':mensaje' => $mensaje_notificacion
@@ -170,14 +169,14 @@ try {
     }
 
     $pdo->commit();
-    echo json_encode(['success' => true, 'message' => 'Notas guardadas y alumnos notificados correctamente.']);
+    echo json_encode(['success' => true, 'message' => 'Notas guardadas correctamente.']);
 
 } catch (PDOException $e) {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
     error_log("Error DB en save_grades: " . $e->getMessage());
-   echo json_encode(['success' => false, 'message' => 'Error de base de datos al guardar las notas. Detalles: ' . $e->getMessage()]); 
+   echo json_encode(['success' => false, 'message' => 'Error de base de datos al guardar. ' . $e->getMessage()]); 
 } catch (Exception $e) {
      error_log("Error general en save_grades: " . $e->getMessage());
      echo json_encode(['success' => false, 'message' => 'Error interno del servidor.']);

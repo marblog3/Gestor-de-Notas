@@ -259,6 +259,8 @@ function toggleSolicitudes() {
 
 async function cargarSolicitudes() {
     const pendingList = document.getElementById("pendingList");
+    const adminDot = document.getElementById("admin-notification-dot"); // Referencia al punto
+
     pendingList.innerHTML = "<li>Cargando solicitudes pendientes...</li>";
 
     try {
@@ -269,10 +271,15 @@ async function cargarSolicitudes() {
 
         if (!pendingUsers || pendingUsers.length === 0) {
             pendingList.innerHTML = '<li>No hay solicitudes pendientes.</li>';
+            if(adminDot) adminDot.style.display = 'none'; // Ocultar punto
             return;
         }
 
+        // Si hay usuarios, mostrar punto
+        if(adminDot) adminDot.style.display = 'inline-block'; 
+
         pendingUsers.forEach((userReq, index) => {
+            // ... (el resto del código de generación de lista sigue igual) ...
             const date = new Date(userReq.requested_at).toLocaleString();
             const li = document.createElement("li");
             li.innerHTML = `
@@ -291,6 +298,7 @@ async function cargarSolicitudes() {
         });
     } catch (e) {
         pendingList.innerHTML = '<li>Error al cargar solicitudes del servidor.</li>';
+        if(adminDot) adminDot.style.display = 'none'; // Ocultar punto en error
         console.error("Error al cargar solicitudes:", e);
     }
 }

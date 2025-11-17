@@ -19,7 +19,7 @@ async function checkActiveUserData() {
             const data = await response.json();
             if (data.success && data.user) {
                 // Actualiza el objeto global 'activeUser'
-                activeUser = data.user; 
+                activeUser = data.user;
                 // Actualiza la sesión en el navegador para futuras cargas
                 sessionStorage.setItem("activeUser", JSON.stringify(activeUser));
                 console.log("Sesión actualizada:", activeUser);
@@ -712,15 +712,15 @@ function guardarDatosEnServidor(materia, anioCurso, divisionCurso) { // <-- ¡MO
             profesor_email: activeUser.email,
             profesor_nombre: activeUser.fullname, // <-- *** CAMPO VERIFICADO ***
             activeUserRole: activeUser.role,
-            anioCurso: anioCurso, 
-            divisionCurso: divisionCurso 
+            anioCurso: anioCurso,
+            divisionCurso: divisionCurso
         })
     })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 openAlertModalProfesor("Notas guardadas correctamente. Los alumnos verán sus calificaciones.");
-                
+
             } else {
                 openAlertModalProfesor(`Hubo un error al guardar en la Planilla: ${data.message}`);
             }
@@ -748,6 +748,7 @@ const calcularPromedioBtn = document.getElementById("calcularPromedioBtn");
 // --- Lógica de botones ---
 
 
+// En js/profesor.js, reemplaza el bloque de modificarBtn por este:
 
 if (modificarBtn) {
     modificarBtn.addEventListener("click", () => {
@@ -755,6 +756,12 @@ if (modificarBtn) {
             const select = document.createElement("select");
             select.innerHTML = span.dataset.options || "";
             select.className = "select-1";
+            
+            // Restaurar ID original si lo tenía
+            if (span.id) {
+                select.id = span.id;
+            }
+
             for (let opt of select.options) {
                 if (opt.text === span.textContent) {
                     opt.selected = true;
@@ -762,7 +769,29 @@ if (modificarBtn) {
                 }
             }
             span.replaceWith(select);
+
+            // *** SOLUCIÓN AL ERROR DE CAMBIO DE MATERIA ***
+            // Si el select restaurado es el de materias, hay que volver a darle vida (evento change)
+            if (select.id === "materia-seleccionada") {
+                select.addEventListener('change', (e) => {
+                    const selectedIndex = e.target.value;
+                    const anioSelect = document.getElementById("anio-select");
+                    const divisionSelect = document.getElementById("division-select");
+
+                    if (selectedIndex !== "" && profesorAsignaciones[selectedIndex]) {
+                        const asignacionSeleccionada = profesorAsignaciones[selectedIndex];
+                        if(anioSelect) anioSelect.value = asignacionSeleccionada.anio;
+                        if(divisionSelect) divisionSelect.value = asignacionSeleccionada.division;
+                        cargarAlumnos(); // Recargar la tabla con la nueva materia
+                    } else {
+                        if(anioSelect) anioSelect.value = "";
+                        if(divisionSelect) divisionSelect.value = "";
+                        cargarAlumnos();
+                    }
+                });
+            }
         });
+
         boletin.classList.remove("vista-previa");
         guardarBtn.style.display = "inline-block";
         modificarBtn.style.display = "none";
@@ -770,18 +799,11 @@ if (modificarBtn) {
         exportarBtn.style.display = "none";
         aplicarValidaciones();
 
-        // [CÓDIGO AÑADIDO/MODIFICADO]
+        // Forzamos la recarga de alumnos para asegurarnos que los datos están frescos
         const materiaSelect = document.getElementById("materia-seleccionada");
-        // Forzamos la recarga de alumnos y notas con la materia ya restaurada
         if (materiaSelect && materiaSelect.value !== "") {
-            cargarAlumnos(); 
+            cargarAlumnos();
         }
-    });
-}
-
-if (notificarBtn) {
-    notificarBtn.addEventListener("click", () => {
-        handleAuthClick();
     });
 }
 
@@ -814,13 +836,18 @@ if (guardarBtn) {
         // Antes de pasar a vista previa, calculamos el promedio final
         actualizarCalificacionFinal();
 
-        // El resto del código no cambia
         document.querySelectorAll("select").forEach(select => {
             const valor = getSelectText(select);
             const span = document.createElement("span");
             span.textContent = valor;
             span.className = "select-preview";
             span.dataset.options = select.innerHTML;
+            
+            // *** CORRECCIÓN IMPORTANTE: PRESERVAR EL ID ***
+            if (select.id) {
+                span.id = select.id;
+            }
+
             select.replaceWith(span);
         });
         boletin.classList.add("vista-previa");
@@ -874,16 +901,27 @@ window.onpopstate = function () {
 
 
 function getMateriaSeleccionada() {
-    const select = document.getElementById("materia-seleccionada");
-    if (select && select.value !== "") {
-        return select.options[select.selectedIndex]?.text || "";
-    }
-    const span = document.querySelector("#materia-seleccionada.select-preview");
-    if (span) {
-        return span.textContent;
+    // Intentamos buscar por ID
+    let element = document.getElementById("materia-seleccionada");
+    
+    // Si no lo encuentra por ID, buscamos por la clase select-preview que tenga el texto de la materia
+    // (Esto es un respaldo por si el ID se perdió antes)
+    if (!element) {
+        // Buscamos el span que está en la celda correspondiente a la materia
+        const cellMateria = document.querySelector(".tabla-2 tr:first-child td:nth-child(2)");
+        if (cellMateria) {
+            element = cellMateria.querySelector(".select-preview") || cellMateria.querySelector("select");
+        }
     }
 
-    return "";
+    if (!element) return "";
+
+    if (element.tagName === "SELECT") {
+        return element.options[element.selectedIndex]?.text || "";
+    } else {
+        // Si es SPAN u otro elemento de texto
+        return element.textContent || "";
+    }
 }
 
 
@@ -1075,85 +1113,56 @@ if (document.getElementById("calcularPromedioBtn")) {
 
 
 // =================================================================
-// LÓGICA DE LA API DE GOOGLE (Mantenida)
+// LÓGICA DE NOTIFICACIÓN VÍA SERVIDOR (PHPMailer)
 // =================================================================
-const CLIENT_ID = '385519034733-oug8nbcd676633k9u8bfkfo6v0a2394k.apps.googleusercontent.com';
-const SCOPES = 'https://www.googleapis.com/auth/gmail.send';
 
-let tokenClient;
 
-function gapiLoaded() {
-    gapi.load('client', async () => {
+if (notificarBtn) {
+    notificarBtn.addEventListener("click", async () => {
+        const materia = getMateriaSeleccionada();
+        
+        if (!materia || materia === "Seleccionar materia") {
+            openAlertModalProfesor("Por favor, seleccione una materia antes de notificar.");
+            return;
+        }
+
+        // Limpiar nombre de la materia (quitar paréntesis de curso)
+        let materiaLimpia = materia;
+        const match = materia.match(/(.*)\s\((.*)\s(.*)\s-\s(.*)\)/);
+        if (match) {
+            materiaLimpia = match[1].trim();
+        }
+
+        // Deshabilitar botón para evitar doble clic
+        notificarBtn.disabled = true;
+        notificarBtn.textContent = "Enviando...";
+
         try {
-            await gapi.client.init({
-                discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest'],
+            const response = await fetch('../api/notificar_carga.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    profesor_nombre: activeUser.fullname,
+                    materia: materiaLimpia
+                })
             });
+
+            const data = await response.json();
+
+            if (data.success) {
+                openAlertModalProfesor("¡Notificación enviada con éxito a Preceptoría!");
+            } else {
+                openAlertModalProfesor("Error al enviar: " + data.message);
+            }
+
         } catch (e) {
-            console.error("Error initializing GAPI client", e);
+            console.error("Error de red:", e);
+            openAlertModalProfesor("Error de conexión al intentar notificar.");
+        } finally {
+            notificarBtn.disabled = false;
+            notificarBtn.innerHTML = "<b>NOTIFICAR</b>";
         }
     });
-}
-
-function gisLoaded() {
-    try {
-        tokenClient = google.accounts.oauth2.initTokenClient({
-            client_id: CLIENT_ID,
-            scope: SCOPES,
-            callback: async (resp) => {
-                if (resp.error) {
-                    console.error("Error en la autorización:", resp);
-                    showCustomAlert("Hubo un error en la autorización con Google.");
-                    throw (resp);
-                }
-                await enviarEmailDeAviso();
-            },
-        });
-    } catch (e) {
-        console.error("Error initializing GIS client", e);
-    }
-}
-
-function handleAuthClick() {
-    if (!tokenClient) {
-        showCustomAlert("La autenticación de Google no se ha cargado todavía. Por favor, espere un momento y vuelva a intentarlo.");
-        return;
-    }
-    if (gapi.client.getToken() === null) {
-        tokenClient.requestAccessToken({ prompt: 'consent' });
-    } else {
-        tokenClient.requestAccessToken({ prompt: '' });
-    }
-}
-
-function encodeSubject(subject) {
-    const encoded = btoa(unescape(encodeURIComponent(subject)));
-    return `=?UTF-8?B?${encoded}?=`;
-}
-
-async function enviarEmailDeAviso() {
-    const materia = getMateriaSeleccionada() || "la materia";
-    const profesor = activeUser.fullname || "El Profesor/a";
-    const emailDestino = "mvbenitezramirez@eest5.com";
-
-    const asuntoOriginal = `Notificación de carga de notas: ${materia}`;
-    const asuntoCodificado = encodeSubject(asuntoOriginal);
-
-    const cuerpoMensaje = 'Hola,\r\n\r\n' +
-        `Este es un aviso para informarle que el profesor/a ${profesor} ha cargado/actualizado las notas para ${materia}.\r\n\r\n` +
-        'Saludos cordiales,\r\n' +
-        'Sistema de Gestión E.E.S.T.N°5';
-
-    const emailString = [`To: ${emailDestino}`, 'Content-Type: text/plain; charset=utf-8', 'MIME-Version: 1.0', `Subject: ${asuntoCodificado}`, '', cuerpoMensaje].join('\n');
-    const base64EncodedEmail = btoa(emailString).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-
-    try {
-        const response = await gapi.client.gmail.users.messages.send({ 'userId': 'me', 'resource': { 'raw': base64EncodedEmail } });
-        console.log("Correo de notificación enviado exitosamente:", response);
-        showCustomAlert("¡Notificación enviada con éxito!");
-    } catch (error) {
-        console.error("Error al enviar el correo:", error);
-        showCustomAlert("Hubo un error al enviar la notificación. Revisa la consola para más detalles.");
-    }
 }
 
 // --- NUEVA FUNCIÓN: Establece el ciclo lectivo al año actual ---
@@ -1176,6 +1185,8 @@ function establecerCicloLectivoAutomatico() {
         }
     }
 }
+
+
 function logout() {
     sessionStorage.removeItem("activeUser");
     window.location.replace("principal.html");
