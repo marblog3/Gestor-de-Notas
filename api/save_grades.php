@@ -27,7 +27,7 @@ try {
 
     $pdo->beginTransaction();
 
-    // Preparar SQL de Guardado (Igual que antes)
+    // Preparar SQL de Guardado
     $sql_save = "
         INSERT INTO notas (
             alumno_email, materia, profesor_email, fecha_carga, curso_anio,

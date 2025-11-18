@@ -1,6 +1,6 @@
 /* =================================================================
    PRINCIPAL.CSS
-   Estilos para Login y Registro (Re-skin basado en prototipo)
+   Estilos para Login y Registro
    ================================================================= */
 
 /* --- Configuración global del body --- */
@@ -12,7 +12,7 @@ body {
     overflow-y: auto; /* Permitir scroll si el contenido es muy alto */
 }
 
-/* --- Estilos del Header (Tu original) --- */
+/* --- Estilos del Header --- */
 .mi-header {
     display: flex;
     justify-content: space-between;
@@ -88,7 +88,7 @@ body {
     text-align: center;
 }
 
-/* --- Estilos del Formulario (inspirados en el prototipo) --- */
+/* --- Estilos del Formulario --- */
 
 .form-wrapper h2 {
     font-size: 32px;

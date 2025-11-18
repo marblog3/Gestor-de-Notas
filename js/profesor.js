@@ -1,5 +1,5 @@
-// Gestor-de-Notas/js/profesor.js (Archivo completo a REEMPLAZAR)
-// --- VALIDACIÓN DE SESIÓN (MODIFICADA PARA SER ROBUSTA) ---
+// Gestor-de-Notas/js/profesor.js
+// --- VALIDACIÓN DE SESIÓN ---
 const activeUserJSON = sessionStorage.getItem("activeUser");
 if (!activeUserJSON) {
     window.location.href = "principal.html";

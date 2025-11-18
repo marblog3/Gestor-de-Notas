@@ -1,4 +1,4 @@
-// Gestor-de-Notas/js/preceptor.js (Archivo completo REEMPLAZADO)
+// Gestor-de-Notas/js/preceptor.js
 
 // Verifica si hay sesión activa al cargar la página
 const activeUserJSON = sessionStorage.getItem("activeUser");

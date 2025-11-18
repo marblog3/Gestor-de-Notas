@@ -1,11 +1,11 @@
-// Mostrar login
+// Mostrar login 
 function showLogin() {
     document.getElementById('login-container').style.display = 'block';
     document.getElementById('register-container').style.display = 'none';
     document.getElementById('register-error-msg').innerHTML = '';
 }
 
-// Mostrar registro
+// Mostrar registro 
 function showRegister() {
     document.getElementById('login-container').style.display = 'none';
     document.getElementById('register-container').style.display = 'block';

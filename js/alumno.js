@@ -1,4 +1,4 @@
-// Gestor-de-Notas/js/alumno.js (COMPLETO Y FINAL)
+// Gestor-de-Notas/js/alumno.js
 
 // --- VARIABLES GLOBALES ---
 const reviewingEmail = sessionStorage.getItem("reviewingUserEmail");
